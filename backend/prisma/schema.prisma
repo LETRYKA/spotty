@@ -1,15 +1,78 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
-generator client {
-  provider = "prisma-client-js"
-  output   = "../generated/prisma"
-}
-
+// Data source and generator
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Models
+
+model User {
+  id              String        @id @default(uuid())
+  phoneNumber     String        @unique
+  name            String
+  avatarImage     String?
+  backgroundImage String?
+  moodStatus      String?
+  batteryLevel    Int?
+  friendships     Friendship[]  @relation("UserToFriend")
+  friendsOf       Friendship[]  @relation("FriendToUser")
+  locations       Location[]
+  events          Event[]       @relation("EventOwner")
+  joinedEvents    Event[]       @relation("EventParticipants")
+  stories         Story[]
+  createdAt       DateTime      @default(now())
+}
+
+model Friendship {
+  id        String   @id @default(uuid())
+
+  user      User     @relation("UserToFriend", fields: [userId], references: [id])
+  userId    String
+
+  friend    User     @relation("FriendToUser", fields: [friendId], references: [id])
+  friendId  String
+
+  status    String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, friendId])
+}
+
+model Location {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  lat       Float
+  lng       Float
+  updatedAt DateTime @updatedAt
+}
+
+model Event {
+  id            String     @id @default(uuid())
+  title         String
+  description   String?
+  lat           Float
+  lng           Float
+  isPrivate     Boolean
+  hiddenFromMap Boolean
+  password      String?
+  owner         User        @relation("EventOwner", fields: [ownerId], references: [id])
+  ownerId       String
+  participants  User[]      @relation("EventParticipants")
+  createdAt     DateTime    @default(now())
+}
+
+model Story {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  mediaUrl  String
+  lat       Float?
+  lng       Float?
+  createdAt DateTime @default(now())
+  expiresAt DateTime
 }
