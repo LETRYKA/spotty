@@ -32,7 +32,7 @@ app.use("/api/users", usersRoute);
 app.use("/api/friends", friendsRoute);
 app.use("/api/location", locationRoute);
 app.use("/api/stories", storiesRoute);
-app.use("/api/events", eventsRoute);
+app.use("/api/events", eventsRoute);``
 
 app.get("/api", (req, res) => {
   res.send("API is running...");
