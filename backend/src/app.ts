@@ -7,7 +7,6 @@ import { eventsRoute } from "./routes/events-routes";
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import { eventsRoutes } from "./routes/events-routes";
 
 dotenv.config();
 const app = express();
