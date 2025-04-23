@@ -17,7 +17,14 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
       participantIds,
     } = req.body;
 
-    if (!title || !ownerId || lat === undefined || lng === undefined || !description || !password) {
+    if (
+      !title ||
+      !ownerId ||
+      lat === undefined ||
+      lng === undefined ||
+      !description ||
+      !password
+    ) {
       res.status(400).json({ error: "Missing required fields" });
       return;
     }
@@ -28,16 +35,18 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
       res.status(400).json({ error: "User not found" });
       return;
     }
-    if (password && password.length !== 4) { 
-        res.status(400).json({ error: "Password must be at least 4 characters" });
-        return;
+    if (password && password.length !== 4) {
+      res.status(400).json({ error: "Password must be at least 4 characters" });
+      return;
     }
     if (participantIds && Array.isArray(participantIds)) {
       const validParticipants = await prisma.user.findMany({
         where: { id: { in: participantIds } },
       });
       if (validParticipants.length !== participantIds.length) {
-        res.status(400).json({ error: "One or more participant IDs are invalid" });
+        res
+          .status(400)
+          .json({ error: "One or more participant IDs are invalid" });
         return;
       }
     }
@@ -46,16 +55,16 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
       data: {
         title,
         description: description || null,
-        lat: parseFloat(lat), 
-        lng: parseFloat(lng), 
+        lat: parseFloat(lat),
+        lng: parseFloat(lng),
         isPrivate: isPrivate ?? false,
         hiddenFromMap: hiddenFromMap ?? false,
         password: password || null,
-        owner: { connect: { id: ownerId } }, 
+        startAt: new Date(),
+        owner: { connect: { id: ownerId } },
         participants: participantIds
           ? { connect: participantIds.map((id: string) => ({ id })) }
           : undefined,
-        createdAt: new Date(),
       },
     });
 

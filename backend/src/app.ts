@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import webhooksRouter from "./routes/webhooks";
 import { userRoute } from "./routes/user-routes";
 import { friendsRoute } from "./routes/friends-routes";
 import { storiesRoute } from "./routes/stories-routes";
@@ -26,13 +27,22 @@ app.use(
     credentials: true,
   })
 );
-app.use(express.json());
 
+// Apply express.json() only to non-webhook routes
+app.use((req, res, next) => {
+  if (req.path.startsWith("/api/webhooks")) {
+    return next(); // Skip express.json() for webhook routes
+  }
+  return express.json()(req, res, next); // Apply express.json() for other routes
+});
+
+// Routes
 app.use("/api/users", userRoute);
 app.use("/api/friends", friendsRoute);
 app.use("/api/location", locationRoute);
 app.use("/api/stories", storiesRoute);
-app.use("/api/events", eventsRoute);``
+app.use("/api/events", eventsRoute);
+app.use("/api/webhooks", webhooksRouter);
 
 app.get("/api", (req, res) => {
   res.send("API is running...");
