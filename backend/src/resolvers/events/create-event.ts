@@ -17,7 +17,7 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
       participantIds,
     } = req.body;
 
-    if (!title || !ownerId || lat === undefined || lng === undefined || !description) {
+    if (!title || !ownerId || lat === undefined || lng === undefined || !description || !password) {
       res.status(400).json({ error: "Missing required fields" });
       return;
     }
@@ -27,6 +27,10 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
     if (!owner) {
       res.status(400).json({ error: "User not found" });
       return;
+    }
+    if (password && password.length !== 4) { 
+        res.status(400).json({ error: "Password must be at least 4 characters" });
+        return;
     }
     if (participantIds && Array.isArray(participantIds)) {
       const validParticipants = await prisma.user.findMany({
