@@ -8,15 +8,22 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// Enums
+enum EventStatus {
+  UPCOMING
+  ONGOING
+  ENDED
+}
+
 // Models
 
 model User {
-  id              String        @id @default(uuid())
-  email           String        @unique
+  id              String    @id @default(uuid())
+  email           String    @unique
   password        String
   name            String
-  phoneNumber     String?       @unique
-  isVerified      Boolean       @default(false)
+  phoneNumber     String?   @unique
+  isVerified      Boolean   @default(false)
   otpCode         String?
   otpExpiresAt    DateTime?
   avatarImage     String?
@@ -24,24 +31,24 @@ model User {
   moodStatus      String?
   batteryLevel    Int?
 
-  friendships     Friendship[]  @relation("UserToFriend")
-  friendsOf       Friendship[]  @relation("FriendToUser")
-  locations       Location[]
-  events          Event[]       @relation("EventOwner")
-  joinedEvents    Event[]       @relation("EventParticipants")
-  stories         Story[]
+  friendships  Friendship[] @relation("UserToFriend")
+  friendsOf    Friendship[] @relation("FriendToUser")
+  locations    Location[]
+  events       Event[]      @relation("EventOwner")
+  joinedEvents Event[]      @relation("EventParticipants")
+  stories      Story[]
 
-  createdAt       DateTime      @default(now())
+  createdAt DateTime @default(now())
 }
 
 model Friendship {
-  id        String   @id @default(uuid())
+  id String @id @default(uuid())
 
-  user      User     @relation("UserToFriend", fields: [userId], references: [id])
-  userId    String
+  user   User   @relation("UserToFriend", fields: [userId], references: [id])
+  userId String
 
-  friend    User     @relation("FriendToUser", fields: [friendId], references: [id])
-  friendId  String
+  friend   User   @relation("FriendToUser", fields: [friendId], references: [id])
+  friendId String
 
   status    String
   createdAt DateTime @default(now())
@@ -59,7 +66,7 @@ model Location {
 }
 
 model Event {
-  id            String     @id @default(uuid())
+  id            String      @id @default(uuid())
   title         String
   description   String?
   lat           Float
@@ -71,6 +78,9 @@ model Event {
   ownerId       String
   participants  User[]      @relation("EventParticipants")
   createdAt     DateTime    @default(now())
+  startAt       DateTime
+  endAt         DateTime?
+  status        EventStatus @default(UPCOMING)
 }
 
 model Story {
