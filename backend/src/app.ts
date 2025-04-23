@@ -3,6 +3,7 @@ import { usersRoute } from "./routes/user-routes";
 import { friendsRoute } from "./routes/friends-routes";
 import { storiesRoute } from "./routes/stories-routes";
 import { locationRoute } from "./routes/location-routes";
+import { eventsRoute } from "./routes/events-routes";
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -32,7 +33,7 @@ app.use("/api/users", usersRoute);
 app.use("/api/friends", friendsRoute);
 app.use("/api/location", locationRoute);
 app.use("/api/stories", storiesRoute);
-app.use("/api/events", eventsRoutes)
+app.use("/api/events", eventsRoute);
 
 app.get("/api", (req, res) => {
   res.send("API is running...");
