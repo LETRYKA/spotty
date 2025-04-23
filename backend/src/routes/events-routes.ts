@@ -1,7 +1,6 @@
 import express from "express";
-// import { getUsername } from "../resolvers/user-profile/get-username"; example import
-
-
-export const eventsRoutes = express.Router();
-
-// eventsRoutes.get("/:id/invite", getUsername); Example route
+import getEvent from "../resolvers/events/get-event-id";
+import getAllEvents from "../resolvers/events/get-all-events";
+export const eventsRoute = express.Router();
+eventsRoute.get("/[id]", getEvent); 
+eventsRoute.get("/", getAllEvents); 
