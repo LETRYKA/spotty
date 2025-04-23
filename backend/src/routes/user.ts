@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 
 router.patch("/profile", authMiddleware, async (req, res) => {
   const { phoneNumber, avatarImage, moodStatus, batteryLevel } = req.body;
-  const userId = req.userId; // From auth middleware
+  const userId = req.userId;
 
   try {
     const updatedUser = await prisma.user.update({
