@@ -12,18 +12,25 @@ generator client {
 
 model User {
   id              String        @id @default(uuid())
-  phoneNumber     String        @unique
+  email           String        @unique
+  password        String
   name            String
+  phoneNumber     String?       @unique
+  isVerified      Boolean       @default(false)
+  otpCode         String?
+  otpExpiresAt    DateTime?
   avatarImage     String?
   backgroundImage String?
   moodStatus      String?
   batteryLevel    Int?
+
   friendships     Friendship[]  @relation("UserToFriend")
   friendsOf       Friendship[]  @relation("FriendToUser")
   locations       Location[]
   events          Event[]       @relation("EventOwner")
   joinedEvents    Event[]       @relation("EventParticipants")
   stories         Story[]
+
   createdAt       DateTime      @default(now())
 }
 
