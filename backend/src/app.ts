@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { usersRoute } from "./routes/user-routes";
+import { userRoute } from "./routes/user-routes";
 import { friendsRoute } from "./routes/friends-routes";
 import { storiesRoute } from "./routes/stories-routes";
 import { locationRoute } from "./routes/location-routes";
@@ -28,7 +28,7 @@ app.use(
 );
 app.use(express.json());
 
-app.use("/api/users", usersRoute);
+app.use("/api/users", userRoute);
 app.use("/api/friends", friendsRoute);
 app.use("/api/location", locationRoute);
 app.use("/api/stories", storiesRoute);
