@@ -6,6 +6,7 @@ import { locationRoute } from "./routes/location-routes";
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import { eventsRoutes } from "./routes/events-routes";
 
 dotenv.config();
 const app = express();
@@ -31,6 +32,7 @@ app.use("/api/users", usersRoute);
 app.use("/api/friends", friendsRoute);
 app.use("/api/location", locationRoute);
 app.use("/api/stories", storiesRoute);
+app.use("/api/even", eventsRoutes)
 
 app.get("/api", (req, res) => {
   res.send("API is running...");
