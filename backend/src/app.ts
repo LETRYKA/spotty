@@ -1,17 +1,23 @@
+import express from "express";
+import dotenv from "dotenv";
+import cors from "cors";
 import { PrismaClient } from "@prisma/client";
+import { WebSocketServer } from "ws";
+import http from "http";
+
 import webhooksRouter from "./routes/webhooks";
 import { userRoute } from "./routes/user-routes";
 import { friendsRoute } from "./routes/friends-routes";
 import { storiesRoute } from "./routes/stories-routes";
 import { locationRoute } from "./routes/location-routes";
 import { eventsRoute } from "./routes/events-routes";
-import express from "express";
-import dotenv from "dotenv";
-import cors from "cors";
 
 dotenv.config();
-const app = express();
 const prisma = new PrismaClient();
+const app = express();
+const server = http.createServer(app);
+const wss = new WebSocketServer({ server });
+
 const port = process.env.PORT || 8000;
 const allowedOrigins = ["http://localhost:3000"];
 
@@ -28,12 +34,9 @@ app.use(
   })
 );
 
-// Apply express.json() only to non-webhook routes
 app.use((req, res, next) => {
-  if (req.path.startsWith("/api/webhooks")) {
-    return next(); // Skip express.json() for webhook routes
-  }
-  return express.json()(req, res, next); // Apply express.json() for other routes
+  if (req.path.startsWith("/api/webhooks")) return next();
+  return express.json()(req, res, next);
 });
 
 // Routes
@@ -48,6 +51,45 @@ app.get("/api", (req, res) => {
   res.send("API is running...");
 });
 
-app.listen(port, async () => {
-  console.log(`💀 Server is running on port ${port}`);
+// WEBSOCKET
+wss.on("connection", (ws) => {
+  ws.on("message", async (data) => {
+    try {
+      const msg = JSON.parse(data.toString());
+      if (msg.type === "location-update") {
+        const { userId, lat, lng } = msg;
+
+        if (!userId || !lat || !lng) return;
+
+        // save db with id lat lng
+        await prisma.location.upsert({
+          where: { id: userId },
+          update: { lat, lng },
+          create: { userId, lat, lng },
+        });
+
+        wss.clients.forEach((client) => {
+          if (client !== ws && client.readyState === ws.OPEN) {
+            client.send(
+              JSON.stringify({
+                type: "friend-location-update",
+                userId,
+                lat,
+                lng,
+              })
+            );
+          }
+        });
+      }
+    } catch (err) {
+      console.error("error", err);
+    }
+  });
+});
+
+server.listen(port, () => {
+  console.log(`💀 Server is running on port ${port} (WebSocket enabled)`);
+});
+server.on("error", (err) => {
+  console.error("error:", err);
 });
