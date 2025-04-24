@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-
+ 
 const prisma = new PrismaClient();
-
+ 
 const createEvent = async (req: Request, res: Response): Promise<void> => {
   try {
     const {
@@ -16,7 +16,6 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
       ownerId,
       participantIds,
     } = req.body;
-
     if (
       !title ||
       !ownerId ||
@@ -50,7 +49,7 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
         return;
       }
     }
-
+ 
     const event = await prisma.event.create({
       data: {
         title,
@@ -67,7 +66,7 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
           : undefined,
       },
     });
-
+ 
     res.status(201).json(event);
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
@@ -77,3 +76,4 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
 };
 
 export default createEvent;
+
