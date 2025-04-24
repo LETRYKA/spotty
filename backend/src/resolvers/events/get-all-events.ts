@@ -10,6 +10,7 @@ const getAllEvents = async (
     const events = await prisma.event.findMany({
       include: {
         owner: true,
+        participants: true,
       },
     });
 
