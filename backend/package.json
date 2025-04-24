@@ -19,13 +19,15 @@
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
-    "yup": "^1.6.1",
-    "svix": "^1.64.1"
+    "svix": "^1.64.1",
+    "ws": "^8.18.1",
+    "yup": "^1.6.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.1",
     "@types/node": "^22.14.1",
+    "@types/ws": "^8.18.1",
     "nodemon": "^3.1.9",
     "prisma": "^6.6.0",
     "ts-node": "^10.9.2",
