@@ -16,7 +16,6 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
       ownerId,
       participantIds,
     } = req.body;
- 
     if (
       !title ||
       !ownerId ||
@@ -75,5 +74,6 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
     await prisma.$disconnect();
   }
 };
- 
+
 export default createEvent;
+
