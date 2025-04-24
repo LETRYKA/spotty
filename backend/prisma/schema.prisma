@@ -57,9 +57,8 @@ model Friendship {
 }
 
 model Location {
-  id        String   @id @default(uuid())
+  userId    String   @id
   user      User     @relation(fields: [userId], references: [id])
-  userId    String
   lat       Float
   lng       Float
   updatedAt DateTime @updatedAt
