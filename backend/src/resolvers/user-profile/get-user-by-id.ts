@@ -3,9 +3,8 @@ import { Request, Response } from 'express';
 
 const prisma = new PrismaClient();
 
-export async function getUserById(req: Request, res: Response) {
+export async  function getUserById(req: Request, res: Response) {
   const { id } = req.params;
-
   try {
     const user = await prisma.user.findUnique({
       where: { id },
@@ -33,14 +32,14 @@ export async function getUserById(req: Request, res: Response) {
           },
         },
         locations: true,
-        events: true,
+        events: false,
         joinedEvents: true,
         stories: true,
       },
     });
 
     if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+      res.status(404).json({ error: 'User not found' });
     }
 
     res.status(200).json(user);
