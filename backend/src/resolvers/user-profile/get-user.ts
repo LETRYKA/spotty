@@ -29,7 +29,7 @@ export async function getUsers(req: Request, res: Response) {
             userId: true,
           },
         },
-        locations: true,
+        locations: false,
         events: true,
         joinedEvents: true,
         stories: true,

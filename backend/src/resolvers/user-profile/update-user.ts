@@ -25,7 +25,6 @@ export async function updateUser(req: Request, res: Response) {
         ...(backgroundImage !== undefined && { backgroundImage }),
         ...(moodStatus !== undefined && { moodStatus }),
         ...(batteryLevel !== undefined && { batteryLevel }),
-        ...(isVerified !== undefined && { isVerified }),
       },
       select: {
         id: true,
