@@ -10,7 +10,7 @@ const updateEvent = async (req: Request, res: Response): Promise<void> => {
     res.status(400).json({ error: "Event ID is required" });
     return;
   }
-
+  
   // Assuming userId is set via middleware or passed in the body
   const userId = req.body.userId;
   console.log("userId:", userId);
