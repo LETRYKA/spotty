@@ -8,6 +8,7 @@ import leaveEvent from "../resolvers/events/leave-event";
 import updateEvent from "../resolvers/events/update-event";
 export const eventsRoute = express.Router();
 
+
 eventsRoute.post("/", createEvent)
 eventsRoute.get("/:id", getEvent); 
 eventsRoute.get("/", getAllEvents); 
