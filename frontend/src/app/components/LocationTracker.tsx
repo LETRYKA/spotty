@@ -1,48 +1,71 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+
+type FriendLocation = {
+  userId: string;
+  lat: number;
+  lng: number;
+};
 
 export default function LiveLocation({ userId }: { userId: string }) {
+  const [friendLocations, setFriendLocations] = useState<FriendLocation[]>([]);
+
   useEffect(() => {
     const socket = new WebSocket("ws://localhost:8000");
 
     socket.onopen = () => {
-      console.log("webscoket connected");
-
-      navigator.geolocation.watchPosition(
-        (pos) => {
-          const { latitude, longitude } = pos.coords;
-          console.log("post", latitude, longitude);
-
-          socket.send(
-            JSON.stringify({
-              type: "location-update",
-              userId,
-              lat: latitude,
-              lng: longitude,
-            })
-          );
-        },
-        (err) => {
-          console.error("error:", err);
-        },
-        {
-          enableHighAccuracy: true,
-          maximumAge: 0,
-          timeout: 5000,
-        }
-      );
+      console.log("websocket working");
     };
 
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      console.log("WS:", data);
+      if (data.type === "friend-location-update" && data.userId !== userId) {
+        setFriendLocations((prev) => {
+          const updated = prev.filter((f) => f.userId !== data.userId);
+          return [
+            ...updated,
+            { userId: data.userId, lat: data.lat, lng: data.lng },
+          ];
+        });
+      }
     };
+
+    if ("geolocation" in navigator) {
+      const watchId = navigator.geolocation.watchPosition(
+        (pos) => {
+          const { latitude: lat, longitude: lng } = pos.coords;
+          socket.send(
+            JSON.stringify({
+              type: "location-update",
+              userId,
+              lat,
+              lng,
+            })
+          );
+        },
+        (err) => console.error("Geolocation error:", err),
+        { enableHighAccuracy: true }
+      );
+
+      return () => navigator.geolocation.clearWatch(watchId);
+    }
 
     return () => {
       socket.close();
     };
   }, [userId]);
 
-  return <div>🛰️ Live location sharing enabled for {userId}</div>;
+  return (
+    <div>
+      Location working {userId}
+      <ul>
+        {friendLocations.map((f) => (
+          <li key={f.userId}>
+            {f.userId}: ({f.lat.toFixed(5)}, {f.lng.toFixed(5)})
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }

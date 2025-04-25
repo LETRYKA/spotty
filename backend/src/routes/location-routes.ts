@@ -1,23 +1,26 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
+
 const router = express.Router();
 const prisma = new PrismaClient();
 
-router.get("/:userId", async (req: any, res: any) => {
+router.put("/:userId", async (req: any, res: any) => {
   const { userId } = req.params;
+  const { lat, lng } = req.body;
+
+  if (!lat || !lng) return res.status(400).json({ error: "Missing lat/lng" });
 
   try {
-    const location = await prisma.location.findFirst({
+    const location = await prisma.location.upsert({
       where: { userId },
-      orderBy: { updatedAt: "desc" },
+      update: { lat, lng },
+      create: { userId, lat, lng },
     });
 
-    if (!location) return res.status(404).json({ error: "Location not found" });
-
     res.json(location);
-  } catch (err) {
-    console.error("DB error:", err);
-    res.status(500).json({ error: "Server error" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to update location" });
   }
 });
 

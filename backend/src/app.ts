@@ -39,7 +39,7 @@ app.use((req, res, next) => {
   return express.json()(req, res, next);
 });
 
-// Routes
+// routes
 app.use("/api/users", userRoute);
 app.use("/api/friends", friendsRoute);
 app.use("/api/location", locationRoute);
@@ -51,6 +51,7 @@ app.get("/api", (req, res) => {
   res.send("API is running...");
 });
 
+const clients = new Map();
 // WEBSOCKET
 wss.on("connection", (ws) => {
   ws.on("message", async (data) => {
@@ -59,16 +60,18 @@ wss.on("connection", (ws) => {
       if (msg.type === "location-update") {
         const { userId, lat, lng } = msg;
 
-        if (!userId || !lat || !lng) return;
+        if (!userId || typeof lat !== "number" || typeof lng !== "number")
+          return;
 
-        // save db with id lat lng
         await prisma.location.upsert({
-          where: { id: userId },
+          where: { userId },
           update: { lat, lng },
           create: { userId, lat, lng },
         });
 
-        wss.clients.forEach((client) => {
+        clients.set(userId, ws);
+
+        for (const [otherUserId, client] of clients.entries()) {
           if (client !== ws && client.readyState === ws.OPEN) {
             client.send(
               JSON.stringify({
@@ -79,17 +82,24 @@ wss.on("connection", (ws) => {
               })
             );
           }
-        });
+        }
       }
     } catch (err) {
-      console.error("error", err);
+      console.error("WebSocket error:", err);
+    }
+  });
+
+  ws.on("close", () => {
+    for (const [userId, client] of clients.entries()) {
+      if (client === ws) clients.delete(userId);
     }
   });
 });
 
 server.listen(port, () => {
-  console.log(`💀 Server is running on port ${port} (WebSocket enabled)`);
+  console.log(`💀 Server is running on port ${port} (websocket enabled)`);
 });
+
 server.on("error", (err) => {
-  console.error("error:", err);
+  console.error("Server error:", err);
 });
