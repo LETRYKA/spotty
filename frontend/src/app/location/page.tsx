@@ -1,85 +1,125 @@
 "use client";
 
-import React, { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import mapboxgl from "mapbox-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
 
-const Map: React.FC = () => {
+mapboxgl.accessToken = "pk.eyJ1IjoiYmFsa2FuYW9wcGEiLCJhIjoiY205dXUwcHM4MGYyZjJrcTByemN1ZWp5MyJ9.sxemiJPgp0W7lsEdhSePEw";
+
+const Map = () => {
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<mapboxgl.Map | null>(null);
+
   useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://api.mapbox.com/mapbox-gl-js/v3.11.0/mapbox-gl.js";
-    script.async = true;
-    script.onload = () => {
-      // Initialize map after the script has loaded
-      if (typeof window !== "undefined") {
-        const mapboxgl = require("mapbox-gl"); // Only import when running on the client side
+    if (!mapContainerRef.current) return;
 
-        mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+    const map = new mapboxgl.Map({
+      container: mapContainerRef.current,
+      style: "mapbox://styles/balkanaoppa/cm9vjzngv00i401s06zr61vb2",
+      center: [-77.04, 38.907],
+      zoom: 13,
+      pitch: 60,
+      bearing: -17.6,
+      antialias: true,
+    });
 
-        const map = new mapboxgl.Map({
-          container: "map", // The container ID
-          style: process.env.NEXT_PUBLIC_MAPBOX_STYLE_URL, // Custom style URL
-          projection: "globe", // Display the map as a globe
-          zoom: 1,
-          center: [30, 15],
-        });
+    mapRef.current = map;
 
-        map.addControl(new mapboxgl.NavigationControl());
+    map.on("load", () => {
+      // 3D Terrain
+      map.addSource("mapbox-dem", {
+        type: "raster-dem",
+        url: "mapbox://mapbox.terrain-rgb",
+        tileSize: 512,
+        maxzoom: 14,
+      });
+      map.setTerrain({ source: "mapbox-dem", exaggeration: 1.5 });
 
-        map.on("style.load", () => {
-          map.setFog({}); // Set the default atmosphere style
-        });
+      // 3D Buildings
+      map.addLayer({
+        id: "3d-buildings",
+        source: "composite",
+        "source-layer": "building",
+        filter: ["==", "extrude", "true"],
+        type: "fill-extrusion",
+        minzoom: 15,
+        paint: {
+          "fill-extrusion-color": "#aaa",
+          "fill-extrusion-height": ["get", "height"],
+          "fill-extrusion-base": ["get", "min_height"],
+          "fill-extrusion-opacity": 0.6,
+        },
+      });
 
-        // Rotation logic
-        const secondsPerRevolution = 240;
-        const maxSpinZoom = 5;
-        const slowSpinZoom = 3;
+      // MARKER DATA (GeoJSON)
+      map.addSource("places", {
+        type: "geojson",
+        data: {
+          type: "FeatureCollection",
+          features: [
+            {
+              type: "Feature",
+              properties: {
+                description: "<strong>Capital Pride Parade</strong><p>4:30 p.m. Free.</p>",
+              },
+              geometry: {
+                type: "Point",
+                coordinates: [106.9177016, 47.9184676],
+              },
+            },
+            {
+              type: "Feature",
+              properties: {
+                description: "<strong>Big Backyard Bash</strong><p>Food, wine, fun.</p>",
+              },
+              geometry: {
+                type: "Point",
+                coordinates: [-77.090372, 38.881189],
+              },
+            },
+          ],
+        },
+      });
+      
 
-        let userInteracting = false;
-        const spinEnabled = true;
+      // ADD CIRCLE MARKERS
+      map.addLayer({
+        id: "places",
+        type: "circle",
+        source: "places",
+        paint: {
+          "circle-color": "#ff5500",
+          "circle-radius": 8,
+          "circle-stroke-width": 2,
+          "circle-stroke-color": "#fff",
+        },
+      });
 
-        function spinGlobe() {
-          const zoom = map.getZoom();
-          if (spinEnabled && !userInteracting && zoom < maxSpinZoom) {
-            let distancePerSecond = 360 / secondsPerRevolution;
-            if (zoom > slowSpinZoom) {
-              const zoomDif =
-                (maxSpinZoom - zoom) / (maxSpinZoom - slowSpinZoom);
-              distancePerSecond *= zoomDif;
-            }
-            const center = map.getCenter();
-            center.lng -= distancePerSecond;
-            map.easeTo({ center, duration: 1000, easing: (n: any) => n });
-          }
+      // ADD POPUP
+      const popup = new mapboxgl.Popup({ closeButton: false, closeOnClick: false });
+
+      map.on("mouseenter", "places", (e) => {
+        map.getCanvas().style.cursor = "pointer";
+        const coords = e.features?.[0]?.geometry?.coordinates.slice();
+        const desc = e.features?.[0]?.properties?.description;
+
+        if (coords && desc) {
+          popup.setLngLat(coords).setHTML(desc).addTo(map);
         }
+      });
 
-        map.on("mousedown", () => {
-          userInteracting = true;
-        });
-        map.on("dragstart", () => {
-          userInteracting = true;
-        });
-
-        map.on("moveend", () => {
-          spinGlobe();
-        });
-
-        spinGlobe(); // Start spinning the globe initially
-      }
-    };
-
-    document.head.appendChild(script);
+      map.on("mouseleave", "places", () => {
+        map.getCanvas().style.cursor = "";
+        popup.remove();
+      });
+    });
 
     return () => {
-      // Clean up the script when component unmounts
-      document.head.removeChild(script);
+      map.remove();
     };
   }, []);
 
-  return (
-    <div
-      id="map"
-      style={{ position: "absolute", top: 0, bottom: 0, width: "100%" }}
-    />
-  );
+  return <div ref={mapContainerRef} className="w-screen h-screen" />;
 };
 
 export default Map;
