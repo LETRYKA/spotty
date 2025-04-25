@@ -4,16 +4,16 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 const updateEvent = async (req: Request, res: Response): Promise<void> => {
-  const { id } = req.params;  // Change from eventId to id
+  const { id } = req.params; 
   
   if (!id) {
     res.status(400).json({ error: "Event ID is required" });
     return;
   }
-
+  
   // Assuming userId is set via middleware or passed in the body
   const userId = req.body.userId;
-  console.log("userId:", userId);  // Log userId to ensure it's set correctly
+  console.log("userId:", userId);
 
   if (!userId) {
     res.status(401).json({ error: "User not authenticated" });
