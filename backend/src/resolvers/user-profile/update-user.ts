@@ -43,6 +43,6 @@ export async function updateUser(req: Request, res: Response) {
     res.status(200).json(updatedUser);
   } catch (error: any) {
     console.error("Failed to update user:", error);
-    res.status(500).json({ error: "Failed to update user", details: error.message });
+    res.status(500).json({ error: "Баййжээээ ✋🏻 Алдаа гарлаа 😭", details: error.message });
   }
 }
