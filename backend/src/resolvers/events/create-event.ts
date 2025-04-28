@@ -18,7 +18,8 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
       participantIds,
       startAt,
       endAt,
-      status
+      status,
+      participantLimit,
     } = req.body;
  
     if (
@@ -27,7 +28,7 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
       lat === undefined ||
       lng === undefined ||
       !description ||
-      isPrivate === undefined
+      isPrivate === undefined || !participantLimit
     ) {
       res.status(400).json({ error: "Missing required fields" });
       return;
@@ -58,6 +59,10 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
         res.status(400).json({ error: "One or more participant IDs are invalid" });
         return;
       }
+      if (participantLimit && participantIds.length > participantLimit) {
+        res.status(400).json({ error: `Participant limit of ${participantLimit} exceeded` });
+        return;
+      }
     }
  
     const event = await prisma.event.create({
@@ -76,6 +81,7 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
         status: status || "UPCOMING",
         startAt: startAt ? new Date(startAt) : new Date(),
         endAt: endAt ? new Date(endAt) : null,
+        participantLimit: participantLimit !== undefined ? participantLimit : null
       },
     });
     if (new Date(event.startAt).getTime() <= new Date().getTime()) {

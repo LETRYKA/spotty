@@ -30,7 +30,8 @@ const updateEvent = async (req: Request, res: Response): Promise<void> => {
     password,
     startAt,
     endAt,
-    status
+    status,
+    participantLimit
   } = req.body;
 
   try {
@@ -46,7 +47,7 @@ const updateEvent = async (req: Request, res: Response): Promise<void> => {
     if (event.ownerId !== userId) {
       res.status(403).json({ error: "You are not the owner of this event" });
       return;
-    }
+    } 
 
     const updatedEvent = await prisma.event.update({
       where: { id },
@@ -61,6 +62,7 @@ const updateEvent = async (req: Request, res: Response): Promise<void> => {
         startAt: startAt ? new Date(startAt) : event.startAt,
         endAt: endAt ? new Date(endAt) : event.endAt,
         status: status || event.status,
+        participantLimit: participantLimit !== undefined ? participantLimit : null
       },
     });
 

@@ -76,6 +76,7 @@ model Event {
   owner         User        @relation("EventOwner", fields: [ownerId], references: [id])
   ownerId       String
   participants  User[]      @relation("EventParticipants")
+  participantLimit Int?
   createdAt     DateTime    @default(now())
   startAt       DateTime
   endAt         DateTime?
