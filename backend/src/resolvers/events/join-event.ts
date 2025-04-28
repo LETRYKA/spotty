@@ -34,6 +34,12 @@ const joinEvent = async (
       res.status(200).json({ message: "User already joined.", event });
       return;
     }
+    if (event.participantLimit !== null && event.participantLimit <= event.participants.length) {
+      res.status(400).json({
+        error: `Хэрэглэгч дүүрсэн. ${event.participantLimit} Хэрэглэгч`,
+      });
+      return;
+    }
 
     const updatedEvent = await prisma.event.update({
       where: { id: eventId },
