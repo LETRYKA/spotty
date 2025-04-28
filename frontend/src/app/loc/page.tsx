@@ -1,6 +1,6 @@
 "use client";
 
-import LiveLocation from "@/app/components/LocationTracker";
+import LiveLocation from "@/components/LocationTracker";
 
 const page = () => {
   return (
