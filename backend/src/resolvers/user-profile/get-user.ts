@@ -1,9 +1,9 @@
-import { PrismaClient } from '@prisma/client';
-import { Request, Response } from 'express';
+import { PrismaClient } from "@prisma/client";
+import { Request, Response } from "express";
 
 const prisma = new PrismaClient();
 
-export async function getUsers(req: Request, res: Response) {
+export async function getUsers(req: Request, res: Response): Promise<void> {
   try {
     const users = await prisma.user.findMany({
       select: {
@@ -37,8 +37,10 @@ export async function getUsers(req: Request, res: Response) {
     });
 
     res.status(200).json(users);
+    return;
   } catch (error) {
     console.error("Failed to fetch users:", error);
     res.status(500).json({ error: "Failed to fetch users" });
+    return;
   }
 }

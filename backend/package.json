@@ -14,11 +14,15 @@
   "description": "",
   "dependencies": {
     "@clerk/clerk-sdk-node": "^5.1.6",
+    "@clerk/express": "^1.4.9",
+    "@clerk/nextjs": "^6.18.0",
     "@prisma/client": "^6.6.0",
     "bun": "^1.2.10",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "next": "^15.3.1",
     "socket.io": "^4.8.1",
     "svix": "^1.64.1",
     "ws": "^8.18.1",
@@ -27,6 +31,7 @@
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.1",
+    "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^22.14.1",
     "@types/socket.io": "^3.0.2",
     "@types/ws": "^8.18.1",
