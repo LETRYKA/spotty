@@ -39,6 +39,6 @@ export async function getUsers(req: Request, res: Response) {
     res.status(200).json(users);
   } catch (error) {
     console.error("Failed to fetch users:", error);
-    res.status(500).json({ error: "Failed to fetch users" });
+    res.status(500).json({ error: "Баййжээээ ✋🏻 Алдаа гарлаа 😭" });
   }
 }
