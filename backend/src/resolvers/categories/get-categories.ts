@@ -9,7 +9,7 @@ export const getCategories = async (
     next: NextFunction
 ): Promise<void> => {
     try {
-        const categories = await prisma.categories.findMany() // Use camelCase: categories
+        const categories = await prisma.categories.findMany() 
         res.status(200).json(categories)
     } catch (error) {
         console.error(error)
