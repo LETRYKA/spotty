@@ -81,6 +81,7 @@ model Event {
   startAt       DateTime
   endAt         DateTime?
   status        EventStatus @default(UPCOMING)
+  categories    Categories[] @relation("EventCategories")
 }
 
 model Story {
@@ -92,4 +93,10 @@ model Story {
   lng       Float?
   createdAt DateTime @default(now())
   expiresAt DateTime
+}
+model Categories {
+  id        String    @id @default(uuid())
+  name      String 
+  emoji     String
+  events    Event[] @relation("EventCategories")
 }

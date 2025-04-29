@@ -11,6 +11,7 @@ import { friendsRoute } from "./routes/friends-routes";
 import { storiesRoute } from "./routes/stories-routes";
 import { locationRoute } from "./routes/location-routes";
 import { eventsRoute } from "./routes/events-routes";
+import { categoriesRoute } from "./routes/categories-routes";
 
 dotenv.config();
 const prisma = new PrismaClient();
@@ -46,6 +47,7 @@ app.use("/api/location", locationRoute);
 app.use("/api/stories", storiesRoute);
 app.use("/api/events", eventsRoute);
 app.use("/api/webhooks", webhooksRouter);
+app.use("/api/categories", categoriesRoute)
 
 app.get("/api", (req, res) => {
   res.send("API is running...");
