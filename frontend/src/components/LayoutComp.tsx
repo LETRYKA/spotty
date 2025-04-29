@@ -1,4 +1,4 @@
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, Slide } from "react-toastify";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Manrope } from "next/font/google";
 import "@/app/globals.css";
@@ -17,7 +17,19 @@ export default function LayoutComp({
   return (
     <div className={manRope.variable}>
       <ClerkProvider>{children}</ClerkProvider>
-      <ToastContainer />
+      <ToastContainer
+        position="bottom-center"
+        autoClose={4000}
+        hideProgressBar
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable={false}
+        pauseOnHover
+        theme="light"
+        transition={Slide}
+      />
     </div>
   );
 }
