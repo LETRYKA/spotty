@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
- 
+
 const prisma = new PrismaClient();
- 
+
 const createEvent = async (req: Request, res: Response): Promise<void> => {
   console.log("Creating event...");
   try {
@@ -20,20 +20,26 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
       endAt,
       status,
       participantLimit,
+      categories,
     } = req.body;
- 
+
+    // Check for required fields
     if (
       !title ||
       !ownerId ||
       lat === undefined ||
       lng === undefined ||
       !description ||
-      isPrivate === undefined || !participantLimit
+      isPrivate === undefined ||
+      !participantLimit ||
+      !Array.isArray(categories) ||
+      categories.length === 0
     ) {
       res.status(400).json({ error: "Missing required fields" });
       return;
     }
- 
+
+    // Check if the owner exists
     const owner = await prisma.user.findUnique({
       where: { id: ownerId },
     });
@@ -41,16 +47,19 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
       res.status(400).json({ error: "User not found" });
       return;
     }
- 
+
+    // Validate password if needed
     if (password && password.length !== 4) {
       res.status(400).json({ error: "Password must be at least 4 characters" });
       return;
     }
-    if (isPrivate === true && !password) {
+
+    if (isPrivate && !password) {
       res.status(400).json({ error: "A password is required for private events." });
       return;
     }
- 
+
+    // Check for valid participant IDs
     if (participantIds && Array.isArray(participantIds)) {
       const validParticipants = await prisma.user.findMany({
         where: { id: { in: participantIds } },
@@ -64,7 +73,17 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
         return;
       }
     }
- 
+    const existingCategories = await prisma.categories.findMany({
+      where: { id: { in: categories } },
+    });
+
+    if (existingCategories.length !== categories.length) {
+      res.status(400).json({ error: "One or more categories not found" });
+      return;
+    }
+
+    console.log("Categories to connect:", categories); 
+
     const event = await prisma.event.create({
       data: {
         title,
@@ -81,25 +100,33 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
         status: status || "UPCOMING",
         startAt: startAt ? new Date(startAt) : new Date(),
         endAt: endAt ? new Date(endAt) : null,
-        participantLimit: participantLimit !== undefined ? participantLimit : null
+        participantLimit: participantLimit !== undefined ? participantLimit : null,
+        categories: {
+          connect: categories.map((id: string) => ({ id })),
+        },
       },
+      include: { 
+        categories: true
+      }
     });
+
+    // Update event status based on startAt and endAt
     if (new Date(event.startAt).getTime() <= new Date().getTime()) {
       await prisma.event.update({
         where: { id: event.id },
         data: { status: "ONGOING" },
       });
-      console.log(`Event ${event.title} status updated to "ONGOING"`);
     }
+
     if (event.endAt && new Date(event.endAt).getTime() <= new Date().getTime()) {
       await prisma.event.update({
         where: { id: event.id },
         data: { status: "ENDED" },
       });
-      console.log(`Event ${event.title} status updated to "ENDED"`);
     }
+
     res.status(201).json(event);
-    console.log("Event created:");
+    console.log("Event created:", event);
   } catch (error) {
     console.error("Error creating event:", error);
     res.status(500).json({ error: "Internal server error" });
@@ -107,5 +134,5 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
     await prisma.$disconnect();
   }
 };
- 
+
 export default createEvent;

@@ -10,6 +10,7 @@ export const getCategories = async (
 ): Promise<void> => {
     try {
         const categories = await prisma.categories.findMany() 
+        console.log(categories);
         res.status(200).json(categories)
     } catch (error) {
         console.error(error)
