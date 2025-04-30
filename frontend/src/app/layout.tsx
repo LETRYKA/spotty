@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ClerkProvider } from "@clerk/nextjs";
+import { ClerkProvider, SignedIn, SignedOut, SignIn } from "@clerk/nextjs";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,7 +15,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <ClerkProvider>{children}</ClerkProvider>
+        <ClerkProvider>
+          <SignedOut>
+            <SignIn routing="hash" />
+          </SignedOut>
+          <SignedIn>{children}</SignedIn>
+        </ClerkProvider>
       </body>
     </html>
   );
