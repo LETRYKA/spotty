@@ -15,7 +15,7 @@ router.post(
       const CLERK_WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
       if (!CLERK_WEBHOOK_SECRET) {
         console.error("CLERK_WEBHOOK_SECRET is not set");
-        res.status(500).json({ error: "Server configuration error" });
+        res.status(500).json({ error: "not working" });
         return;
       }
 
@@ -28,10 +28,7 @@ router.post(
       const webhook = new Webhook(CLERK_WEBHOOK_SECRET);
       const payload = webhook.verify(req.body, svixHeaders) as any;
 
-      console.log(
-        "Verified webhook payload:",
-        JSON.stringify(payload, null, 2)
-      );
+      console.log("payload", JSON.stringify(payload, null, 2));
 
       if (payload.type === "user.created") {
         const {
@@ -51,7 +48,6 @@ router.post(
         const isVerified =
           email_addresses[0]?.verification?.status === "verified" || false;
 
-        // Prevent duplicate users
         const existingUser = await prisma.user.findUnique({ where: { id } });
         if (!existingUser) {
           await prisma.user.create({
@@ -64,41 +60,40 @@ router.post(
             },
           });
           console.log(
-            `User created in database: ${id}, isVerified: ${isVerified}`
+            `user created in db ${id}, isVerified: ${isVerified}`
           );
         } else {
           console.log(`User ${id} already exists`);
         }
       }
 
-      if (payload.type === "user.updated") {
-        const { id, email_addresses, username, first_name, last_name } =
-          payload.data;
-        const email =
-          email_addresses[0]?.email_address || "unknown@example.com";
-        const name =
-          `${first_name || ""} ${last_name || ""}`.trim() ||
-          username ||
-          "Unknown";
-        const isVerified =
-          email_addresses[0]?.verification?.status === "verified" || false;
+      // if (payload.type === "user.updated") {
+      //   const { id, email_addresses, username, first_name, last_name } =
+      //     payload.data;
+      //   const email =
+      //     email_addresses[0]?.email_address || "unknown@example.com";
+      //   const name =
+      //     `${first_name || ""} ${last_name || ""}`.trim() ||
+      //     username ||
+      //     "Unknown";
+      //   const isVerified =
+      //     email_addresses[0]?.verification?.status === "verified" || false;
 
-        await prisma.user.update({
-          where: { id },
-          data: {
-            email,
-            name,
-            isVerified,
-          },
-        });
-        console.log(
-          `User updated in database: ${id}, isVerified: ${isVerified}`
-        );
-      }
+      //   await prisma.user.update({
+      //     where: { id },
+      //     data: {
+      //       email,
+      //       name,
+      //       isVerified,
+      //     },
+      //   });
+      //   console.log(
+      //     `User updated in database: ${id}, isVerified: ${isVerified}`
+      //   );
+      // }
 
       if (payload.type === "email_address.verified") {
         const { email_address } = payload.data;
-        // Find user by email
         const user = await prisma.user.findFirst({
           where: { email: email_address },
         });
@@ -107,11 +102,9 @@ router.post(
             where: { id: user.id },
             data: { isVerified: true },
           });
-          console.log(
-            `Email verified for user: ${user.id}, email: ${email_address}`
-          );
+          console.log(`email verified ${user.id}, email: ${email_address}`);
         } else {
-          console.log(`No user found for email: ${email_address}`);
+          console.log(`error: ${email_address}`);
         }
       }
 
