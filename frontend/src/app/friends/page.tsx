@@ -1,7 +1,15 @@
+"use client"
+import Header from "@/components/mobile/Header";
+import FriendRequests from "./_mobile/FriendRequests";
+import AllFriends from "./_mobile/AllFriends";
 const Friends = () => {
     return (
-        <div>
-            hello
+        <div className="bg-[#141414] h-screen w-full px-[33px] py-[45px]">
+            <Header />
+            <div className="py-[30px]">
+                <FriendRequests/>
+            </div>
+            <AllFriends/>
         </div>
     )
 }
