@@ -11,6 +11,9 @@
   "dependencies": {
     "@clerk/elements": "^0.23.18",
     "@clerk/nextjs": "^6.17.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/material": "^7.0.2",
     "@radix-ui/react-avatar": "^1.1.7",
     "@radix-ui/react-dialog": "^1.1.11",
     "@radix-ui/react-label": "^2.1.4",
