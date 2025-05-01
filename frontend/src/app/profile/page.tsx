@@ -5,7 +5,7 @@ const Profile = () => {
   return (
     <>
       <div className="w-full h-screen bg-[#141414] flex flex-col justify-center relative">
-        <UserProfile/>
+        <UserProfile />
       </div>
     </>
   );
