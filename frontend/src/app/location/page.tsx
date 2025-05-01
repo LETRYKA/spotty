@@ -1,9 +1,9 @@
-import MapWidgets from "./_components/MapWidgets";
+import LocationWeb from "./_web/Location";
 
 const Location = () => {
   return (
     <>
-      <MapWidgets />
+      <LocationWeb />
     </>
   );
 };
