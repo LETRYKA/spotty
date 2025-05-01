@@ -49,7 +49,7 @@ const Event = () => {
           <div>
             <p className="text-white">Hide from the map</p>
             <p className="text-white opacity-[0.5] text-[12px]">
-              Only your friends can see the event
+              Only your friends can see the event.
             </p>
           </div>
           <Switch />
