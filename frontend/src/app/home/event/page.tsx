@@ -1,4 +1,3 @@
-"use client";
 import { DatePickerDemo } from "./_components/date-picker";
 import { Switch } from "@/components/ui/switch";
 
