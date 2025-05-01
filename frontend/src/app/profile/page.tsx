@@ -1,6 +1,6 @@
 "use client";
-import UserProfile from "./_components/UserProfile";
-import UserProfileMobile from "./_components/UserProfileMobile";
+import UserProfile from "./_web/UserProfile";
+import UserProfileMobile from "./_mobile/UserProfileMobile";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 const Profile = () => {
