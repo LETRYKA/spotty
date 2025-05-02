@@ -2,9 +2,14 @@
 // import { Chevron} from "lucide-react";
 import { ChevronRight } from 'lucide-react';
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
+import { useRouter } from 'next/navigation';
 const FriendRequests = () => {
+    const router = useRouter();
+    const handleClick = () => {
+        router.push('/requests');
+    }
     return (
-        <div className="w-full flex justify-between ">
+        <div className="w-full flex justify-between " onClick={handleClick}>
             <div className='flex justify-between gap-3'>
                 <div className="relative h-[60px] w-[60px]">
                     <Avatar className="absolute top-0 left-0">
