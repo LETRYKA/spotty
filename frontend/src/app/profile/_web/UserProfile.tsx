@@ -3,7 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Verified from "/public/verified-badge-profile-icon-png 1.png";
 import { Button } from "@/components/ui/button";
-import EditProfile from "./_components/editprofile";
+import EditProfile from "./_components/EditProfile";
 
 
 const UserProfile = () => {
