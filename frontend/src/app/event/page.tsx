@@ -61,14 +61,16 @@ const Event = () => {
           />
         ) : (
           <div
-            className="w-full bg-[#28272A] rounded-lg flex flex-col justify-center items-center py-4 cursor-pointer"
+            className="w-full bg-[#28272A] rounded-lg flex flex-col justify-center items-center cursor-pointer p-2"
             onClick={triggerFileInput}
           >
-            <Image src="/Group 55 (1).png" alt="" width={60} height={60} />
-            <p className="text-white text-[12px]">Drop your image here</p>
-            <p className="text-white opacity-[0.3] text-[10px]">
-              Supports: JPEG, JPEG2000, PNG
-            </p>
+            <div className="border border-dashed  border-gray-700 rounded-lg w-full h-full flex flex-col justify-center items-center py-4">
+              <Image src="/Group 55 (1).png" alt="" width={60} height={60} />
+              <p className="text-white text-[12px]">Drop your image here</p>
+              <p className="text-white opacity-[0.3] text-[10px]">
+                Supports: JPEG, JPEG2000, PNG
+              </p>
+            </div>
           </div>
         )}
 
