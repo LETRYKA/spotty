@@ -1,10 +1,27 @@
+"use client";
+import { useState, useRef } from "react";
 import { DatePickerDemo } from "./_components/date-picker";
 import { Switch } from "@/components/ui/switch";
-
+import Image from "next/image";
 const Event = () => {
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setImagePreview(imageUrl);
+    }
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
+  };
+
   return (
     <div className="w-full min-h-screen bg-gray-500 flex justify-center items-center">
-      <div className="relative bg-[#1C1B20] w-[90%] max-w-md  rounded-2xl flex flex-col items-start px-6 py-6 space-y-6">
+      <div className="relative bg-[#1C1B20] w-[25%] min-w-md rounded-2xl flex flex-col items-start px-6 py-6 space-y-3">
         <div>
           <p className="text-2xl font-semibold text-white">Create event</p>
           <p className="text-base text-white opacity-50">
@@ -20,7 +37,7 @@ const Event = () => {
           />
           <input
             type="text"
-            className="w-1/2 bg-[#28272A] rounded-lg px-4 py-2 text-white  focus:outline-none focus:border-[1px] focus:ring-[#68686d]"
+            className="w-1/2 bg-[#28272A] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[1px] focus:ring-[#68686d]"
           />
         </div>
 
@@ -32,9 +49,37 @@ const Event = () => {
           <input
             type="text"
             placeholder="Slot"
-            className="w-1/2 bg-[#28272A] rounded-lg px-4 py-2 text-white  focus:outline-none focus:border-[1px] focus:ring-[#68686d]"
+            className="w-1/2 bg-[#28272A] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[1px] focus:ring-[#68686d]"
           />
         </div>
+
+        {imagePreview ? (
+          <div
+            className="w-full h-32 bg-cover bg-center rounded-lg border border-gray-700 cursor-pointer"
+            style={{ backgroundImage: `url(${imagePreview})` }}
+            onClick={triggerFileInput}
+          />
+        ) : (
+          <div
+            className="w-full bg-[#28272A] rounded-lg flex flex-col justify-center items-center py-4 cursor-pointer"
+            onClick={triggerFileInput}
+          >
+            <Image src="/Group 55 (1).png" alt="" width={60} height={60} />
+            <p className="text-white text-[12px]">Drop your image here</p>
+            <p className="text-white opacity-[0.3] text-[10px]">
+              Supports: JPEG, JPEG2000, PNG
+            </p>
+          </div>
+        )}
+
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleImageChange}
+          ref={fileInputRef}
+          className="hidden"
+        />
+
         <div className="w-full flex flex-row justify-between items-center rounded-2xl bg-[#28272A] px-4 py-5">
           <div>
             <p className="text-white">Private</p>
