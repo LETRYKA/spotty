@@ -21,9 +21,9 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
       status,
       participantLimit,
       categories,
+      backgroundImage,
     } = req.body;
 
-    // Check for required fields
     if (
       !title ||
       !ownerId ||
@@ -93,6 +93,7 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
         isPrivate: isPrivate ?? false,
         hiddenFromMap: hiddenFromMap ?? false,
         password: password || null,
+        backgroundImage: backgroundImage || null,
         owner: { connect: { id: ownerId } },
         participants: participantIds
           ? { connect: participantIds.map((id: string) => ({ id })) }
