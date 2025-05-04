@@ -31,7 +31,8 @@ const updateEvent = async (req: Request, res: Response): Promise<void> => {
     startAt,
     endAt,
     status,
-    participantLimit
+    participantLimit,
+    backgroundImage
   } = req.body;
 
   try {
@@ -62,7 +63,8 @@ const updateEvent = async (req: Request, res: Response): Promise<void> => {
         startAt: startAt ? new Date(startAt) : event.startAt,
         endAt: endAt ? new Date(endAt) : event.endAt,
         status: status || event.status,
-        participantLimit: participantLimit !== undefined ? participantLimit : null
+        participantLimit: participantLimit !== undefined ? participantLimit : null,
+        backgroundImage: backgroundImage !== undefined ? backgroundImage : event.backgroundImage
       },
     });
 
