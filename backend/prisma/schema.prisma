@@ -73,7 +73,7 @@ model Event {
   isPrivate     Boolean
   hiddenFromMap Boolean
   password      String?
-  backgroundImage String?
+  backgroundImages String[]
   owner         User        @relation("EventOwner", fields: [ownerId], references: [id])
   ownerId       String
   participants  User[]      @relation("EventParticipants")
