@@ -13,6 +13,12 @@ import { locationRoute } from "./routes/location-routes";
 import { eventsRoute } from "./routes/events-routes";
 import { categoriesRoute } from "./routes/categories-routes";
 
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://spottyproject.vercel.app",
+  "spotty-lovat.vercel.app",
+];
+
 dotenv.config();
 const prisma = new PrismaClient();
 const app = express();
@@ -37,11 +43,6 @@ const port = process.env.PORT || 8000;
 //     credentials: true,
 //   })
 // );
-
-const allowedOrigins = [
-  "http://localhost:3000",
-  "https://spottyproject.vercel.app",
-];
 
 app.use(
   cors({
