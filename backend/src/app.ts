@@ -16,7 +16,7 @@ import { categoriesRoute } from "./routes/categories-routes";
 const allowedOrigins = [
   "http://localhost:3000",
   "https://spottyproject.vercel.app",
-  "spotty-lovat.vercel.app",
+  "https://spotty-lovat.vercel.app",
 ];
 
 dotenv.config();
@@ -26,23 +26,6 @@ const server = http.createServer(app);
 const wss = new WebSocketServer({ server });
 
 const port = process.env.PORT || 8000;
-// const allowedOrigins = [
-//   "http://localhost:3000",
-//   "https://spottyproject.vercel.app",
-// ];
-
-// app.use(
-//   cors({
-//     origin: function (origin, callback) {
-//       if (!origin || allowedOrigins.includes(origin)) {
-//         callback(null, origin);
-//       } else {
-//         callback(new Error("Not allowed by CORS"));
-//       }
-//     },
-//     credentials: true,
-//   })
-// );
 
 app.use(
   cors({
