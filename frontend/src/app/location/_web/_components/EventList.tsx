@@ -20,6 +20,7 @@ interface Event {
   startAt: string;
   endAt: string | null;
   status: string;
+  backgroundImage: string;
   owner: {
     id: string;
     email: string;
@@ -110,8 +111,7 @@ const EventList = ({
                   className="h-full w-auto aspect-square rounded-2xl bg-cover bg-center"
                   style={{
                     backgroundImage: `url(${
-                      event.owner.avatarImage ||
-                      "https://e3.365dm.com/24/09/2048x1152/skynews-sean-diddy-combs-sean-combs_6688341.jpg"
+                      event?.backgroundImage || "event.owner.avatarImage"
                     })`,
                   }}
                 />
