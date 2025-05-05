@@ -40,6 +40,7 @@ interface Event {
   startAt: string;
   endAt: string | null;
   status: string;
+  backgroundImage: string | null; // Added this property
 }
 
 interface MapProps {
@@ -76,7 +77,7 @@ export default function MapWithFriendsAndEvents({
   const fetchFriends = async (): Promise<Friend[]> => {
     try {
       const res = await fetch(
-        `https://spotty-5r8n.onrender.com/api/friends/user_2w9biEe54qZ1SkryBmCaL6CZoq3`
+        `https://spotty-5r8n.onrender.com/api/friends/user_2wTOJwIWXyv5OyMIQnLu9WQEPS0`
       );
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
       const data = await res.json();
@@ -216,7 +217,9 @@ export default function MapWithFriendsAndEvents({
       el.innerHTML = `
         <div class="event-container flex flex-col justify-center items-center">
           <div class="w-16 h-auto aspect-square bg-gradient-to-r from-purple-500 via-purple-500 to-pink-500 shadow-lg p-1 rounded-full relative">
-            <img src="https://i.pinimg.com/736x/96/5b/6c/965b6c76e28f8131bfa0f888006ec7b9.jpg" 
+            <img src="${
+              event.backgroundImage || "https://via.placeholder.com/48"
+            }" 
                  class="event-image object-cover w-full h-auto aspect-square rounded-full shadow-md" />
             ${moodStatusMarkup}
           </div>

@@ -9,6 +9,8 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 import DropDown from "./Menu";
+import { useUser } from "@clerk/nextjs";
+import { toast } from "react-toastify";
 
 interface Event {
   id: string;
@@ -25,7 +27,13 @@ interface Event {
   startAt: string;
   endAt: string | null;
   status: string;
-  participants: { avatarImage: string; name: string; moodStatus: string }[];
+  participants: {
+    id: string;
+    avatarImage: string;
+    name: string;
+    moodStatus: string;
+  }[];
+  galleryImages: string[];
 }
 
 const fetchEvent = async (eventId: string): Promise<Event | null> => {
@@ -42,6 +50,56 @@ const fetchEvent = async (eventId: string): Promise<Event | null> => {
   }
 };
 
+const joinEvent = async (
+  eventId: string,
+  userId: string
+): Promise<Event | null> => {
+  try {
+    const res = await fetch(
+      `https://spotty-5r8n.onrender.com/api/events/${eventId}/join`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId }),
+      }
+    );
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    const data = await res.json();
+    toast.success("Joined event successfully!");
+    return data.event;
+  } catch (err) {
+    console.error("Failed to join event:", err);
+    return null;
+  }
+};
+
+const leaveEvent = async (
+  eventId: string,
+  userId: string
+): Promise<Event | null> => {
+  try {
+    const res = await fetch(
+      `https://spotty-5r8n.onrender.com/api/events/${eventId}/leave`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId }),
+      }
+    );
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    const data = await res.json();
+    toast.success("Leaved!");
+    return data.event;
+  } catch (err) {
+    console.error("Failed to join event:", err);
+    return null;
+  }
+};
+
 const EventDetail = ({
   eventId,
   onBack,
@@ -49,11 +107,22 @@ const EventDetail = ({
   eventId: string;
   onBack: () => void;
 }) => {
+  const { user } = useUser();
   const [event, setEvent] = useState<Event | null>(null);
+  const [joined, setJoined] = useState(false);
 
   useEffect(() => {
     fetchEvent(eventId).then(setEvent);
   }, [eventId]);
+
+  useEffect(() => {
+    if (!event || !user) return;
+    const isJoined = event.participants.some(
+      (participant) => participant.id === user.id
+    );
+
+    setJoined(isJoined);
+  }, [event, user]);
 
   if (!event) {
     return <div>Loading...</div>;
@@ -84,11 +153,28 @@ const EventDetail = ({
         })}
       </p>
       <div className="w-full flex justify-center gap-3 mt-3 px-8">
-        <Button className="bg-[#0278FC] hover:bg-[#0277fcdc] w-2/4 text-white rounded-2xl py-8 flex flex-col gap-0 text-base hover:scale-105 transition-all">
-          <CircleCheck strokeWidth={3} />
-          Going
-        </Button>
-        <Button className="bg-[var(--background)]/10 hover:bg-[var(--background)]/15 w-2/4 text-white/50 rounded-2xl py-8 flex flex-col gap-0 text-base hover:scale-105 transition-all">
+        {joined ? (
+          <Button className="bg-[#0278FC] hover:bg-[#0277fcdc] w-2/4 text-white rounded-2xl py-8 flex flex-col gap-0 text-base hover:scale-105 transition-all">
+            <CircleCheck strokeWidth={3} />
+            Going
+          </Button>
+        ) : (
+          <Button
+            onClick={() =>
+              user && joinEvent(eventId, user.id).then(() => setJoined(true))
+            }
+            className="bg-[var(--background)]/10 hover:bg-[var(--background)]/15 w-2/4 text-white/50 rounded-2xl py-8 flex flex-col gap-0 text-base hover:scale-105 transition-all"
+          >
+            <CircleCheck strokeWidth={3} />
+            Join
+          </Button>
+        )}
+        <Button
+          onClick={() =>
+            user && leaveEvent(eventId, user.id).then(() => setJoined(false))
+          }
+          className="bg-[var(--background)]/10 hover:bg-[var(--background)]/15 w-2/4 text-white/50 rounded-2xl py-8 flex flex-col gap-0 text-base hover:scale-105 transition-all"
+        >
           <CircleCheck strokeWidth={3} />
           Not going
         </Button>
@@ -97,12 +183,12 @@ const EventDetail = ({
         <div className="w-full">
           <Carousel>
             <CarouselContent>
-              {Array.from({ length: 3 }).map((_, index) => (
+              {event.galleryImages.map((gallery, index) => (
                 <CarouselItem key={index} className="basis-3/5 py-4">
                   <div
                     className="flex aspect-6/7 items-center justify-center p-7 bg-cover bg-center rounded-3xl cursor-pointer hover:scale-105 transition-all"
                     style={{
-                      backgroundImage: `url(https://i.pinimg.com/736x/96/5b/6c/965b6c76e28f8131bfa0f888006ec7b9.jpg)`,
+                      backgroundImage: `url(${gallery})`,
                     }}
                   ></div>
                 </CarouselItem>
