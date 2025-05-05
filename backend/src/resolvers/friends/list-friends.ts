@@ -3,21 +3,44 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export const listFriends = async (req: Request, res: Response) => {
+export const listFriends = async (req: Request, res: Response): Promise<void> => {
   try {
-    const userId = req.query.userId as string;
+    const userId = req.params.id as string;
+
+    if (!userId) {
+      res.status(400).json({ error: "Missing userId" });
+      return;
+    }
 
     const friends = await prisma.friendship.findMany({
       where: {
         userId,
         status: "accepted",
       },
-      include: {
-        friend: true,
+      select: {
+        friend: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            avatarImage: true,
+            phoneNumber: true,
+            isVerified: true,
+            batteryLevel: true,
+            moodStatus: true,
+            backgroundImage: true,
+            locations: {
+              select: { lat: true, lng: true },
+            },
+          },
+        },
       },
     });
 
-    const result = friends.map((f) => f.friend);
+    const result = friends.map((f) => ({
+      ...f.friend,
+    }));
+
     res.status(200).json(result);
   } catch (err: any) {
     const errorMessage = err instanceof Error ? err.message : "Unknown error";

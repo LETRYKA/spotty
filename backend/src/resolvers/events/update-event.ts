@@ -4,17 +4,14 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 const updateEvent = async (req: Request, res: Response): Promise<void> => {
-  const { id } = req.params; 
-  
+  const { id } = req.params;
+
   if (!id) {
     res.status(400).json({ error: "Event ID is required" });
     return;
   }
-  
-  // Assuming userId is set via middleware or passed in the body
-  const userId = req.body.userId;
-  console.log("userId:", userId);
 
+  const userId = req.body.userId;
   if (!userId) {
     res.status(401).json({ error: "User not authenticated" });
     return;
@@ -31,8 +28,16 @@ const updateEvent = async (req: Request, res: Response): Promise<void> => {
     startAt,
     endAt,
     status,
-    participantLimit
+    participantLimit,
+    backgroundImages
   } = req.body;
+
+  if (backgroundImages !== undefined) {
+    if (!Array.isArray(backgroundImages) || backgroundImages.length > 5) {
+      res.status(400).json({ error: "You must provide up to 5 background images as an array." });
+      return;
+    }
+  }
 
   try {
     const event = await prisma.event.findUnique({
@@ -47,7 +52,7 @@ const updateEvent = async (req: Request, res: Response): Promise<void> => {
     if (event.ownerId !== userId) {
       res.status(403).json({ error: "You are not the owner of this event" });
       return;
-    } 
+    }
 
     const updatedEvent = await prisma.event.update({
       where: { id },
@@ -62,7 +67,8 @@ const updateEvent = async (req: Request, res: Response): Promise<void> => {
         startAt: startAt ? new Date(startAt) : event.startAt,
         endAt: endAt ? new Date(endAt) : event.endAt,
         status: status || event.status,
-        participantLimit: participantLimit !== undefined ? participantLimit : null
+        participantLimit: participantLimit !== undefined ? participantLimit : event.participantLimit,
+        backgroundImages: backgroundImages !== undefined ? backgroundImages : event.backgroundImages
       },
     });
 

@@ -21,9 +21,9 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
       status,
       participantLimit,
       categories,
+      backgroundImages,
     } = req.body;
 
-    // Check for required fields
     if (
       !title ||
       !ownerId ||
@@ -81,6 +81,10 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
       res.status(400).json({ error: "One or more categories not found" });
       return;
     }
+    if (!Array.isArray(backgroundImages) || backgroundImages.length > 5) {
+      res.status(400).json({ error: "You must provide up to 5 background images as an array." });
+      return;
+    }
 
     console.log("Categories to connect:", categories); 
 
@@ -93,6 +97,7 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
         isPrivate: isPrivate ?? false,
         hiddenFromMap: hiddenFromMap ?? false,
         password: password || null,
+        backgroundImages: backgroundImages ?? [],
         owner: { connect: { id: ownerId } },
         participants: participantIds
           ? { connect: participantIds.map((id: string) => ({ id })) }
@@ -110,7 +115,7 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
       }
     });
 
-    // Update event status based on startAt and endAt
+
     if (new Date(event.startAt).getTime() <= new Date().getTime()) {
       await prisma.event.update({
         where: { id: event.id },

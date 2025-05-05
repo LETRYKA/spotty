@@ -6,9 +6,9 @@ import { listFriends } from "../resolvers/friends/list-friends";
 
 const router = express.Router();
 
+router.get("/:id", listFriends)
 router.post("/request/:id", requestFriend);
 router.post("/accept/:id", acceptFriend);
 router.delete("/:id", removeFriend);
-router.get("/", listFriends);
 
 export { router as friendsRoute };
