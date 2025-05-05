@@ -30,13 +30,13 @@ const port = process.env.PORT || 8000;
 app.use(
   cors({
     origin: function (origin, callback) {
+      console.log("Origin:", origin);
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, origin);
       } else {
-        callback(new Error("Not allowed by CORS"));
+        callback(new Error("Not allowed by CORS, test"));
       }
     },
-    credentials: true,
   })
 );
 
