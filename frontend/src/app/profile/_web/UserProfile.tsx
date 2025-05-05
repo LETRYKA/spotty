@@ -2,14 +2,14 @@
 import EditCover from "./_components/editCover";
 import EditProfile from "./_components/editProfile";
 import EventCards from "./_components/eventCards";
-
+import EditFriends from "./_components/editFriends";
 
 const UserProfile = () => {
   return (
     <div className="w-full h-auto flex flex-col bg-[#141414] p-9">
-        <EditCover/>
-        <EditProfile/>
-        <EventCards status="ongoing"/>
+      <EditCover/>
+      <EditProfile/>
+      <EventCards/>
     </div>
   );
 };
