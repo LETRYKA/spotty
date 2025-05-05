@@ -11,6 +11,7 @@ export async function getUserById(req: Request, res: Response) {
       where: { id },
       select: {
         id: true,
+        email: true,
         phoneNumber: true,
         name: true,
         avatarImage: true,
