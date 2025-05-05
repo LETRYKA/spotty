@@ -1,6 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Verified from "/public/verified-badge-profile-icon-png 1.png";
 import { Button } from "@/components/ui/button";
+import EditFriends from "./editFriends";
 
 const EditCover = () => {
   return (
@@ -24,18 +25,13 @@ const EditCover = () => {
       </div>
       <p className="text-white font-extrabold text-4xl mt-4">@USER_NAME</p>
       <div className="text-white/50 mt-3 flex gap-4">
-        <p className="text-base">
+        <div className="text-base flex items-center justify-center">
           @username |{" "}
-          <span className="text-white font-semibold">
-            <Button
-              variant="default"
-              className="bg-transparent hover:bg-transparent border-none shadow-none hover:underline"
-            >
-                ###
-            </Button>
+          <span>
+            <EditFriends />
           </span>{" "}
           friends
-        </p>
+        </div>
       </div>
     </div>
   );

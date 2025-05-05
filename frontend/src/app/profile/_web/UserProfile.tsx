@@ -2,7 +2,6 @@
 import EditCover from "./_components/editCover";
 import EditProfile from "./_components/editProfile";
 import EventCards from "./_components/eventCards";
-import EditFriends from "./_components/editFriends";
 
 const UserProfile = () => {
   return (
