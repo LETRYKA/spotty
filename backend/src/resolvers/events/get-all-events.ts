@@ -9,8 +9,30 @@ const getAllEvents = async (
   try {
     const events = await prisma.event.findMany({
       include: {
-        owner: true,
-        participants: true,
+        owner: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            isVerified: true,
+            avatarImage: true,
+            backgroundImage: true,
+            moodStatus: true,
+            batteryLevel: true,
+          },
+        },
+        participants: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            isVerified: true,
+            avatarImage: true,
+            backgroundImage: true,
+            moodStatus: true,
+            batteryLevel: true,
+          },
+        },
       },
     });
 
@@ -20,5 +42,6 @@ const getAllEvents = async (
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 export default getAllEvents;

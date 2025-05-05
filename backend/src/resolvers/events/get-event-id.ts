@@ -14,8 +14,30 @@ const getEvent = async (
     const event = await prisma.event.findUnique({
       where: { id },
       include: {
-        owner: true,
-        participants: true,
+        owner: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            avatarImage: true,
+            isVerified: true,
+            backgroundImage: true,
+            moodStatus: true,
+            batteryLevel: true,
+          },
+        },
+        participants: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            isVerified: true,
+            avatarImage: true,
+            backgroundImage: true,
+            moodStatus: true,
+            batteryLevel: true,
+          },
+        },
       },
     });
 
@@ -23,6 +45,7 @@ const getEvent = async (
       res.status(404).json({ message: "Event not found." });
       return;
     }
+
     const totalParticipants = event.participants.length;
 
     res.status(200).json({
@@ -34,5 +57,6 @@ const getEvent = async (
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 export default getEvent;
