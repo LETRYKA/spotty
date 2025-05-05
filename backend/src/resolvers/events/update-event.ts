@@ -29,14 +29,20 @@ const updateEvent = async (req: Request, res: Response): Promise<void> => {
     endAt,
     status,
     participantLimit,
-    backgroundImages
+    backgroundImage,
+    galleryImages,
   } = req.body;
 
-  if (backgroundImages !== undefined) {
-    if (!Array.isArray(backgroundImages) || backgroundImages.length > 5) {
-      res.status(400).json({ error: "You must provide up to 5 background images as an array." });
+  if (galleryImages !== undefined) {
+    if (!Array.isArray(galleryImages) || galleryImages.length > 5) {
+      res.status(400).json({ error: "You must provide up to 5 gallery images as an array." });
       return;
     }
+  }
+
+  if (backgroundImage !== undefined && typeof backgroundImage !== "string") {
+    res.status(400).json({ error: "backgroundImage must be a string." });
+    return;
   }
 
   try {
@@ -57,7 +63,7 @@ const updateEvent = async (req: Request, res: Response): Promise<void> => {
     const updatedEvent = await prisma.event.update({
       where: { id },
       data: {
-        title: title || event.title,
+        title: title ?? event.title,
         description: description !== undefined ? description : event.description,
         lat: lat !== undefined ? parseFloat(lat) : event.lat,
         lng: lng !== undefined ? parseFloat(lng) : event.lng,
@@ -66,9 +72,10 @@ const updateEvent = async (req: Request, res: Response): Promise<void> => {
         password: password !== undefined ? password : event.password,
         startAt: startAt ? new Date(startAt) : event.startAt,
         endAt: endAt ? new Date(endAt) : event.endAt,
-        status: status || event.status,
+        status: status ?? event.status,
         participantLimit: participantLimit !== undefined ? participantLimit : event.participantLimit,
-        backgroundImages: backgroundImages !== undefined ? backgroundImages : event.backgroundImages
+        backgroundImage: backgroundImage !== undefined ? backgroundImage : event.backgroundImage,
+        galleryImages: galleryImages !== undefined ? galleryImages : event.galleryImages,
       },
     });
 

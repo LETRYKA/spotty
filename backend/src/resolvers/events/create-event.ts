@@ -21,7 +21,8 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
       status,
       participantLimit,
       categories,
-      backgroundImages,
+      backgroundImage,
+      galleryImages,
     } = req.body;
 
     if (
@@ -81,8 +82,14 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
       res.status(400).json({ error: "One or more categories not found" });
       return;
     }
-    if (!Array.isArray(backgroundImages) || backgroundImages.length > 5) {
-      res.status(400).json({ error: "You must provide up to 5 background images as an array." });
+    if (!Array.isArray(galleryImages) || galleryImages.length > 5) {
+      res.status(400).json({ error: "You must provide up to 5 gallery images as an array." });
+      return;
+    }
+    
+    // Optional: validate that backgroundImage is a string if provided
+    if (backgroundImage && typeof backgroundImage !== "string") {
+      res.status(400).json({ error: "backgroundImage must be a string." });
       return;
     }
 
@@ -97,9 +104,10 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
         isPrivate: isPrivate ?? false,
         hiddenFromMap: hiddenFromMap ?? false,
         password: password || null,
-        backgroundImages: backgroundImages ?? [],
+        backgroundImage: backgroundImage || null,
+        galleryImages: galleryImages ?? [],
         owner: { connect: { id: ownerId } },
-        participants: participantIds
+        participants: participantIds  
           ? { connect: participantIds.map((id: string) => ({ id })) }
           : undefined,
         status: status || "UPCOMING",
