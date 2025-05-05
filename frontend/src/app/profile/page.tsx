@@ -8,7 +8,7 @@ const Profile = () => {
   const isMobile = useMediaQuery("(max-width:768px)");
 
   return (
-    <div className="w-full h-screen bg-[#141414] flex flex-col justify-center relative">
+    <div className="w-full h-screen bg-[#141414] flex flex-col justify-start">
       {isMobile ? <UserProfileMobile /> : <UserProfile />}
     </div>
   );
