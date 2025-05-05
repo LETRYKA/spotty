@@ -9,7 +9,7 @@ const UserProfile = () => {
     <div className="w-full h-auto flex flex-col bg-[#141414] p-9">
         <EditCover/>
         <EditProfile/>
-        <EventCards/>
+        <EventCards status="ongoing"/>
     </div>
   );
 };

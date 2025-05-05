@@ -1,6 +1,6 @@
 "use client";
 
-// import UserProfile from "./_web/UserProfile";
+import UserProfile from "./_web/UserProfile";
 import UserProfileMobile from "./_mobile/UserProfileMobile";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
