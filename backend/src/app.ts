@@ -20,7 +20,10 @@ const server = http.createServer(app);
 const wss = new WebSocketServer({ server });
 
 const port = process.env.PORT || 8000;
-const allowedOrigins = ["http://localhost:3000"];
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://spottyproject.vercel.app",
+];
 
 app.use(
   cors({
@@ -47,7 +50,7 @@ app.use("/api/location", locationRoute);
 app.use("/api/stories", storiesRoute);
 app.use("/api/events", eventsRoute);
 app.use("/api/webhooks", webhooksRouter);
-app.use("/api/categories", categoriesRoute)
+app.use("/api/categories", categoriesRoute);
 
 app.get("/api", (req, res) => {
   res.send("API is running...");
@@ -105,4 +108,3 @@ server.listen(port, () => {
 server.on("error", (err) => {
   console.error("Server error:", err);
 });
-
