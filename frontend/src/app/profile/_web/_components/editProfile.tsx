@@ -14,11 +14,12 @@ import {
 
   const EditProfile = () => {
     return (
+      <div className="w-full h-auto flex flex-col items-center">
         <Dialog>
         <DialogTrigger asChild>
           <Button
             variant="outline"
-            className="mt-5 bg-[#141414] text-white rounded-4xl py-5 px-6 focus-visible:ring-transparent"
+            className="mt-3 bg-[#141414] text-white rounded-4xl py-5 px-6 focus-visible:ring-transparent"
           >
             Edit Profile
           </Button>
@@ -103,6 +104,7 @@ import {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      </div>
     )
   }
   export default EditProfile;
