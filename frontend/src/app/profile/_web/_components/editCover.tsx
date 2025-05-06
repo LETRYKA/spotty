@@ -4,36 +4,31 @@ import { useEffect, useState } from "react";
 import { getUserData } from "@/lib/api";
 import EditFriends from "./editFriends";
 import { useUser } from "@clerk/nextjs";
+import { User } from "../types/User";
+import axios from 'axios';
+
 
 const EditCover = () => {
-  const [userData, setUserData] = useState({
-    name: "",
-    email: "",
-    phone: "NULL",
-    friendships: [],
-    friendsCount: 0,
-  });
-
+  const [userData, setUserData] = useState<User | null>(null);
   const { user } = useUser();
   const userId = user?.id;
-  const fetchUser = async () => {
-    const data = await getUserData(userId as string);
 
-    setUserData({
-      name: data.name || "",
-      email: data.email || "",
-      phone: data.phone || "",
-      friendships: data.friendships || [],
-      friendsCount: data?.friendships?.length || 0,
-    });
-
-    console.log("USER_DEDICATED_DATA", data);
-    console.log("USER_DEDICATED_DATA2", data?.friendships?.length);
+  const fetchUser = async (id: string) => {
+    try {
+      const data = await getUserData(id);
+      setUserData(data);
+      console.log("Successully fetch", data);
+    } catch (error) {
+      console.error("Error", error);
+    }
   };
 
   useEffect(() => {
-    fetchUser();
+    if (userId) {
+      fetchUser(userId);
+    }
   }, [userId]);
+
 
   return (
     <div className="w-full flex flex-col justify-start items-center">
@@ -44,7 +39,7 @@ const EditCover = () => {
         <Avatar className="-mt-16  relative rounded-full bg-gradient-to-r from-[#428CFA] via-[#7062FB] via-[#E956D1] via-[#FB5F78] to-[#F98437] w-[128px] h-[128px]">
           <AvatarImage
             className="rounded-full border-3 border-black object-cover"
-            src="https://www.angelopedia.com/NewsInPic/E0G6MS5T42Mongolia.jpg"
+            src={userData?.avatarImage}
             alt="User Profile"
           />
           <AvatarFallback>CN</AvatarFallback>
@@ -54,12 +49,12 @@ const EditCover = () => {
           className="w-7 h-auto aspect-square absolute bottom-2 right-2"
         />
       </div>
-      <p className="text-white font-extrabold text-4xl mt-4">{userData.name}</p>
+      <p className="text-white font-extrabold text-4xl mt-4">{userData?.name}</p>
       <div className="text-white/50 mt-3 flex gap-4">
         <p className="text-base">
-          @{userData.name}
+          @{userData?.name}
           <span className="text-white font-semibold">
-            <EditFriends count={userData?.friendsCount} />
+            <EditFriends/>
           </span>{" "}
           friends
         </p>

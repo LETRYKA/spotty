@@ -14,37 +14,15 @@ import { useEffect, useState } from "react";
 import { getUserData } from "@/lib/api";
 import { Eye, EyeOff } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
-
+interface UserData {
+  name: any;
+  username: any;
+  email: string;
+  phone: any;
+  password: string;
+}
 const EditProfile = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [userData, setUserData] = useState({
-    name: "",
-    // username: "",
-    email: "",
-    phone: "NULL",
-    // password: "",
-  });
-  console.log("USER DATA", userData);
-
-  const { user } = useUser();
-  const userId = user?.id;
-
-  const fetchUser = async () => {
-    const data = await getUserData(userId as string);
-    setUserData({
-      name: data.name || "",
-      // username: data.username || "",
-      email: data.email || "",
-      phone: data.phone || "",
-      // password: "",
-    });
-    console.log("USER_DEDICATED_DATA", data);
-  };
-
-  useEffect(() => {
-    fetchUser();
-  }, [userId]);
-
   return (
     <div className="w-full h-auto flex flex-col items-center">
       <Dialog>
@@ -86,14 +64,14 @@ const EditProfile = () => {
                 <Label htmlFor="username" className="text-xs">
                   Username
                 </Label>
-                <Input
+                {/* <Input
                   id="username"
                   value={userData.name}
                   onChange={(e) =>
                     setUserData({ ...userData, name: e.target.value })
                   }
                   className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020]"
-                />
+                /> */}
               </div>
             </div>
             <div className="w-full flex justify-center mt-4 gap-4">
@@ -101,20 +79,20 @@ const EditProfile = () => {
                 <Label htmlFor="name" className="text-xs">
                   Email
                 </Label>
-                <Input
+                {/* <Input
                   id="name"
                   value={userData.email}
                   onChange={(e) =>
                     setUserData({ ...userData, email: e.target.value })
                   }
                   className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020]"
-                />
+                /> */}
               </div>
               <div className="flex flex-col gap-2 w-full">
                 <Label htmlFor="username" className="text-xs">
                   Phonenumber
                 </Label>
-                <Input
+                {/* <Input
                   id="phonenumber"
                   value={userData.phone}
                   onChange={(e) =>
@@ -122,7 +100,7 @@ const EditProfile = () => {
                   }
                   className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020]"
                   type="number"
-                />
+                /> */}
               </div>
             </div>
             <div className="w-full flex flex-col justify-center mt-4 gap-4">
