@@ -1,10 +1,15 @@
-import WebEvent from "./_components/webEvent";
+// import MobileEventCreate from "./_components/mobileEventCreate";
+import WebEventCreate from "./_components/webEventCreate";
 
 const event = () => {
   return (
     <div className="w-full h-screen flex justify-center items-center ">
-      <div className="hidden sm:block">
-        <WebEvent />
+      <div>
+        <div className="hidden sm:block">
+          <WebEventCreate />
+        </div>
+        <div className="block sm:hidden">
+        </div>
       </div>
     </div>
   )
