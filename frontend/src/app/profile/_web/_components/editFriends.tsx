@@ -41,24 +41,20 @@ import { useUser } from "@clerk/nextjs";
 
 const EditFriends = (props: any) => {
   const { count } = props;
-  const { user } = useUser();
   const [friendData, setFriendData] = useState({
     name: "",
   });
-
+  
+  const { user } = useUser();
   const userId = user?.id;
-
+  
   const fetchFriend = async () => {
     const data = await getFriendData(userId as string);
 
     setFriendData({
       name: data.name || "",
     });
-
-    console.log("USER_DEDICATED_DATA", data);
-    console.log("USER_DEDICATED_DATA2", data?.friendships?.length);
   };
-
   useEffect(() => {
     fetchFriend();
   }, [userId]);
