@@ -5,7 +5,6 @@ import { getUserData } from "@/lib/api";
 import EditFriends from "./editFriends";
 import { useUser } from "@clerk/nextjs";
 import { User } from "../types/User";
-import axios from 'axios';
 
 
 const EditCover = () => {
@@ -17,7 +16,7 @@ const EditCover = () => {
     try {
       const data = await getUserData(id);
       setUserData(data);
-      console.log("Successully fetch", data);
+      console.log("EditCover fetch data", data);
     } catch (error) {
       console.error("Error", error);
     }
@@ -28,7 +27,6 @@ const EditCover = () => {
       fetchUser(userId);
     }
   }, [userId]);
-
 
   return (
     <div className="w-full flex flex-col justify-start items-center">
@@ -54,8 +52,8 @@ const EditCover = () => {
         <p className="text-base">
           @{userData?.name}
           <span className="text-white font-semibold">
-            <EditFriends/>
-          </span>{" "}
+          <EditFriends friendIds={userData?.friendships?.map(f => f.friendId) || []} />
+          </span>
           friends
         </p>
       </div>

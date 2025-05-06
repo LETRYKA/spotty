@@ -12,52 +12,31 @@ import { Button } from "@/components/ui/button";
 import UnfAlert from "./unfAlert";
 import { getFriendData } from "@/lib/api";
 import { useEffect, useState } from "react";
-import { useUser } from "@clerk/nextjs";
+import { User } from "../types/User";
 
-//Friend list fectching and updating logic
-//  const patchFriendAction = async (
-//   userId: string,
-//   action: "invite" | "unfriend"
-// ) => {
-//   try {
-//     const response = await fetch(`/api/friends/${action}`, {
-//       method: "PATCH",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({ userId }),
-//     });
+const EditFriends = ({ friendIds }: { friendIds: string[] }) => {
+  const [friendsData, setFriendsData] = useState<User[]>([]);
 
-//     if (!response.ok) {
-//       throw new Error("Failed to update friend status");
-//     }
-
-//     const result = await response.json();
-//     console.log(`${action} successful`, result);
-//   } catch (error) {
-//     console.error(`Error performing ${action}:`, error);
-//   }
-// };
-
-const EditFriends = (props: any) => {
-  const { count } = props;
-  const [friendData, setFriendData] = useState({
-    name: "",
-  });
-  
-  const { user } = useUser();
-  const userId = user?.id;
-  
-  const fetchFriend = async () => {
-    const data = await getFriendData(userId as string);
-
-    setFriendData({
-      name: data.name || "",
-    });
+  const fetchAllFriends = async () => {
+    try {
+      const data = await Promise.all(
+        friendIds.map(async (id) => {
+          const friend = await getFriendData(id);
+          console.log("Friend data энд байна", friend);
+          return friend as User;
+        })
+      );
+      setFriendsData(data);
+    } catch (error) {
+      console.error("Error fetching friends", error);
+    }
   };
+
   useEffect(() => {
-    fetchFriend();
-  }, [userId]);
+    if (friendIds.length > 0) {
+      fetchAllFriends();
+    }
+  }, [friendIds]);
 
   return (
     <Dialog>
@@ -66,33 +45,49 @@ const EditFriends = (props: any) => {
           variant="default"
           className="text-base font-semibold bg-transparent hover:bg-transparent border-none shadow-none hover:underline focus-visible:ring-transparent"
         >
-          {count > 0 ? count : "No friends yet"}
+          {friendIds.length > 0 ? `${friendIds.length}` : "No friends yet"}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] dark px-8 py-6">
         <DialogHeader>
           <DialogTitle className="text-white">All friends</DialogTitle>
         </DialogHeader>
-        <div className=" flex flex-row gap-4 mt-4 items-center justify-center">
-          <Avatar className="rounded-full w-[58px] h-[58px]">
-            <AvatarImage
-              className="rounded-full object-cover"
-              src="https://www.angelopedia.com/NewsInPic/E0G6MS5T42Mongolia.jpg"
-              alt="User Profile"
-            />
-            <AvatarFallback>CN</AvatarFallback>
-          </Avatar>
-          <div className="flex flex-col justify-center items-start">
-            <p className="text-white text-sm">{friendData.name}</p>
-            <p className="text-white/50 text-[10px]">user_name</p>
-          </div>
-          <Button
-            className="ml-auto bg-[#D9D9D9]/30 text-white hover:bg-[#141414] hover:text-white/50 border-none shadow-none text-sm font-semibold"
-            // onClick={() => patchFriendAction("user-id-123", "invite")}
-          >
-            Invite
-          </Button>
-          <UnfAlert />
+        <div className="flex flex-col gap-4 mt-4 items-start justify-center">
+          {friendsData.length === 0 ? (
+            <p className="text-white">No friends found.</p>
+          ) : (
+            friendsData.map((friendsData) => {
+              const key =
+                friendsData.id || `friend-${friendsData.name}-${Math.random()}`;
+              return (
+                <div
+                  key={key}
+                  className="flex flex-row gap-4 items-center justify-center w-full"
+                >
+                  <Avatar className="rounded-full w-[58px] h-[58px]">
+                    {friendsData.avatarImage ? (
+                      <AvatarImage
+                        className="rounded-full object-cover"
+                        src={friendsData.avatarImage}
+                      />
+                    ) : (
+                      <AvatarFallback>CN</AvatarFallback>
+                    )}
+                  </Avatar>
+                  <div className="flex flex-col justify-center items-start">
+                    <p className="text-white text-sm">{friendsData.name}</p>
+                    <p className="text-white/50 text-[10px]">
+                      @{friendsData.name}
+                    </p>
+                  </div>
+                  <Button className="ml-auto bg-[#D9D9D9]/30 text-white hover:bg-[#141414] hover:text-white/50 border-none shadow-none text-sm font-semibold">
+                    Invite
+                  </Button>
+                  <UnfAlert />
+                </div>
+              );
+            })
+          )}
         </div>
       </DialogContent>
     </Dialog>
