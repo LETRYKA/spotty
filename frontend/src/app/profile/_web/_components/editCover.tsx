@@ -1,38 +1,34 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { getUserData } from "@/lib/api"; 
+import { getUserData } from "@/lib/api";
+import EditFriends from "./editFriends";
+import { useUser } from "@clerk/nextjs";
+
 const EditCover = () => {
   const [userData, setUserData] = useState({
     name: "",
     email: "",
     phone: "NULL",
-    friendships: [], // Store the friendships array
-    friendsCount: 0, // Store the friends count
+    friendships: [],
+    friendsCount: 0,
   });
 
-  const userId = "user_2wTOJwIWXyv5OyMIQnLu9WQEPS0";
-
+  const { user } = useUser();
+  const userId = user?.id;
   const fetchUser = async () => {
-    const data = await getUserData(userId);
-
-    const uniqueFriends = [
-      ...new Set([
-        ...data.friendships.map(
-          (friendship: { friendId: string }) => friendship.friendId
-        ),
-      ]),
-    ];
+    const data = await getUserData(userId as string);
 
     setUserData({
       name: data.name || "",
       email: data.email || "",
       phone: data.phone || "",
       friendships: data.friendships || [],
-      friendsCount: uniqueFriends.length,
+      friendsCount: data?.friendships?.length || 0,
     });
 
     console.log("USER_DEDICATED_DATA", data);
+    console.log("USER_DEDICATED_DATA2", data?.friendships?.length);
   };
 
   useEffect(() => {
@@ -54,7 +50,7 @@ const EditCover = () => {
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
         <img
-          src='verified-badge-profile-icon-png-one.png'
+          src="verified-badge-profile-icon-png-one.png"
           className="w-7 h-auto aspect-square absolute bottom-2 right-2"
         />
       </div>
@@ -63,19 +59,12 @@ const EditCover = () => {
         <p className="text-base">
           @{userData.name}
           <span className="text-white font-semibold">
-            <Button
-              variant="default"
-              className="bg-transparent hover:bg-transparent border-none shadow-none hover:underline"
-            >
-              {userData.friendsCount > 0
-                ? userData.friendsCount
-                : "No friends yet"}
-            </Button>
+            <EditFriends count={userData?.friendsCount} />
           </span>{" "}
           friends
-          </p>
-        </div>
+        </p>
       </div>
+    </div>
   );
 };
 export default EditCover;

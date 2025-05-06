@@ -12,8 +12,11 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useEffect, useState } from "react";
 import { getUserData } from "@/lib/api";
+import { Eye, EyeOff } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
 
 const EditProfile = () => {
+  const [showPassword, setShowPassword] = useState(false);
   const [userData, setUserData] = useState({
     name: "",
     // username: "",
@@ -22,11 +25,12 @@ const EditProfile = () => {
     // password: "",
   });
   console.log("USER DATA", userData);
-  
-  const userId = "user_2wTOJwIWXyv5OyMIQnLu9WQEPS0";
+
+  const { user } = useUser();
+  const userId = user?.id;
 
   const fetchUser = async () => {
-    const data = await getUserData(userId);
+    const data = await getUserData(userId as string);
     setUserData({
       name: data.name || "",
       // username: data.username || "",
@@ -74,11 +78,7 @@ const EditProfile = () => {
                   First Name
                 </Label>
                 <Input
-                  id="name"
-                  value={userData.name}
-                  onChange={(e) =>
-                    setUserData({ ...userData, name: e.target.value })
-                  }
+                  id="FirstName"
                   className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020]"
                 />
               </div>
@@ -88,6 +88,10 @@ const EditProfile = () => {
                 </Label>
                 <Input
                   id="username"
+                  value={userData.name}
+                  onChange={(e) =>
+                    setUserData({ ...userData, name: e.target.value })
+                  }
                   className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020]"
                 />
               </div>
@@ -121,15 +125,48 @@ const EditProfile = () => {
                 />
               </div>
             </div>
-            <div className="w-full flex justify-center mt-4 gap-4">
+            <div className="w-full flex flex-col justify-center mt-4 gap-4">
               <div className="flex w-full flex-col gap-2">
                 <Label htmlFor="name" className="text-xs">
-                  Password
+                  Old Password
                 </Label>
                 <Input
                   id="name"
                   className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020]"
+                  type="password"
                 />
+              </div>
+              <div className="flex w-full flex-col gap-2">
+                <Label htmlFor="confirm-password" className="text-xs">
+                  New Password
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="confirm-password"
+                    className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020] pr-10"
+                    type={showPassword ? "text" : "password"}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+                <div className="flex w-full flex-col gap-2">
+                  <Label htmlFor="name" className="text-xs">
+                    Confirm Password
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      id="confirm-password"
+                      className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020] pr-10"
+                      type={showPassword ? "text" : "password"}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>

@@ -1,3 +1,5 @@
+"use client";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Dialog,
@@ -8,6 +10,9 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import UnfAlert from "./unfAlert";
+import { getFriendData } from "@/lib/api";
+import { useEffect, useState } from "react";
+import { useUser } from "@clerk/nextjs";
 
 //Friend list fectching and updating logic
 //  const patchFriendAction = async (
@@ -34,7 +39,30 @@ import UnfAlert from "./unfAlert";
 //   }
 // };
 
-const EditFriends = () => {
+const EditFriends = (props: any) => {
+  const { count } = props;
+  const { user } = useUser();
+  const [friendData, setFriendData] = useState({
+    name: "",
+  });
+
+  const userId = user?.id;
+
+  const fetchFriend = async () => {
+    const data = await getFriendData(userId as string);
+
+    setFriendData({
+      name: data.name || "",
+    });
+
+    console.log("USER_DEDICATED_DATA", data);
+    console.log("USER_DEDICATED_DATA2", data?.friendships?.length);
+  };
+
+  useEffect(() => {
+    fetchFriend();
+  }, [userId]);
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -42,7 +70,7 @@ const EditFriends = () => {
           variant="default"
           className="text-base font-semibold bg-transparent hover:bg-transparent border-none shadow-none hover:underline focus-visible:ring-transparent"
         >
-          count
+          {count > 0 ? count : "No friends yet"}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] dark px-8 py-6">
@@ -59,7 +87,7 @@ const EditFriends = () => {
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
           <div className="flex flex-col justify-center items-start">
-            <p className="text-white text-sm">first_name</p>
+            <p className="text-white text-sm">{friendData.name}</p>
             <p className="text-white/50 text-[10px]">user_name</p>
           </div>
           <Button
