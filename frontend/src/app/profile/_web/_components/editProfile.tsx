@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useEffect, useState } from "react";
-import { getUserData } from "@/utils/getUserData";
+import { getUserData } from "@/lib/api";
 
 const EditProfile = () => {
   const [userData, setUserData] = useState({

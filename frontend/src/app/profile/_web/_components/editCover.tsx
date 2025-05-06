@@ -1,9 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import Verified from "/public/verified-badge-profile-icon-png 1.png";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { getUserData } from "@/utils/getUserData";
-
+import { getUserData } from "@/lib/api"; 
 const EditCover = () => {
   const [userData, setUserData] = useState({
     name: "",
@@ -56,7 +54,7 @@ const EditCover = () => {
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
         <img
-          src={Verified.src}
+          src='verified-badge-profile-icon-png-one.png'
           className="w-7 h-auto aspect-square absolute bottom-2 right-2"
         />
       </div>
@@ -70,14 +68,14 @@ const EditCover = () => {
               className="bg-transparent hover:bg-transparent border-none shadow-none hover:underline"
             >
               {userData.friendsCount > 0
-                ? ` ${userData.friendsCount}`
+                ? userData.friendsCount
                 : "No friends yet"}
             </Button>
           </span>{" "}
           friends
+          </p>
         </div>
       </div>
-    </div>
   );
 };
 export default EditCover;
