@@ -75,7 +75,7 @@ const EditCover = () => {
             </Button>
           </span>{" "}
           friends
-        </p>
+        </div>
       </div>
     </div>
   );
