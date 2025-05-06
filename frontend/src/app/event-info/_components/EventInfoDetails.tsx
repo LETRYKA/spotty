@@ -33,6 +33,12 @@ const EventInfoDetails = () => {
                     </Button>
                 </div>
             </div>
+            <div className='bg-[red] p-40 rounded-[30px]'>
+
+            </div>
+            <div className='bg-[black] p-40 rounded-[30px]'>
+
+            </div>
         </div>
     )
 }
