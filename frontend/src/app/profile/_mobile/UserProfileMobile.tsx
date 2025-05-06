@@ -3,10 +3,20 @@
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import HeaderMobileProfile from "./Header";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, Navigation, Plus } from "lucide-react";
+import { ChevronDown, Navigation, Plus, ArrowLeft } from "lucide-react";
 import diddyImg from "@/../public/diddyImg.png";
 import Image from "next/image";
 import Link from "next/link";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  SheetClose,
+} from "@/components/ui/sheet";
+import EditProfile from "./EditProfile";
+
 const UserProfileMobile = () => {
   return (
     <div className="w-full h-full flex flex-col justify-start items-center p-7">
@@ -57,13 +67,18 @@ const UserProfileMobile = () => {
             Friends <ChevronDown />
           </Button>
         </Link>
-        <Button className="bg-[#333333] w-2/4 py-6 rounded-lg font-semibold">
-          Edit Profile
-        </Button>
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button className="bg-[#333333] w-2/4 py-6 rounded-lg font-semibold">
+              Edit Profile
+            </Button>
+          </SheetTrigger>
+          <EditProfile />
+        </Sheet>
       </div>
       {/* EVENT HISTORY */}
       <div className="w-full mt-10"></div>
-      <div className="w-full bg-[#19181A] border-1 border-[#2A2A2A] flex justify-between items-center p-3 rounded-2xl">
+      <div className="w-full bg-[#19181A] border-1 border-[#2A2A2A] flex justify-between items-center p-3 rounded-2xl h-[99px]">
         <div className="flex h-full">
           <Image
             src={diddyImg}
