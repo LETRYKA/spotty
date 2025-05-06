@@ -16,3 +16,19 @@ export const getUserData = async (userId: string) => {
     return error;
   }
 };
+
+
+// getFriendData function
+export const getFriendData = async (userId: string) => {
+  try {
+    const response = await axios.get(`${API_URL}/api/friends/${userId}`, {
+      headers: {
+        Accept: "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.log("Axios Error shuu", error);
+    return error;
+  }
+};
