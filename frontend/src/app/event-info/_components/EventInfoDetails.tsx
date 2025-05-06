@@ -1,45 +1,62 @@
-import { CircleX } from 'lucide-react';
-import {
-    Avatar,
-    AvatarFallback,
-    AvatarImage,
-  } from "@/components/ui/avatar"
-  import { Lock } from 'lucide-react';
-  import { Button } from "@/components/ui/button"
-  import { CircleCheck } from 'lucide-react';
+"use client";
+
+import { CircleX, X } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Lock } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { CircleCheck } from "lucide-react";
+
 const EventInfoDetails = () => {
-    return (
-        <div>
-            <div className="flex w-full justify-between items-center">
-                <CircleX className='text-white h-[35px] w-[35px]'/>
-                <Avatar className='h-[40px] w-[40px]'>
-                    <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                    <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
-            </div>
-            <div className='flex flex-col w-full justify-center items-center pt-[230px]'>
-                <Lock className='text-white'/>
-                <h1 className='text-white font-bold text-[40px] w-[300px] text-center'>Typical girls night</h1>
-                <p className='text-[white]/80 w-[150px] text-center'>19 May, 12pm
-                Ulaanbaatar, kid100</p>
-            </div>
-            <div className='px-[60px] h-[50px]'>
-                <div className='bg-[black] h-full w-full flex justify-between'>
-                    <Button className='flex flex-col p-4'>
-                        <CircleCheck /> Going
-                    </Button>
-                    <Button className='p-4'>
-                        Not Going
-                    </Button>
-                </div>
-            </div>
-            <div className='bg-[red] p-40 rounded-[30px]'>
-
-            </div>
-            <div className='bg-[black] p-40 rounded-[30px]'>
-
-            </div>
+  return (
+    <div className="w-full h-auto flex flex-col justify-center p-9">
+      <div className="flex w-full justify-between items-center z-40">
+        <div className="w-9 h-auto aspect-square bg-[var(--background)]/15 backdrop-blur-xs rounded-full flex justify-center items-center cursor-pointer">
+          <X className="w-4 text-[var(--background)]" strokeWidth={3} />
         </div>
-    )
-}
+        <Avatar className="w-9 h-auto aspect-square">
+          <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+          <AvatarFallback>CN</AvatarFallback>
+        </Avatar>
+      </div>
+      <div className="flex flex-col w-full justify-center items-center mt-70">
+        <div className="w-9 h-auto aspect-square bg-[var(--background)]/30 backdrop-blur-xs rounded-full flex justify-center items-center cursor-pointer">
+          <Lock className="w-4 text-[var(--background)]" strokeWidth={3} />
+        </div>
+        <h1 className="text-white font-extrabold text-5xl text-center">
+          Typical girls night
+        </h1>
+        <p className="text-[white]/70 text-sm text-center px-28 mt-6">
+          19 May, 12pm Ulaanbaatar, kid100
+        </p>
+      </div>
+      <div className="w-full px-10 mt-10">
+        <div className="w-full bg-[#0A0A0B] border-1 border-[#1D1D1D] rounded-full flex justify-center items-center p-2">
+          <Button className="flex flex-col items-center text-[#00C655] text-sm font-extrabold bg-[var(--background)] hover:bg-[var(--background)] rounded-full gap-0 w-2/4 py-6">
+            <CircleCheck />
+            Going
+          </Button>
+          <Button className="flex flex-col items-center text-[var(--background)]/50 text-sm font-extrabold bg-[#0A0A0B] hover:bg-[#0A0A0B] rounded-full gap-0 w-2/4 py-6">
+            <CircleX />
+            Not going
+          </Button>
+        </div>
+      </div>
+      <div className="w-full bg-[#0A0A0B] border-1 border-[#1b1b1b] rounded-2xl mt-10 p-7">
+        <div className="w-full flex flex-col justify-center items-center gap-2">
+          <div className="w-8 h-auto aspect-square bg-slate-400 rounded-full"></div>
+          <p className="text-xs text-[var(--background)]/50">
+            Hosted by{" "}
+            <strong className="text-[var(--background)]">LETRYKA</strong>
+          </p>
+        </div>
+        <p className="text-xs text-[var(--background)]/50 mt-4">About</p>
+        <p className="text-sm text-[var(--background)] mt-2">
+          Lorem Ipsum is simply dummy text of the printing and typesetting
+          industry. Lorem Ipsum has been the industry's standard dummy text ever
+          since.
+        </p>
+      </div>
+    </div>
+  );
+};
 export default EventInfoDetails;

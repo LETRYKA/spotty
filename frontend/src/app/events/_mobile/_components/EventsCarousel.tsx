@@ -5,7 +5,6 @@ import three from "/public/3.avif";
 import four from "/public/4.avif";
 import five from "/public/5.avif";
 
-
 const EventsCarousel = () => {
   const images = [
     { src: one.src, alt: "Image 1" },
@@ -16,7 +15,7 @@ const EventsCarousel = () => {
   ];
 
   return (
-    <div className="w-full h-full rounded-3xl overflow-hidden">
+    <div className="w-full h-full rounded-3xl overflow-hidden mt-20">
       <CardCarousel
         images={images}
         autoplayDelay={2000}
