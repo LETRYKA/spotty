@@ -1,21 +1,49 @@
 import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogFooter,
-    DialogTitle,
-    DialogTrigger,
-  } from "@/components/ui/dialog";
-  import { Label } from "@/components/ui/label";
-  import { Input } from "@/components/ui/input";
-  import { Button } from "@/components/ui/button";
-  import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-  
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useEffect, useState } from "react";
+import { getUserData } from "@/utils/getUserData";
 
-  const EditProfile = () => {
-    return (
-      <div className="w-full h-auto flex flex-col items-center">
-        <Dialog>
+const EditProfile = () => {
+  const [userData, setUserData] = useState({
+    name: "",
+    // username: "",
+    email: "",
+    phone: "NULL",
+    // password: "",
+  });
+  console.log("USER DATA", userData);
+  
+  const userId = "user_2wTOJwIWXyv5OyMIQnLu9WQEPS0";
+
+  const fetchUser = async () => {
+    const data = await getUserData(userId);
+    setUserData({
+      name: data.name || "",
+      // username: data.username || "",
+      email: data.email || "",
+      phone: data.phone || "",
+      // password: "",
+    });
+    console.log("USER_DEDICATED_DATA", data);
+  };
+
+  useEffect(() => {
+    fetchUser();
+  }, [userId]);
+
+  return (
+    <div className="w-full h-auto flex flex-col items-center">
+      <Dialog>
         <DialogTrigger asChild>
           <Button
             variant="outline"
@@ -47,6 +75,10 @@ import {
                 </Label>
                 <Input
                   id="name"
+                  value={userData.name}
+                  onChange={(e) =>
+                    setUserData({ ...userData, name: e.target.value })
+                  }
                   className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020]"
                 />
               </div>
@@ -67,6 +99,10 @@ import {
                 </Label>
                 <Input
                   id="name"
+                  value={userData.email}
+                  onChange={(e) =>
+                    setUserData({ ...userData, email: e.target.value })
+                  }
                   className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020]"
                 />
               </div>
@@ -75,7 +111,11 @@ import {
                   Phonenumber
                 </Label>
                 <Input
-                  id="username"
+                  id="phonenumber"
+                  value={userData.phone}
+                  onChange={(e) =>
+                    setUserData({ ...userData, phone: e.target.value })
+                  }
                   className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020]"
                   type="number"
                 />
@@ -95,16 +135,18 @@ import {
           </div>
           <DialogFooter>
             <div className="flex w-full mt-6 px-2 justify-center items-center gap-4">
-            <Button className="rounded-full w-2/4 py-5 border border-[#262626] bg-none"
-            > Maybe later</Button>
-            <Button className="rounded-full w-2/4 py-5 dark" type="submit">
-              Save changes
-            </Button>
+              <Button className="rounded-full w-2/4 py-5 border border-[#262626] bg-none">
+                {" "}
+                Maybe later
+              </Button>
+              <Button className="rounded-full w-2/4 py-5 dark" type="submit">
+                Save changes
+              </Button>
             </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      </div>
-    )
-  }
-  export default EditProfile;
+    </div>
+  );
+};
+export default EditProfile;

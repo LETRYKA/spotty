@@ -1,9 +1,46 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Verified from "/public/verified-badge-profile-icon-png 1.png";
 import { Button } from "@/components/ui/button";
-import EditFriends from "./editFriends";
+import { useEffect, useState } from "react";
+import { getUserData } from "@/utils/getUserData";
 
 const EditCover = () => {
+  const [userData, setUserData] = useState({
+    name: "",
+    email: "",
+    phone: "NULL",
+    friendships: [], // Store the friendships array
+    friendsCount: 0, // Store the friends count
+  });
+
+  const userId = "user_2wTOJwIWXyv5OyMIQnLu9WQEPS0";
+
+  const fetchUser = async () => {
+    const data = await getUserData(userId);
+
+    const uniqueFriends = [
+      ...new Set([
+        ...data.friendships.map(
+          (friendship: { friendId: string }) => friendship.friendId
+        ),
+      ]),
+    ];
+
+    setUserData({
+      name: data.name || "",
+      email: data.email || "",
+      phone: data.phone || "",
+      friendships: data.friendships || [],
+      friendsCount: uniqueFriends.length,
+    });
+
+    console.log("USER_DEDICATED_DATA", data);
+  };
+
+  useEffect(() => {
+    fetchUser();
+  }, [userId]);
+
   return (
     <div className="w-full flex flex-col justify-start items-center">
       <div className="w-full h-[319px] bg-[#8D8D8D] flex flex-col rounded-3xl relative">
@@ -23,12 +60,19 @@ const EditCover = () => {
           className="w-7 h-auto aspect-square absolute bottom-2 right-2"
         />
       </div>
-      <p className="text-white font-extrabold text-4xl mt-4">@USER_NAME</p>
+      <p className="text-white font-extrabold text-4xl mt-4">{userData.name}</p>
       <div className="text-white/50 mt-3 flex gap-4">
-        <div className="text-base flex items-center justify-center">
-          @username |{" "}
-          <span>
-            <EditFriends />
+        <p className="text-base">
+          @{userData.name}
+          <span className="text-white font-semibold">
+            <Button
+              variant="default"
+              className="bg-transparent hover:bg-transparent border-none shadow-none hover:underline"
+            >
+              {userData.friendsCount > 0
+                ? ` ${userData.friendsCount}`
+                : "No friends yet"}
+            </Button>
           </span>{" "}
           friends
         </div>
