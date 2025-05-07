@@ -13,7 +13,17 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 
+const MAX_CHAR_LIMIT = 1000;
+
 const AboutCreateEvent = () => {
+  const [aboutText, setAboutText] = React.useState("");
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = event.target.value;
+    if (inputValue.length <= MAX_CHAR_LIMIT) {
+      setAboutText(inputValue);
+    }
+  };
 
   return (
     <div>
@@ -36,24 +46,24 @@ const AboutCreateEvent = () => {
           </div>
         </DrawerTrigger>
 
-        <DrawerContent>
+        <DrawerContent className="bg-[#252526]">
           <div className="mx-auto w-full max-w-sm">
-            <DrawerHeader>
-              <DrawerTitle>Move Goal</DrawerTitle>
-              <DrawerDescription>Set your daily activity goal.</DrawerDescription>
+            <DrawerClose asChild className="flex justify-end p-0">
+              <p className="text-[#0278FC] font-extrabold cursor-pointer ">Done</p>
+            </DrawerClose>
+            <DrawerHeader className="py-0 pb-4">
+              <DrawerTitle className="text-[#FFFFFF]/50">About</DrawerTitle>
+              <textarea
+                placeholder="Tell your guests about your event."
+                value={aboutText}
+                onChange={handleInputChange}
+                className="w-full h-[200px] mt-2 p-3 rounded-2xl bg-[#1f1f1f] text-white resize-none align-top
+                focus:outline-none focus:ring-[#FFFFFF]/30 "
+              />
+              <p className="text-[#FFFFFF]/30 text-[12px] mt-1">
+                Character Limit: {aboutText.length}/{MAX_CHAR_LIMIT}
+              </p>
             </DrawerHeader>
-
-            <div className="p-4 pb-0">
-              <div className="flex items-center justify-center space-x-2">
-              </div>
-            </div>
-
-            <DrawerFooter>
-              <Button>Submit</Button>
-              <DrawerClose asChild>
-                <Button variant="outline">Cancel</Button>
-              </DrawerClose>
-            </DrawerFooter>
           </div>
         </DrawerContent>
       </Drawer>
