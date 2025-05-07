@@ -13,30 +13,28 @@ import UnfAlert from "./unfAlert";
 import { getFriendData } from "@/lib/api";
 import { useEffect, useState } from "react";
 import { User } from "../types/User";
+import { useUser } from "@clerk/nextjs";
 
 const EditFriends = ({ friendIds }: { friendIds: string[] }) => {
   const [friendsData, setFriendsData] = useState<User[]>([]);
+  const { user } = useUser();
+  const userId = user?.id;
 
-  const fetchAllFriends = async () => {
+  const fetchFriends = async (id: string) => {
     try {
-      const data = await Promise.all(
-        friendIds.map(async (id) => {
-          const friend = await getFriendData(id);
-          console.log("Friend data энд байна", friend);
-          return friend as User;
-        })
-      );
+      const data = await getFriendData(id);
       setFriendsData(data);
+      console.log("EditFriends fetch data", data);
     } catch (error) {
-      console.error("Error fetching friends", error);
+      console.error("Error", error);
     }
   };
-
   useEffect(() => {
-    if (friendIds.length > 0) {
-      fetchAllFriends();
+    if (userId) {
+      fetchFriends(userId);
     }
-  }, [friendIds]);
+  }
+  , [userId]);
 
   return (
     <Dialog>
