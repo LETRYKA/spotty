@@ -86,12 +86,10 @@ const UserProfileMobile = () => {
           </Avatar>
         </div>
       </div>
-
       <div className="mt-17 flex justify-center items-center flex-col">
         <div className="text-white text-2xl">{userData?.name}</div>
         <span className="text-white opacity-50">{userData?.moodStatus}</span>
       </div>
-
       <div className="flex justify-between w-70.25 mt-6.25">
         <div className="flex flex-col items-center">
           <div className="text-white">{userData?.friendships?.length ?? 0}</div>
@@ -108,14 +106,12 @@ const UserProfileMobile = () => {
           <div className="text-white opacity-50">Participated</div>
         </div>
       </div>
-
       <div className="flex w-full px-4 sm:px-10 gap-3 mt-10 justify-center items-center">
         <Button className="bg-[#333333] w-2/4 h-12.25">
           Friends <ChevronDown />
         </Button>
         <Button className="bg-[#333333] w-2/4 h-12.25">Edit Profile</Button>
       </div>
-
       {userData?.events?.map((event, index) => (
         <div
           key={event.id || index}

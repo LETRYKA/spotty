@@ -9,7 +9,7 @@ const EventInfoBackgroundImg = () => {
           src={Banner.src}
           alt="Banner Image"
         />
-        <div className="w-full h-[40rem] absolute top-0 left-0 blur-gradient-mask pointer-events-none" />
+        <div className="w-full h-[40rem] absolute top-20 left-0 blur-gradient-mask pointer-events-none" />
         <div className="absolute bottom-0 w-full">
           <div className="w-full h-[30rem] bg-gradient-to-t from-[#00090D] to-transparent" />
         </div>
