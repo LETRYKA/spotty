@@ -5,6 +5,7 @@ import {
   DialogFooter,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -14,19 +15,23 @@ import { useEffect, useState } from "react";
 import { getUserData } from "@/lib/api";
 import { Eye, EyeOff } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
+import { useUserStore } from "@/app/profile/_web/store/userStore";
 import { User } from "../types/User";
-
+import { handleSave } from "../utils/handleSave";
 
 const EditProfile = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [userData, setUserData] = useState<User | null>(null);
+  const [localUserData, setLocalUserData] = useState<User | null>(null);
+  const { setFullUserData, setUserData: updateStoreUserData } = useUserStore();
   const { user } = useUser();
   const userId = user?.id;
+
 
   const fetchUser = async (id: string) => {
     try {
       const data = await getUserData(id);
-      setUserData(data);
+      setLocalUserData(data);
+      setFullUserData(data);
       console.log("EditProfile fetch data", data);
     } catch (error) {
       console.error("Error", error);
@@ -38,36 +43,7 @@ const EditProfile = () => {
       fetchUser(userId);
     }
   }, [userId]);
-
-  // const handleSave = async () => {
-  //   if (!userId || !userData) return;
   
-  //   try {
-  //     const response = await fetch(`http://localhost:3000/user/${userId}`, {
-  //       method: "PATCH",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         name: userData.name,
-  //         email: userData.email,
-  //         phoneNumber: userData.phoneNumber,
-  //       }),
-  //     });
-  
-  //     if (!response.ok) {
-  //       const errorText = await response.text(); 
-  //       console.error("Failed to update user:", errorText);
-  //       return;
-  //     }
-  
-  //     const updatedData = await response.json();
-  //     setUserData(updatedData);
-  //     console.log("User updated successfully:", updatedData);
-  //   } catch (error) {
-  //     console.error("Error updating user:", error);
-  //   }
-  // };
 
   return (
     <div className="w-full h-auto flex flex-col items-center">
@@ -112,13 +88,13 @@ const EditProfile = () => {
                 </Label>
                 <Input
                   id="username"
-                  value={userData?.name ?? ""}
+                  value={localUserData?.name ?? ""}
                   onChange={(e) =>
-                    setUserData((prev) =>
+                    setLocalUserData((prev) =>
                       prev ? { ...prev, name: e.target.value } : prev
                     )
                   }
-                  className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020]"
+                  
                 />
               </div>
             </div>
@@ -130,9 +106,9 @@ const EditProfile = () => {
                 </Label>
                 <Input
                   id="email"
-                  value={userData?.email ?? ""}
+                  value={localUserData?.email ?? ""}
                   onChange={(e) =>
-                    setUserData((prev) =>
+                    setLocalUserData((prev) =>
                       prev ? { ...prev, email: e.target.value } : prev
                     )
                   }
@@ -145,12 +121,10 @@ const EditProfile = () => {
                 </Label>
                 <Input
                   id="phonenumber"
-                  value={userData?.phoneNumber ?? ""}
+                  value={localUserData?.phoneNumber ?? ""}
                   onChange={(e) =>
-                    setUserData((prev) =>
-                      prev
-                        ? { ...prev, phoneNumber: e.target.value }
-                        : prev
+                    setLocalUserData((prev) =>
+                      prev ? { ...prev, phoneNumber: e.target.value } : prev
                     )
                   }
                   className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020]"
@@ -204,6 +178,7 @@ const EditProfile = () => {
             </div>
           </div>
           <DialogFooter>
+            <DialogClose asChild>
             <div className="flex w-full mt-6 px-2 justify-center items-center gap-4">
               <Button className="rounded-full w-2/4 py-5 border border-[#262626] bg-none">
                 Maybe later
@@ -211,11 +186,12 @@ const EditProfile = () => {
               <Button
                 className="rounded-full w-2/4 py-5 dark"
                 type="button"
-                // onClick={handleSave}
+                onClick={()=> handleSave(localUserData, updateStoreUserData)}
               >
                 Save changes
               </Button>
             </div>
+            </DialogClose>
           </DialogFooter>
         </DialogContent>
       </Dialog>
