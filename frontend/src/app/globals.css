@@ -119,6 +119,7 @@
   }
   body {
     @apply bg-background text-foreground;
+    background: #00090D;
   }
   /* Chrome, Safari, Edge, Opera */
   input::-webkit-outer-spin-button,
@@ -137,3 +138,11 @@
     cursor: pointer;
   }
 }
+
+.blur-gradient-mask {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+}
+
