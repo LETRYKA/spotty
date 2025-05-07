@@ -25,7 +25,6 @@ const EditFriends = ({ friendIds }: { friendIds: string[] }) => {
     try {
       const data = await getFriendData(id);
       setFriendsData(data);
-      console.log("EditFriends fetch data", data);
     } catch (error) {
       console.error("Error", error);
     }

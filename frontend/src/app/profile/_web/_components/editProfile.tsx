@@ -31,7 +31,6 @@ const EditProfile = () => {
       const data = await getUserData(id);
       setLocalUserData(data);
       setFullUserData(data);
-      console.log("EditProfile fetch data", data);
     } catch (error) {
       console.error("Error", error);
     }
