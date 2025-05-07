@@ -9,9 +9,6 @@ import { useUser } from "@clerk/nextjs";
 
 const EventCards = () => {
   const [eventData, setEventData] = useState<Event[]>([]);
-  
-  console.log("EventCards data Fetch", eventData);
-
   const { user } = useUser();
   const userId = user?.id;
 
@@ -87,7 +84,7 @@ const EventCards = () => {
         return (
           <div
             key={event.id}
-            className="bg-[#313034] flex flex-col rounded-3xl items-center relative"
+            className="bg-[#313034] flex flex-col rounded-3xl items-center relative transition-transform duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl"
           >
             <img
               src={Mapping.src}
@@ -113,8 +110,6 @@ const EventCards = () => {
                   />
                 </div>
               </div>
-
-              {/* Status Styling */}
               <div className="w-full absolute bottom-20">
                 <div
                   className={`py-1 px-3 w-fit rounded-2xl ${background} border ${border} text-white font-medium text-[0.7rem] flex justify-center items-center`}
@@ -122,8 +117,6 @@ const EventCards = () => {
                   {text}
                 </div>
               </div>
-
-              {/* Other event details */}
               <div className="w-full h-auto flex flex-row justify-between bg-white mt-4 absolute top-47 rounded-2xl px-4 py-3 gap-3">
                 <div className="flex flex-col items-start">
                   <p className="font-extrabold text-sm">@USERNAMETE</p>

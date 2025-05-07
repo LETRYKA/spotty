@@ -26,7 +26,7 @@ const UnfAlert = ({ userId, friendId }: UnfAlertProps) => {
 
   const confirmRemoveFriend = async () => {
     await handleRemoveFriend(userId, friendId, () => {
-      router.refresh(); // Or update your local state if applicable
+      router.refresh();
     });
   };
 
