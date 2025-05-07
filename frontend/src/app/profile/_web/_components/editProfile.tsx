@@ -11,12 +11,13 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { useUserStore } from "@/app/profile/_web/store/userStore";
 import { User } from "../types/User";
 import { handleSave } from "../utils/handleSave";
+import { getUserData } from "@/lib/api";
 
 const EditProfile = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -24,7 +25,6 @@ const EditProfile = () => {
   const { setFullUserData, setUserData: updateStoreUserData } = useUserStore();
   const { user } = useUser();
   const userId = user?.id;
-
 
   const fetchUser = async (id: string) => {
     try {
@@ -84,7 +84,7 @@ const EditProfile = () => {
                 <Label htmlFor="username" className="text-xs">
                   Username
                 </Label>
-                {/* <Input
+                <Input
                   id="username"
                   value={localUserData?.name ?? ""}
                   onChange={(e) =>
@@ -109,13 +109,13 @@ const EditProfile = () => {
                     )
                   }
                   className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020]"
-                /> */}
+                />
               </div>
               <div className="flex flex-col gap-2 w-full">
                 <Label htmlFor="username" className="text-xs">
                   Phonenumber
                 </Label>
-                {/* <Input
+                <Input
                   id="phonenumber"
                   value={localUserData?.phoneNumber ?? ""}
                   onChange={(e) =>
@@ -125,7 +125,7 @@ const EditProfile = () => {
                   }
                   className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020]"
                   type="number"
-                /> */}
+                />
               </div>
             </div>
             <div className="w-full flex flex-col justify-center mt-4 gap-4">
@@ -175,19 +175,19 @@ const EditProfile = () => {
           </div>
           <DialogFooter>
             <DialogClose asChild>
-            <div className="flex w-full mt-6 px-2 justify-center items-center gap-4">
-              <Button className="rounded-full w-2/4 py-5 border border-[#262626] bg-none">
-                {" "}
-                Maybe later
-              </Button>
-              <Button
-                className="rounded-full w-2/4 py-5 dark"
-                type="button"
-                onClick={()=> handleSave(localUserData, updateStoreUserData)}
-              >
-                Save changes
-              </Button>
-            </div>
+              <div className="flex w-full mt-6 px-2 justify-center items-center gap-4">
+                <Button className="rounded-full w-2/4 py-5 border border-[#262626] bg-none">
+                  {" "}
+                  Maybe later
+                </Button>
+                <Button
+                  className="rounded-full w-2/4 py-5 dark"
+                  type="button"
+                  onClick={() => handleSave(localUserData, updateStoreUserData)}
+                >
+                  Save changes
+                </Button>
+              </div>
             </DialogClose>
           </DialogFooter>
         </DialogContent>
