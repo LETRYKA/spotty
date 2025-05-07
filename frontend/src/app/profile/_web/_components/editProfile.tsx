@@ -10,65 +10,13 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useEffect, useState } from "react";
-import { getUserData } from "@/lib/api";
+import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { useUser } from "@clerk/nextjs";
 import { User } from "../types/User";
 
 
 const EditProfile = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [userData, setUserData] = useState<User | null>(null);
-  const { user } = useUser();
-  const userId = user?.id;
-
-  const fetchUser = async (id: string) => {
-    try {
-      const data = await getUserData(id);
-      setUserData(data);
-      console.log("EditProfile fetch data", data);
-    } catch (error) {
-      console.error("Error", error);
-    }
-  };
-
-  useEffect(() => {
-    if (userId) {
-      fetchUser(userId);
-    }
-  }, [userId]);
-
-  // const handleSave = async () => {
-  //   if (!userId || !userData) return;
-  
-  //   try {
-  //     const response = await fetch(`http://localhost:3000/user/${userId}`, {
-  //       method: "PATCH",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         name: userData.name,
-  //         email: userData.email,
-  //         phoneNumber: userData.phoneNumber,
-  //       }),
-  //     });
-  
-  //     if (!response.ok) {
-  //       const errorText = await response.text(); 
-  //       console.error("Failed to update user:", errorText);
-  //       return;
-  //     }
-  
-  //     const updatedData = await response.json();
-  //     setUserData(updatedData);
-  //     console.log("User updated successfully:", updatedData);
-  //   } catch (error) {
-  //     console.error("Error updating user:", error);
-  //   }
-  // };
-
   return (
     <div className="w-full h-auto flex flex-col items-center">
       <Dialog>
@@ -110,52 +58,43 @@ const EditProfile = () => {
                 <Label htmlFor="username" className="text-xs">
                   Username
                 </Label>
-                <Input
+                {/* <Input
                   id="username"
-                  value={userData?.name ?? ""}
+                  value={userData.name}
                   onChange={(e) =>
-                    setUserData((prev) =>
-                      prev ? { ...prev, name: e.target.value } : prev
-                    )
+                    setUserData({ ...userData, name: e.target.value })
                   }
                   className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020]"
-                />
+                /> */}
               </div>
             </div>
-
             <div className="w-full flex justify-center mt-4 gap-4">
               <div className="flex flex-col gap-2 w-full">
                 <Label htmlFor="name" className="text-xs">
                   Email
                 </Label>
-                <Input
-                  id="email"
-                  value={userData?.email ?? ""}
+                {/* <Input
+                  id="name"
+                  value={userData.email}
                   onChange={(e) =>
-                    setUserData((prev) =>
-                      prev ? { ...prev, email: e.target.value } : prev
-                    )
+                    setUserData({ ...userData, email: e.target.value })
                   }
                   className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020]"
-                />
+                /> */}
               </div>
               <div className="flex flex-col gap-2 w-full">
                 <Label htmlFor="username" className="text-xs">
                   Phonenumber
                 </Label>
-                <Input
+                {/* <Input
                   id="phonenumber"
-                  value={userData?.phoneNumber ?? ""}
+                  value={userData.phone}
                   onChange={(e) =>
-                    setUserData((prev) =>
-                      prev
-                        ? { ...prev, phoneNumber: e.target.value }
-                        : prev
-                    )
+                    setUserData({ ...userData, phone: e.target.value })
                   }
                   className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020]"
                   type="number"
-                />
+                /> */}
               </div>
             </div>
             <div className="w-full flex flex-col justify-center mt-4 gap-4">
@@ -164,7 +103,7 @@ const EditProfile = () => {
                   Old Password
                 </Label>
                 <Input
-                  id="old-password"
+                  id="name"
                   className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020]"
                   type="password"
                 />
@@ -175,7 +114,7 @@ const EditProfile = () => {
                 </Label>
                 <div className="relative">
                   <Input
-                    id="new-password"
+                    id="confirm-password"
                     className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020] pr-10"
                     type={showPassword ? "text" : "password"}
                   />
@@ -206,13 +145,10 @@ const EditProfile = () => {
           <DialogFooter>
             <div className="flex w-full mt-6 px-2 justify-center items-center gap-4">
               <Button className="rounded-full w-2/4 py-5 border border-[#262626] bg-none">
+                {" "}
                 Maybe later
               </Button>
-              <Button
-                className="rounded-full w-2/4 py-5 dark"
-                type="button"
-                // onClick={handleSave}
-              >
+              <Button className="rounded-full w-2/4 py-5 dark" type="submit">
                 Save changes
               </Button>
             </div>
