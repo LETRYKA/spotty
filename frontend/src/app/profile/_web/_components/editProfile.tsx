@@ -11,8 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useEffect, useState } from "react";
-import { getUserData } from "@/lib/api";
+import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { useUserStore } from "@/app/profile/_web/store/userStore";
@@ -43,7 +42,6 @@ const EditProfile = () => {
       fetchUser(userId);
     }
   }, [userId]);
-  
 
   return (
     <div className="w-full h-auto flex flex-col items-center">
@@ -86,7 +84,7 @@ const EditProfile = () => {
                 <Label htmlFor="username" className="text-xs">
                   Username
                 </Label>
-                <Input
+                {/* <Input
                   id="username"
                   value={localUserData?.name ?? ""}
                   onChange={(e) =>
@@ -94,11 +92,9 @@ const EditProfile = () => {
                       prev ? { ...prev, name: e.target.value } : prev
                     )
                   }
-                  
                 />
               </div>
             </div>
-
             <div className="w-full flex justify-center mt-4 gap-4">
               <div className="flex flex-col gap-2 w-full">
                 <Label htmlFor="name" className="text-xs">
@@ -113,13 +109,13 @@ const EditProfile = () => {
                     )
                   }
                   className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020]"
-                />
+                /> */}
               </div>
               <div className="flex flex-col gap-2 w-full">
                 <Label htmlFor="username" className="text-xs">
                   Phonenumber
                 </Label>
-                <Input
+                {/* <Input
                   id="phonenumber"
                   value={localUserData?.phoneNumber ?? ""}
                   onChange={(e) =>
@@ -129,7 +125,7 @@ const EditProfile = () => {
                   }
                   className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020]"
                   type="number"
-                />
+                /> */}
               </div>
             </div>
             <div className="w-full flex flex-col justify-center mt-4 gap-4">
@@ -138,7 +134,7 @@ const EditProfile = () => {
                   Old Password
                 </Label>
                 <Input
-                  id="old-password"
+                  id="name"
                   className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020]"
                   type="password"
                 />
@@ -149,7 +145,7 @@ const EditProfile = () => {
                 </Label>
                 <div className="relative">
                   <Input
-                    id="new-password"
+                    id="confirm-password"
                     className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020] pr-10"
                     type={showPassword ? "text" : "password"}
                   />
@@ -181,6 +177,7 @@ const EditProfile = () => {
             <DialogClose asChild>
             <div className="flex w-full mt-6 px-2 justify-center items-center gap-4">
               <Button className="rounded-full w-2/4 py-5 border border-[#262626] bg-none">
+                {" "}
                 Maybe later
               </Button>
               <Button
