@@ -20,7 +20,7 @@ import {
 import { Ellipsis } from 'lucide-react';
 import { UserRound } from 'lucide-react';
 import { UserRoundPlus } from 'lucide-react';
-const GuedtInfo = () => {
+const GuestInfo = () => {
     return (
       <div>  
         <Drawer>
@@ -60,4 +60,4 @@ const GuedtInfo = () => {
       </div>
     )
 }
-export default GuedtInfo;
+export default GuestInfo;
