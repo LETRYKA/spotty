@@ -5,6 +5,7 @@ import {
   DialogFooter,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -12,11 +13,36 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
+import { useUserStore } from "@/app/profile/_web/store/userStore";
 import { User } from "../types/User";
-
+import { handleSave } from "../utils/handleSave";
 
 const EditProfile = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [localUserData, setLocalUserData] = useState<User | null>(null);
+  const { setFullUserData, setUserData: updateStoreUserData } = useUserStore();
+  const { user } = useUser();
+  const userId = user?.id;
+
+
+  const fetchUser = async (id: string) => {
+    try {
+      const data = await getUserData(id);
+      setLocalUserData(data);
+      setFullUserData(data);
+      console.log("EditProfile fetch data", data);
+    } catch (error) {
+      console.error("Error", error);
+    }
+  };
+
+  useEffect(() => {
+    if (userId) {
+      fetchUser(userId);
+    }
+  }, [userId]);
+
   return (
     <div className="w-full h-auto flex flex-col items-center">
       <Dialog>
@@ -60,12 +86,13 @@ const EditProfile = () => {
                 </Label>
                 {/* <Input
                   id="username"
-                  value={userData.name}
+                  value={localUserData?.name ?? ""}
                   onChange={(e) =>
-                    setUserData({ ...userData, name: e.target.value })
+                    setLocalUserData((prev) =>
+                      prev ? { ...prev, name: e.target.value } : prev
+                    )
                   }
-                  className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020]"
-                /> */}
+                />
               </div>
             </div>
             <div className="w-full flex justify-center mt-4 gap-4">
@@ -73,11 +100,13 @@ const EditProfile = () => {
                 <Label htmlFor="name" className="text-xs">
                   Email
                 </Label>
-                {/* <Input
-                  id="name"
-                  value={userData.email}
+                <Input
+                  id="email"
+                  value={localUserData?.email ?? ""}
                   onChange={(e) =>
-                    setUserData({ ...userData, email: e.target.value })
+                    setLocalUserData((prev) =>
+                      prev ? { ...prev, email: e.target.value } : prev
+                    )
                   }
                   className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020]"
                 /> */}
@@ -88,9 +117,11 @@ const EditProfile = () => {
                 </Label>
                 {/* <Input
                   id="phonenumber"
-                  value={userData.phone}
+                  value={localUserData?.phoneNumber ?? ""}
                   onChange={(e) =>
-                    setUserData({ ...userData, phone: e.target.value })
+                    setLocalUserData((prev) =>
+                      prev ? { ...prev, phoneNumber: e.target.value } : prev
+                    )
                   }
                   className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020]"
                   type="number"
@@ -143,15 +174,21 @@ const EditProfile = () => {
             </div>
           </div>
           <DialogFooter>
+            <DialogClose asChild>
             <div className="flex w-full mt-6 px-2 justify-center items-center gap-4">
               <Button className="rounded-full w-2/4 py-5 border border-[#262626] bg-none">
                 {" "}
                 Maybe later
               </Button>
-              <Button className="rounded-full w-2/4 py-5 dark" type="submit">
+              <Button
+                className="rounded-full w-2/4 py-5 dark"
+                type="button"
+                onClick={()=> handleSave(localUserData, updateStoreUserData)}
+              >
                 Save changes
               </Button>
             </div>
+            </DialogClose>
           </DialogFooter>
         </DialogContent>
       </Dialog>

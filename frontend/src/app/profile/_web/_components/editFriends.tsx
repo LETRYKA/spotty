@@ -7,6 +7,7 @@ import {
   DialogTrigger,
   DialogHeader,
   DialogTitle,
+  DialogClose
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import UnfAlert from "./unfAlert";
@@ -52,7 +53,7 @@ const EditFriends = ({ friendIds }: { friendIds: string[] }) => {
         </DialogHeader>
         <div className="flex flex-col gap-4 mt-4 items-start justify-center">
           {friendsData.length === 0 ? (
-            <p className="text-white">No friends found.</p>
+            <p className="text-white">No friends yet</p>
           ) : (
             friendsData.map((friendsData) => {
               const key =
@@ -81,7 +82,11 @@ const EditFriends = ({ friendIds }: { friendIds: string[] }) => {
                   <Button className="ml-auto bg-[#D9D9D9]/30 text-white hover:bg-[#141414] hover:text-white/50 border-none shadow-none text-sm font-semibold">
                     Invite
                   </Button>
-                  <UnfAlert />
+                  <DialogClose asChild>
+                  {userId && friendsData.id && (
+                    <UnfAlert userId={userId} friendId={friendsData.id} />
+                  )}
+                  </DialogClose>
                 </div>
               );
             })

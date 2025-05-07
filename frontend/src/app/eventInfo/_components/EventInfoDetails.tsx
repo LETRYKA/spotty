@@ -5,6 +5,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CircleCheck } from "lucide-react";
+import DirectionEvent from "./DirectionEvent";
+import GuedtInfo from "./GuestInfo";
+
 
 const EventInfoDetails = () => {
   return (
@@ -43,7 +46,10 @@ const EventInfoDetails = () => {
       </div>
       <div className="w-full bg-[#0A0A0B] border-1 border-[#1b1b1b] rounded-2xl mt-10 p-7">
         <div className="w-full flex flex-col justify-center items-center gap-2">
-          <div className="w-8 h-auto aspect-square bg-slate-400 rounded-full"></div>
+        <Avatar>
+          <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+          <AvatarFallback>CN</AvatarFallback>
+        </Avatar>
           <p className="text-xs text-[var(--background)]/50">
             Hosted by{" "}
             <strong className="text-[var(--background)]">LETRYKA</strong>
@@ -56,6 +62,12 @@ const EventInfoDetails = () => {
           since.
         </p>
       </div>
+      <DirectionEvent/>
+      <div className="w-full flex justify-between mt-5">
+        <p className="text-white">Guest list 8/8</p>
+        <h1 className="text-[#F45B69]">Full</h1>
+      </div>
+      <GuedtInfo/>
     </div>
   );
 };

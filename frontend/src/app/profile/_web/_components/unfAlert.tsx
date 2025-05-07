@@ -1,3 +1,5 @@
+"use client";
+
 import {
   AlertDialog,
   AlertDialogContent,
@@ -11,9 +13,23 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { handleRemoveFriend } from "@/app/profile/_web/utils/handleRemoveFriend";
 
-const UnfAlert = () => {
-  
+interface UnfAlertProps {
+  userId: string;
+  friendId: string;
+}
+
+const UnfAlert = ({ userId, friendId }: UnfAlertProps) => {
+  const router = useRouter();
+
+  const confirmRemoveFriend = async () => {
+    await handleRemoveFriend(userId, friendId, () => {
+      router.refresh(); // Or update your local state if applicable
+    });
+  };
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -31,15 +47,18 @@ const UnfAlert = () => {
         <AlertDialogHeader>
           <AlertDialogTitle className="text-white text-sm">Итгэлтэй байна уу?</AlertDialogTitle>
           <AlertDialogDescription>
-           Unfriend хийлэээшдэ. Ингээд л харилцаандаа сэв шааж байгаа юм уу?
+            Unfriend хийлэээшдэ. Ингээд л харилцаандаа сэв шааж байгаа юм уу?
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel className="text-white border-none">Болих</AlertDialogCancel>
-          <AlertDialogAction>Тэгье</AlertDialogAction>
+          <AlertDialogAction onClick={confirmRemoveFriend}>
+            Тэгье
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   );
 };
+
 export default UnfAlert;
