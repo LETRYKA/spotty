@@ -102,7 +102,6 @@ const EventDetail = ({
       return res.data.event;
     } catch (err) {
       console.error("Failed to leave event:", err);
-      toast.error(err.response.data.message);
       return null;
     }
   };
