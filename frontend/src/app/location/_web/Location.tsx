@@ -3,6 +3,7 @@
 import { useState } from "react";
 import MapWidgets from "./MapWidgets";
 import LocationPage from "./Map";
+import CreateEvent from "./_components/CreateEvent";
 
 const LocationWeb = () => {
   const [isSideBarOpen, setIsSideBarOpen] = useState<boolean>(() => {
@@ -29,6 +30,7 @@ const LocationWeb = () => {
           setSelectedEventId={setSelectedEventId}
           setIsSideBarOpen={setIsSideBarOpen}
         />
+        <CreateEvent />
       </div>
     </>
   );
