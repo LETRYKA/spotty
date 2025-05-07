@@ -1,32 +1,11 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
-import { getUserData } from "@/lib/api";
 import EditFriends from "./editFriends";
-import { useUser } from "@clerk/nextjs";
-import { User } from "../types/User";
+import { useUserStore } from "@/app/profile/_web/store/userStore";
 
 
 const EditCover = () => {
-  const [userData, setUserData] = useState<User | null>(null);
-  const { user } = useUser();
-  const userId = user?.id;
-
-  const fetchUser = async (id: string) => {
-    try {
-      const data = await getUserData(id);
-      setUserData(data);
-      console.log("EditCover fetch data", data);
-    } catch (error) {
-      console.error("Error", error);
-    }
-  };
-
-  useEffect(() => {
-    if (userId) {
-      fetchUser(userId);
-    }
-  }, [userId]);
+  const { userData } = useUserStore();
 
   return (
     <div className="w-full flex flex-col justify-start items-center">
@@ -52,7 +31,7 @@ const EditCover = () => {
         <p className="text-base">
           @{userData?.name}
           <span className="text-white font-semibold">
-          <EditFriends friendIds={userData?.friendships?.map(f => f.friendId) || []} />
+            <EditFriends friendIds={userData?.friendships?.map(f => f.friendId) || []} />
           </span>
           friends
         </p>
