@@ -5,16 +5,14 @@ import { useUser } from "@clerk/nextjs";
 import { ChevronDown } from "lucide-react";
 import { getUserData } from "@/lib/api";
 import { useUserStore } from "@/app/profile/_web/store/userStore";
-
 import { User } from "../_web/types/User";
 import HeaderMobileProfile from "./Header";
 import EventCardsMobile from "./_components/event-card-mobile";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const UserProfileMobile = () => {
-  const { userData, setFullUserData } = useUserStore();
-  const [localUserData, setLocalUserData] = useState<User | null>(null);
+  const [userData, setLocalUserData] = useState<User | null>(null);
   const { user } = useUser();
   const userId = user?.id;
 
@@ -23,7 +21,6 @@ const UserProfileMobile = () => {
       try {
         const data = await getUserData(id);
         setLocalUserData(data);
-        setFullUserData(data);
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -32,17 +29,18 @@ const UserProfileMobile = () => {
     if (userId) {
       fetchUser(userId);
     }
-  }, [userId, setFullUserData]);
+  }, [userId]);
 
   if (!userData) {
     return <div className="w-full h-full flex justify-center items-center">Loading...</div>;
   }
+  console.log("userData", userData);
 
   return (
     <div className="w-full h-full flex flex-col justify-start items-center p-9">
       <HeaderMobileProfile
         name={userData.name || "Unknown"}
-        isVerified={false}
+        isVerified={userData.isVerified || false}
       />
 
       <div className="w-full bg-[#8D8D8D] flex flex-col rounded-3xl h-26 mt-8">
@@ -52,13 +50,16 @@ const UserProfileMobile = () => {
             alt=""
             className="w-full h-26 rounded-3xl object-cover"
           />
-          <Avatar className="rounded-full">
-            <AvatarImage
-              className="rounded-full object-cover w-27.25 h-27.25 absolute left-1/2 -translate-x-1/2 top-13 bg-gradient-to-tr from-blue-500 via-pink-500 to-orange-400 p-[3px]"
-              src={userData?.avatarImage}
-              alt="User Profile"
-            />
-          </Avatar>
+          <div className="w-full flex justify-center ">
+            <Avatar className="-mt-16  relative rounded-full bg-gradient-to-r from-[#428CFA] via-[#7062FB] via-[#E956D1] via-[#FB5F78] to-[#F98437] w-[128px] h-[128px]">
+              <AvatarImage
+                className="rounded-full border-3 border-black object-cover"
+                src={userData?.avatarImage}
+                alt="User Profile"
+              />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+          </div>
         </div>
       </div>
       <div className="mt-17 flex justify-center items-center flex-col">
@@ -66,7 +67,6 @@ const UserProfileMobile = () => {
         <span className="text-white opacity-50">{userData?.moodStatus}</span>
       </div>
 
-      {/* Stats */}
       <div className="flex justify-between w-70.25 mt-6.25">
         <div className="flex flex-col items-center">
           <div className="text-white">{userData.friendships?.length ?? 0}</div>
@@ -82,7 +82,6 @@ const UserProfileMobile = () => {
         </div>
       </div>
 
-      {/* Actions */}
       <div className="flex w-full px-4 sm:px-10 gap-3 mt-10 justify-center items-center">
         <Button className="bg-[#333333] w-2/4 h-12.25">
           Friends <ChevronDown className="ml-1 w-4 h-4" />
@@ -90,7 +89,6 @@ const UserProfileMobile = () => {
         <Button className="bg-[#333333] w-2/4 h-12.25">Edit Profile</Button>
       </div>
 
-      {/* Events List */}
       <EventCardsMobile />
     </div>
   );

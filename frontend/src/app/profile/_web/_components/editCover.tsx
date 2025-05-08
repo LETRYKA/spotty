@@ -5,7 +5,6 @@ import { useUserStore } from "@/app/profile/_web/store/userStore";
 
 const EditCover = () => {
   const { userData } = useUserStore();
-  console.log("userData", userData);
 
   return (
     <div className="w-full flex flex-col justify-start items-center">

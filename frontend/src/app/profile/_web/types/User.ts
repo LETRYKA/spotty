@@ -17,4 +17,5 @@ export type User = {
   friendships: Friendship[];
   locations: any[]; 
   stories: any[]; 
+  isVerified: boolean;
 };
