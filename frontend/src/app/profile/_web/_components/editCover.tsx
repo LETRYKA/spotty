@@ -5,6 +5,8 @@ import { useUserStore } from "@/app/profile/_web/store/userStore";
 
 const EditCover = () => {
   const { userData } = useUserStore();
+  console.log("userData", userData);
+  const isVerified = userData?.isVerified;
 
   return (
     <div className="w-full flex flex-col justify-start items-center">
@@ -23,7 +25,7 @@ const EditCover = () => {
         </Button>
       </div>
       <div className="relative">
-        <Avatar className="-mt-16  relative rounded-full bg-gradient-to-r from-[#428CFA] via-[#7062FB] via-[#E956D1] via-[#FB5F78] to-[#F98437] w-[128px] h-[128px]">
+        <Avatar className="-mt-16 p-[0.2rem] relative rounded-full bg-gradient-to-r from-[#428CFA] via-[#7062FB] via-[#E956D1] via-[#FB5F78] to-[#F98437] w-[128px] h-[128px]">
           <AvatarImage
             className="rounded-full border-3 border-black object-cover"
             src={userData?.avatarImage}
@@ -31,10 +33,13 @@ const EditCover = () => {
           />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
-        <img
-          src="verified-badge-profile-icon-png-one.png"
-          className="w-7 h-auto aspect-square absolute bottom-2 right-2"
-        />
+        {isVerified && (
+          <img
+            src="verified-badge-profile-icon-png-one.png"
+            className="w-7 h-auto aspect-square absolute bottom-2 right-2"
+            alt="Verified Badge"
+          />
+        )}
       </div>
       <p className="text-white font-extrabold text-4xl mt-4">
         {userData?.name}

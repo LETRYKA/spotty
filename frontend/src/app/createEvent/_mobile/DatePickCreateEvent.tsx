@@ -21,12 +21,12 @@ export function DatePickCreateEvent() {
       <PopoverTrigger asChild>
         <Button
           className={cn(
-            "w-1/2 justify-start text-left font-normal bg-[#28272A] rounded-lg px-4 py-5 text-white focus:outline-none",
+            "w-[48%] justify-start text-left font-normal bg-[#28272A] rounded-lg px-4 py-5 text-white focus:outline-none",
             !date && "text-muted-foreground ]"
           )}
         >
           <CalendarIcon />
-          {date ? format(date, "PPP") : <span>Pick a date</span>}
+          {date ? format(date, "PPP") : <span>Pick a Start date</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
