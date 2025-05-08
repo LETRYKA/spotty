@@ -131,7 +131,7 @@ const EventCards = () => {
                   <div className="rounded-full w-5 h-5 bg-[#B7B7B7] -ml-3"></div>
                   <div className="rounded-full w-5 h-5 bg-[#939393] -ml-3"></div>
                   <p className="font-semibold text-xs ml-1">
-                    10/{event.participantLimit}
+                    {event.participants.length}/{event.participantLimit}
                   </p>
                 </div>
               </div>
