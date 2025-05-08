@@ -18,7 +18,7 @@ const MAX_CHAR_LIMIT = 1000;
 const AboutCreateEvent = () => {
   const [aboutText, setAboutText] = React.useState("");
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const inputValue = event.target.value;
     if (inputValue.length <= MAX_CHAR_LIMIT) {
       setAboutText(inputValue);
