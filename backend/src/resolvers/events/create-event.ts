@@ -13,7 +13,7 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
       lat,
       lng,
       isPrivate,
-      hiddenFromMap,
+      hiddenFromMap,  
       password,
       ownerId,
       participantIds,
@@ -34,6 +34,8 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
       !description ||
       isPrivate === undefined ||
       !participantLimit ||
+      !startAt ||
+      !endAt ||
       !Array.isArray(categories) ||
       categories.length === 0
     ) {
