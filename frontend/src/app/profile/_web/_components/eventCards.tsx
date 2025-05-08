@@ -1,6 +1,5 @@
 import React from "react";
 import Mapping from "/public/Mapping.png";
-import RandomIcon from "/public/Random-icon.png";
 import { Navigation } from "lucide-react";
 import { getUserData } from "@/lib/api";
 import { useEffect, useState } from "react";
@@ -19,18 +18,23 @@ const EventCards = () => {
         const updatedEvents = data.events.map((event: Event) => {
           const formattedStartAt = new Date(event.startAt);
           const year = formattedStartAt.getUTCFullYear();
-          const month = (formattedStartAt.getUTCMonth() + 1).toString().padStart(2, '0');
-          const day = formattedStartAt.getUTCDate().toString().padStart(2, '0');
+          const month = (formattedStartAt.getUTCMonth() + 1)
+            .toString()
+            .padStart(2, "0");
+          const day = formattedStartAt.getUTCDate().toString().padStart(2, "0");
           let hour = formattedStartAt.getUTCHours();
-          const minute = formattedStartAt.getUTCMinutes().toString().padStart(2, '0');
+          const minute = formattedStartAt
+            .getUTCMinutes()
+            .toString()
+            .padStart(2, "0");
           const isAM = hour < 12;
-          hour = hour % 12 || 12; 
-          const formattedHour = hour.toString().padStart(2, '0');
-          const ampm = isAM ? 'AM' : 'PM';
+          hour = hour % 12 || 12;
+          const formattedHour = hour.toString().padStart(2, "0");
+          const ampm = isAM ? "AM" : "PM";
           event.formattedStartAt = `${year}-${month}-${day}-${formattedHour}:${minute} ${ampm}`;
           return event;
         });
-      
+
         setEventData(updatedEvents);
       }
     } catch (error) {
@@ -77,9 +81,11 @@ const EventCards = () => {
   };
 
   return (
-    <div className="w-full h-auto flex flex-wrap gap-6 mt-8 px-8">
+    <div className="w-full h-auto flex flex-wrap gap-10 mt-8 px-8">
       {eventData.map((event) => {
-        const { background, border, text } = getStatusStylesAndText(event.status);
+        const { background, border, text } = getStatusStylesAndText(
+          event.status
+        );
 
         return (
           <div
@@ -92,7 +98,7 @@ const EventCards = () => {
               className="w-[300px] h-auto aspect-square rounded-3xl object-cover"
             />
             <div className="absolute top-4 bottom-4 left-6 right-6">
-              <div className="w-full flex justify-between items-center gap-4">
+              <div className="w-full flex justify-between items-start gap-4">
                 <div className="w-full h-auto flex flex-col justify-start items-start">
                   <h5 className="text-white/50 text-sm font-medium flex gap-2 items-center">
                     <Navigation className="w-4 rounded-full" />
@@ -102,12 +108,8 @@ const EventCards = () => {
                     {event.title}
                   </p>
                 </div>
-                <div className="w-24 h-auto aspect-square bg-[linear-gradient(45deg,_#FAC634,_#FACF64)] rounded-full flex justify-center items-center">
-                  <img
-                    src={RandomIcon.src}
-                    alt="Event Icon"
-                    className="w-9 h-auto aspect-square object-cover"
-                  />
+                <div className="w-24 h-auto aspect-square bg-[linear-gradient(45deg,_#FAC634,_#FACF64)] rounded-full flex justify-center items-center mt-3">
+                  <span className="text-3xl">{event?.categories[0]?.emoji}</span>
                 </div>
               </div>
               <div className="w-full absolute bottom-20">
@@ -119,16 +121,18 @@ const EventCards = () => {
               </div>
               <div className="w-full h-auto flex flex-row justify-between bg-white mt-4 absolute top-47 rounded-2xl px-4 py-3 gap-3">
                 <div className="flex flex-col items-start">
-                  <p className="font-extrabold text-sm">@USERNAMETE</p>
+                  <p className="font-extrabold text-sm">@{event.owner.name}</p>
                   <p className="font-regular text-[0.6rem] text-black/50">
-                  {event.formattedStartAt}
+                    {event.formattedStartAt}
                   </p>
                 </div>
                 <div className="flex flex-row gap-1 justify-center items-center relative">
                   <div className="rounded-full w-5 h-5 bg-[#D9D9D9]"></div>
                   <div className="rounded-full w-5 h-5 bg-[#B7B7B7] -ml-3"></div>
                   <div className="rounded-full w-5 h-5 bg-[#939393] -ml-3"></div>
-                  <p className="font-semibold text-xs ml-1">10/{event.participantLimit}</p>
+                  <p className="font-semibold text-xs ml-1">
+                    10/{event.participantLimit}
+                  </p>
                 </div>
               </div>
             </div>
