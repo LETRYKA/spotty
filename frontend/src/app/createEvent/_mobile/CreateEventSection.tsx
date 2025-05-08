@@ -10,6 +10,7 @@ import { DatePickCreateEvent } from "./DatePickCreateEvent";
 import GallerySection from "./GallerySection";
 import AboutCreateEvent from "./AboutCreateEvent";
 import AddPicButton from "./AddPicButton";
+import DatePickEnd from "./DatePickEnd";
 
 const CreateEventSection = () => {
   return (
@@ -54,13 +55,16 @@ const CreateEventSection = () => {
           Хүүхдийн 100 өргөн чөлөө Ulaanbatar, Mongolia, Ulan Bator
         </p>
       </div>
-      <div className="flex w-full space-x-4 mt-5">
-        <DatePickCreateEvent />
+      <div className="flex flex-col w-full space-x-4 mt-5 gap-4">
         <input
           type="text"
           placeholder="Slot"
-          className="w-1/2 bg-[#28272A] rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-[#68686d]"
+          className="w-full bg-[#28272A] rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-[#68686d]"
         />
+        <div className="flex w-full justify-between">
+          <DatePickCreateEvent />
+          <DatePickEnd />
+        </div>
       </div>
       <GallerySection />
     </div>
