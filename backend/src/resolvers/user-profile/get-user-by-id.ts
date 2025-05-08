@@ -1,5 +1,5 @@
-import { PrismaClient } from '@prisma/client';
-import { Request, Response } from 'express';
+import { PrismaClient } from "@prisma/client";
+import { Request, Response } from "express";
 
 const prisma = new PrismaClient();
 
@@ -35,14 +35,33 @@ export async function getUserById(req: Request, res: Response) {
           },
         },
         locations: true,
-        events: true,
+        events: {
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            startDate: true,
+            endAt: true,
+            participants: true,
+            location: true,
+            isPrivate: true,
+            createdAt: true,
+            categories: {
+              select: {
+                id: true,
+                name: true,
+                emoji: true,
+              },
+            },
+          },
+        },
         joinedEvents: true,
         stories: true,
       },
     });
 
     if (!user) {
-res.status(404).json({ error: 'Хэрэглэгч олдсонгүй' });
+      res.status(404).json({ error: "Хэрэглэгч олдсонгүй" });
     }
 
     res.status(200).json(user);
