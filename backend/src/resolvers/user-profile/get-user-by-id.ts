@@ -43,6 +43,7 @@ export async function getUserById(req: Request, res: Response) {
             startAt: true,
             endAt: true,
             participants: true,
+            participantLimit: true,
             isPrivate: true,
             createdAt: true,
             owner: {

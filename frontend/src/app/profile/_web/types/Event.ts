@@ -16,4 +16,15 @@ export type Event = {
   password: string | null;
   startAt: string;
   formattedStartAt?: string;
+  owner: {
+    name: string;
+  };
+  participants: [];
+  categories: [
+    {
+      id: string;
+      name: string;
+      emoji: string;
+    }
+  ];
 };
