@@ -3,7 +3,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -30,17 +29,15 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { format } from "date-fns";
-import { CalendarIcon, Clock } from "lucide-react";
+import { CalendarIcon, ChevronDown, Clock } from "lucide-react";
 import { useFormik } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { z } from "zod";
 import { cn } from "@/lib/utils";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
-type Checked = DropdownMenuCheckboxItemProps["checked"];
-
 const eventSchema = z.object({
-  title: z.string().max(12, "Title must be at most 12 characters"), // Changed from min(12) to max(12)
+  title: z.string().max(12, "Title must be at most 12 characters"),
   categories: z.array(z.string()).min(1, "Select at least one category"),
   description: z.string().optional(),
   dateTime: z.date({ required_error: "Date and time are required" }),
@@ -69,7 +66,6 @@ export default function CreateEvent() {
     validationSchema: toFormikValidationSchema(eventSchema),
     onSubmit: (values) => {
       console.log(values);
-      // Handle form submission
     },
   });
 
@@ -95,13 +91,11 @@ export default function CreateEvent() {
 
   const handleDateSelect = (date: Date | undefined) => {
     if (date) {
-      // If we already have a time selected, preserve it
       const currentDateTime = formik.values.dateTime;
       if (currentDateTime) {
         date.setHours(currentDateTime.getHours());
         date.setMinutes(currentDateTime.getMinutes());
       } else {
-        // Default to 12:00 PM if no time is selected
         date.setHours(12);
         date.setMinutes(0);
       }
@@ -115,10 +109,9 @@ export default function CreateEvent() {
   ) => {
     let currentDate = formik.values.dateTime;
 
-    // If no date is selected yet, start with today
     if (!currentDate) {
       currentDate = new Date();
-      currentDate.setHours(12); // Default to 12 PM
+      currentDate.setHours(12);
       currentDate.setMinutes(0);
     }
 
@@ -126,7 +119,6 @@ export default function CreateEvent() {
 
     if (type === "hour") {
       const hour = parseInt(value, 10);
-      // Check current AM/PM state to determine if we need to add 12 hours
       const isPM = newDate.getHours() >= 12;
       newDate.setHours(isPM ? hour + 12 : hour);
     } else if (type === "minute") {
@@ -157,77 +149,73 @@ export default function CreateEvent() {
             Enter your event details.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={formik.handleSubmit}>
-          <div className="w-full rounded-3xl text-white space-y-6">
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Input
-                  name="title"
-                  placeholder="Title (max 12 chars)"
-                  value={formik.values.title}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  maxLength={12} // Added maxLength attribute
-                  className="w-full bg-[#0D0D0D]/70 p-3 rounded-lg outline-none text-sm border-1 border-[#2F2F2F]"
-                />
-                {formik.touched.title && formik.errors.title && (
-                  <div className="text-[var(--destructive)] text-xs mt-2">
-                    {formik.errors.title}
-                  </div>
-                )}
-              </div>
-              <div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="bg-[#0D0D0D]/70 border-1 border-[#2F2F2F]"
-                    >
-                      Category
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-54 dark">
-                    <DropdownMenuCheckboxItem
-                      checked={formik.values.categories.includes("Status Bar")}
-                      onCheckedChange={() => toggleCategory("Status Bar")}
-                    >
-                      Status Bar
-                    </DropdownMenuCheckboxItem>
-                    <DropdownMenuCheckboxItem
-                      checked={formik.values.categories.includes("Panel")}
-                      onCheckedChange={() => toggleCategory("Panel")}
-                    >
-                      Panel
-                    </DropdownMenuCheckboxItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-                {formik.touched.categories && formik.errors.categories && (
-                  <div className="text-[var(--destructive)] text-xs mt-2">
-                    {formik.errors.categories}
-                  </div>
-                )}
-              </div>
+        <form onSubmit={formik.handleSubmit} className="flex flex-col gap-3">
+          <div className="flex w-full justify-center items-start gap-3">
+            <div className="w-2/4">
+              <Input
+                name="title"
+                placeholder="Title"
+                value={formik.values.title}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                maxLength={12}
+                className="w-full bg-[#0D0D0D]/70 p-3 py-6 rounded-xl outline-none text-sm border-1 border-[#2F2F2F]"
+              />
+              {formik.touched.title && formik.errors.title && (
+                <div className="text-[var(--destructive)] text-xs mt-2">
+                  {formik.errors.title}
+                </div>
+              )}
             </div>
-
-            <Textarea
-              name="description"
-              placeholder="Description"
-              value={formik.values.description}
-              onChange={formik.handleChange}
-              rows={4}
-              className="w-full bg-[#0D0D0D]/70 p-3 rounded-xl outline-none text-sm border-1 border-[#2F2F2F]"
-            />
-
-            <div className="space-y-3">
-              <label className="text-sm text-[var(--background)]">
-                Date & Time
-              </label>
+            <div className="flex flex-col w-2/4">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full py-6 bg-[#0D0D0D]/70 rounded-xl border-1 border-[#2F2F2F] text-[var(--background)] text-sm flex justify-between items-center hover:bg-[#111111] hover:text-[var(--background]"
+                  >
+                    Category
+                    <ChevronDown className="text-[var(--background)]/50" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-54 dark">
+                  <DropdownMenuCheckboxItem
+                    checked={formik.values.categories.includes("Status Bar")}
+                    onCheckedChange={() => toggleCategory("Status Bar")}
+                  >
+                    Status Bar
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem
+                    checked={formik.values.categories.includes("Panel")}
+                    onCheckedChange={() => toggleCategory("Panel")}
+                  >
+                    Panel
+                  </DropdownMenuCheckboxItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              {formik.touched.categories && formik.errors.categories && (
+                <div className="text-[var(--destructive)] text-xs mt-2">
+                  {formik.errors.categories}
+                </div>
+              )}
+            </div>
+          </div>
+          <Textarea
+            name="description"
+            placeholder="Description"
+            value={formik.values.description}
+            onChange={formik.handleChange}
+            rows={4}
+            className="w-full min-h-24 bg-[#0D0D0D]/70 p-3 rounded-xl outline-none text-sm border-1 border-[#2F2F2F] text-[var(--background)]"
+          />
+          <div className="w-full flex justify-center items-enter gap-3">
+            <div className="flex flex-col w-2/4">
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
                     variant={"outline"}
                     className={cn(
-                      "w-full justify-start text-left font-normal bg-[#0D0D0D]/70 border-[#2F2F2F]",
+                      "w-full justify-start text-left font-normal bg-[#0D0D0D]/70 border-[#2F2F2F] py-6 rounded-xl text-[var(--background)]",
                       !formik.values.dateTime && "text-muted-foreground"
                     )}
                   >
@@ -240,8 +228,8 @@ export default function CreateEvent() {
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent
-                  className="w-auto p-0 bg-[#0D0D0D] border-[#2F2F2F]"
-                  align="start" // Added align prop to ensure proper positioning
+                  className="w-auto p-0 bg-[#0D0D0D] border-[#2F2F2F] text-[var(--background)] rounded-2xl"
+                  align="start"
                 >
                   <div className="sm:flex">
                     <Calendar
@@ -342,11 +330,10 @@ export default function CreateEvent() {
                 </div>
               )}
             </div>
-
             <Input
               name="slot"
               type="number"
-              placeholder="Slot (leave empty for infinite)"
+              placeholder="Slot"
               value={formik.values.slot || ""}
               onChange={(e) => {
                 const value = e.target.value;
@@ -355,97 +342,97 @@ export default function CreateEvent() {
                   value === "" ? undefined : parseInt(value)
                 );
               }}
-              className="w-full bg-[#0D0D0D]/70 p-3 rounded-lg outline-none text-sm border-1 border-[#2F2F2F]"
+              className="w-2/4 bg-[#0D0D0D]/70 py-6 rounded-xl outline-none text-sm border-1 border-[#2F2F2F] text-[var(--background)]"
             />
+          </div>
 
-            <div className="border-2 border-dashed border-[#2c2c2c] p-2 rounded-2xl text-center">
-              <label className="block cursor-pointer">
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleFileChange}
+          <div className="border-2 border-dashed border-[#2c2c2c] p-2 rounded-2xl text-center">
+            <label className="block cursor-pointer">
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleFileChange}
+              />
+              {bgPreview ? (
+                <img
+                  src={bgPreview}
+                  alt="Preview"
+                  className="w-full h-40 object-cover rounded-xl"
                 />
-                {bgPreview ? (
+              ) : (
+                <div className="my-6">
                   <img
-                    src={bgPreview}
-                    alt="Preview"
-                    className="w-full h-40 object-cover rounded-xl"
+                    src={UploadIcon.src}
+                    alt="upload"
+                    className="mx-auto mb-2 w-16 h-auto"
                   />
-                ) : (
-                  <div className="my-6">
-                    <img
-                      src={UploadIcon.src}
-                      alt="upload"
-                      className="mx-auto mb-2 w-16 h-auto"
-                    />
-                    <p className="text-xs text-gray-400">
-                      Drop your image here, or{" "}
-                      <span className="text-blue-500 underline">browse</span>
-                    </p>
-                    <p className="text-[0.55rem] text-gray-500 mt-1">
-                      Supports: JPEG, JPEG2000, PNG
-                    </p>
-                  </div>
-                )}
-              </label>
-              {formik.touched.backgroundImage &&
-                formik.errors.backgroundImage && (
-                  <div className="text-[var(--destructive)] text-xs mt-2">
-                    {formik.errors.backgroundImage}
-                  </div>
-                )}
-            </div>
+                  <p className="text-xs text-gray-400">
+                    Drop your image here, or{" "}
+                    <span className="text-blue-500 underline">browse</span>
+                  </p>
+                  <p className="text-[0.55rem] text-gray-500 mt-1">
+                    Supports: JPEG, JPEG2000, PNG
+                  </p>
+                </div>
+              )}
+            </label>
+            {formik.touched.backgroundImage &&
+              formik.errors.backgroundImage && (
+                <div className="text-[var(--destructive)] text-xs mt-2">
+                  {formik.errors.backgroundImage}
+                </div>
+              )}
+          </div>
 
-            <div className="w-full flex gap-3">
-              <div className="w-2/4 h-28 bg-[#0D0D0D]/70 rounded-2xl border-1 border-[#303030] p-4">
-                <div className="w-full flex items-start justify-end space-x-2 h-2/4">
-                  <Checkbox
-                    id="private"
-                    checked={formik.values.isPrivate}
-                    onCheckedChange={(checked) =>
-                      formik.setFieldValue("isPrivate", checked)
-                    }
-                    className="w-6 h-auto aspect-square rounded-sm bg-[var(--background)]/10 border-[var(--background)]/30 data-[state=checked]:bg-blue-600"
-                  />
-                </div>
-                <div className="w-full h-2/4 flex flex-col gap-0.5">
-                  <p className="text-sm text-[var(--background)]">Private</p>
-                  <p className="text-xs text-[var(--background)]/50">
-                    Event secured with passcode
-                  </p>
-                </div>
+          <div className="w-full flex gap-3">
+            <div className="w-2/4 h-28 bg-[#0D0D0D]/70 rounded-2xl border-1 border-[#303030] p-4">
+              <div className="w-full flex items-start justify-end space-x-2 h-2/4">
+                <Checkbox
+                  id="private"
+                  checked={formik.values.isPrivate}
+                  onCheckedChange={(checked) =>
+                    formik.setFieldValue("isPrivate", checked)
+                  }
+                  className="w-6 h-auto aspect-square rounded-full bg-[#0D0D0D]/10 border-[var(--background)]/30 data-[state=checked]:bg-blue-600"
+                />
               </div>
-              <div className="w-2/4 h-28 bg-[#0D0D0D]/70 rounded-2xl border-1 border-[#303030] p-4">
-                <div className="w-full flex items-start justify-end space-x-2 h-2/4">
-                  <Checkbox
-                    id="hideFromMap"
-                    checked={formik.values.hideFromMap}
-                    onCheckedChange={(checked) =>
-                      formik.setFieldValue("hideFromMap", checked)
-                    }
-                    className="w-6 h-auto aspect-square rounded-sm bg-[var(--background)]/10 border-[var(--background)]/30 data-[state=checked]:bg-blue-600"
-                  />
-                </div>
-                <div className="w-full h-2/4 flex flex-col gap-0.5">
-                  <p className="text-sm text-[var(--background)]">
-                    Hide from the map
-                  </p>
-                  <p className="text-xs text-[var(--background)]/50">
-                    Only friends can see
-                  </p>
-                </div>
+              <div className="w-full h-2/4 flex flex-col gap-0.5">
+                <p className="text-sm text-[var(--background)]">Private</p>
+                <p className="text-xs text-[var(--background)]/50">
+                  Event secured with passcode
+                </p>
               </div>
             </div>
-
-            <div className="flex justify-between gap-3 pt-4">
-              <Button
-                type="submit"
-                className="flex-1 bg-blue-600 text-[var(--background)] font-bold py-6 rounded-xl hover:bg-blue-700 transition-all"
-              >
-                Continue
-              </Button>
+            <div className="w-2/4 h-28 bg-[#0D0D0D]/70 rounded-2xl border-1 border-[#303030] p-4">
+              <div className="w-full flex items-start justify-end space-x-2 h-2/4">
+                <Checkbox
+                  id="hideFromMap"
+                  checked={formik.values.hideFromMap}
+                  onCheckedChange={(checked) =>
+                    formik.setFieldValue("hideFromMap", checked)
+                  }
+                  className="w-6 h-auto aspect-square rounded-full bg-[#0D0D0D] border-[var(--background)]/30 data-[state=checked]:bg-blue-600"
+                />
+              </div>
+              <div className="w-full h-2/4 flex flex-col gap-0.5">
+                <p className="text-sm text-[var(--background)]">
+                  Hide from the map
+                </p>
+                <p className="text-xs text-[var(--background)]/50">
+                  Only friends can see
+                </p>
+              </div>
             </div>
+          </div>
+
+          <div className="flex justify-between gap-3 pt-4">
+            <Button
+              type="submit"
+              className="flex-1 bg-blue-600 text-[var(--background)] font-bold py-6 rounded-xl hover:bg-blue-700 transition-all"
+            >
+              Continue
+            </Button>
           </div>
         </form>
       </DialogContent>
