@@ -19,6 +19,7 @@ export async function getUserById(req: Request, res: Response) {
         moodStatus: true,
         batteryLevel: true,
         createdAt: true,
+        isVerified: true,
         friendships: {
           select: {
             id: true,

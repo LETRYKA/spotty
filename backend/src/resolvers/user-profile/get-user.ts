@@ -16,6 +16,7 @@ export async function getUsers(req: Request, res: Response) {
         moodStatus: true,
         batteryLevel: true,
         createdAt: true,
+        isVerified: true,
         friendships: {
           select: {
             id: true,
