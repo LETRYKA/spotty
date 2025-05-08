@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -11,433 +10,249 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
-import UploadIcon from "/public/Group 55 (1).png";
-
-import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { format } from "date-fns";
-import { CalendarIcon, ChevronDown, Clock } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { useFormik } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { z } from "zod";
-import { cn } from "@/lib/utils";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { useState } from "react";
+import DateTimePicker from "./DateTimePicker";
+import ImageGallery from "./ImageGallery";
+import PasscodeDialog from "./Passcode";
 
 const eventSchema = z.object({
-  title: z.string().max(12, "Title must be at most 12 characters"),
-  categories: z.array(z.string()).min(1, "Select at least one category"),
+  title: z.string().max(20, "Title must be at most 20 characters"),
   description: z.string().optional(),
-  dateTime: z.date({ required_error: "Date and time are required" }),
-  slot: z.number().optional(),
-  backgroundImage: z.instanceof(File, {
-    message: "Background image is required",
-  }),
+  lat: z.number().optional(),
+  lng: z.number().optional(),
   isPrivate: z.boolean().default(false),
-  hideFromMap: z.boolean().default(false),
+  hiddenFromMap: z.boolean().default(false),
+  password: z.string().optional(),
+  startAt: z.date({ required_error: "Start time is required" }),
+  endAt: z.date().optional(),
+  participantLimit: z.number().optional(),
+  categories: z
+    .array(z.string())
+    .min(1, "Select at least one category")
+    .default([]),
+  backgroundImage: z.string({ required_error: "Background image is required" }),
+  galleryImages: z.array(z.string()).max(5, "Max 5 gallery images"),
 });
 
 export default function CreateEvent() {
-  const [bgPreview, setBgPreview] = useState<string | null>(null);
+  const [showPasscodeDialog, setShowPasscodeDialog] = useState(false);
+  const [pendingValues, setPendingValues] = useState<any>(null);
 
   const formik = useFormik({
     initialValues: {
       title: "",
-      categories: [] as string[],
       description: "",
-      dateTime: undefined as Date | undefined,
-      slot: undefined as number | undefined,
-      backgroundImage: null as File | null,
+      lat: undefined,
+      lng: undefined,
       isPrivate: false,
-      hideFromMap: false,
+      hiddenFromMap: false,
+      password: "",
+      startAt: undefined,
+      endAt: undefined,
+      participantLimit: undefined,
+      categories: [] as string[],
+      backgroundImage: null,
+      galleryImages: [],
     },
     validationSchema: toFormikValidationSchema(eventSchema),
     onSubmit: (values) => {
-      console.log(values);
+      if (values.isPrivate) {
+        setPendingValues(values);
+        setShowPasscodeDialog(true);
+      } else {
+        console.log({ ...values, password: "" });
+      }
     },
   });
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.currentTarget.files && event.currentTarget.files[0]) {
-      const file = event.currentTarget.files[0];
-      formik.setFieldValue("backgroundImage", file);
-      setBgPreview(URL.createObjectURL(file));
+  const handlePasscodeSubmit = (password: string) => {
+    if (pendingValues) {
+      console.log({ ...pendingValues, password });
+      setShowPasscodeDialog(false);
+      setPendingValues(null);
+      formik.resetForm();
     }
+  };
+
+  const handlePasscodeCancel = () => {
+    setShowPasscodeDialog(false);
+    setPendingValues(null);
   };
 
   const toggleCategory = (category: string) => {
-    const currentCategories = formik.values.categories;
-    if (currentCategories.includes(category)) {
-      formik.setFieldValue(
-        "categories",
-        currentCategories.filter((c) => c !== category)
-      );
-    } else {
-      formik.setFieldValue("categories", [...currentCategories, category]);
-    }
-  };
-
-  const handleDateSelect = (date: Date | undefined) => {
-    if (date) {
-      const currentDateTime = formik.values.dateTime;
-      if (currentDateTime) {
-        date.setHours(currentDateTime.getHours());
-        date.setMinutes(currentDateTime.getMinutes());
-      } else {
-        date.setHours(12);
-        date.setMinutes(0);
-      }
-      formik.setFieldValue("dateTime", date);
-    }
-  };
-
-  const handleTimeChange = (
-    type: "hour" | "minute" | "ampm",
-    value: string
-  ) => {
-    let currentDate = formik.values.dateTime;
-
-    if (!currentDate) {
-      currentDate = new Date();
-      currentDate.setHours(12);
-      currentDate.setMinutes(0);
-    }
-
-    const newDate = new Date(currentDate);
-
-    if (type === "hour") {
-      const hour = parseInt(value, 10);
-      const isPM = newDate.getHours() >= 12;
-      newDate.setHours(isPM ? hour + 12 : hour);
-    } else if (type === "minute") {
-      newDate.setMinutes(parseInt(value, 10));
-    } else if (type === "ampm") {
-      const hours = newDate.getHours();
-      if (value === "AM" && hours >= 12) {
-        newDate.setHours(hours - 12);
-      } else if (value === "PM" && hours < 12) {
-        newDate.setHours(hours + 12);
-      }
-    }
-
-    formik.setFieldValue("dateTime", newDate);
+    const categories = formik.values.categories;
+    formik.setFieldValue(
+      "categories",
+      categories.includes(category)
+        ? categories.filter((c) => c !== category)
+        : [...categories, category]
+    );
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline">Edit Profile</Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px] bg-black/30 backdrop-blur-lg border-1 border-[#2F2F2F] rounded-3xl p-6">
-        <DialogHeader>
-          <DialogTitle className="text-white font-semibold text-xl">
-            Create Event
-          </DialogTitle>
-          <DialogDescription className="-mt-2">
-            Enter your event details.
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={formik.handleSubmit} className="flex flex-col gap-3">
-          <div className="flex w-full justify-center items-start gap-3">
-            <div className="w-2/4">
-              <Input
-                name="title"
-                placeholder="Title"
-                value={formik.values.title}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                maxLength={12}
-                className="w-full bg-[#0D0D0D]/70 p-3 py-6 rounded-xl outline-none text-sm border-1 border-[#2F2F2F]"
-              />
-              {formik.touched.title && formik.errors.title && (
-                <div className="text-[var(--destructive)] text-xs mt-2">
-                  {formik.errors.title}
-                </div>
-              )}
-            </div>
-            <div className="flex flex-col w-2/4">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="w-full py-6 bg-[#0D0D0D]/70 rounded-xl border-1 border-[#2F2F2F] text-[var(--background)] text-sm flex justify-between items-center hover:bg-[#111111] hover:text-[var(--background]"
-                  >
-                    Category
-                    <ChevronDown className="text-[var(--background)]/50" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-54 dark">
-                  <DropdownMenuCheckboxItem
-                    checked={formik.values.categories.includes("Status Bar")}
-                    onCheckedChange={() => toggleCategory("Status Bar")}
-                  >
-                    Status Bar
-                  </DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem
-                    checked={formik.values.categories.includes("Panel")}
-                    onCheckedChange={() => toggleCategory("Panel")}
-                  >
-                    Panel
-                  </DropdownMenuCheckboxItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-              {formik.touched.categories && formik.errors.categories && (
-                <div className="text-[var(--destructive)] text-xs mt-2">
-                  {formik.errors.categories}
-                </div>
-              )}
-            </div>
-          </div>
-          <Textarea
-            name="description"
-            placeholder="Description"
-            value={formik.values.description}
-            onChange={formik.handleChange}
-            rows={4}
-            className="w-full min-h-24 bg-[#0D0D0D]/70 p-3 rounded-xl outline-none text-sm border-1 border-[#2F2F2F] text-[var(--background)]"
-          />
-          <div className="w-full flex justify-center items-enter gap-3">
-            <div className="flex flex-col w-2/4">
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant={"outline"}
-                    className={cn(
-                      "w-full justify-start text-left font-normal bg-[#0D0D0D]/70 border-[#2F2F2F] py-6 rounded-xl text-[var(--background)]",
-                      !formik.values.dateTime && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {formik.values.dateTime ? (
-                      format(formik.values.dateTime, "MM/dd/yyyy hh:mm aa")
-                    ) : (
-                      <span>Pick a date and time</span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent
-                  className="w-auto p-0 bg-[#0D0D0D] border-[#2F2F2F] text-[var(--background)] rounded-2xl"
-                  align="start"
-                >
-                  <div className="sm:flex">
-                    <Calendar
-                      mode="single"
-                      selected={formik.values.dateTime}
-                      onSelect={handleDateSelect}
-                      initialFocus
-                      className="bg-[#0D0D0D]"
-                    />
-                    <div className="flex flex-col sm:flex-row sm:h-[300px] divide-y sm:divide-y-0 sm:divide-x divide-[#2F2F2F]">
-                      <ScrollArea className="w-64 sm:w-auto">
-                        <div className="flex sm:flex-col p-2">
-                          {Array.from({ length: 12 }, (_, i) => i + 1)
-                            .reverse()
-                            .map((hour) => (
-                              <Button
-                                key={hour}
-                                size="icon"
-                                variant={
-                                  formik.values.dateTime &&
-                                  formik.values.dateTime.getHours() % 12 ===
-                                    hour % 12
-                                    ? "default"
-                                    : "ghost"
-                                }
-                                className="sm:w-full shrink-0 aspect-square bg-[#0D0D0D] hover:bg-[#1F1F1F]"
-                                onClick={() =>
-                                  handleTimeChange("hour", hour.toString())
-                                }
-                              >
-                                {hour}
-                              </Button>
-                            ))}
-                        </div>
-                        <ScrollBar
-                          orientation="horizontal"
-                          className="sm:hidden"
-                        />
-                      </ScrollArea>
-                      <ScrollArea className="w-64 sm:w-auto">
-                        <div className="flex sm:flex-col p-2">
-                          {Array.from({ length: 12 }, (_, i) => i * 5).map(
-                            (minute) => (
-                              <Button
-                                key={minute}
-                                size="icon"
-                                variant={
-                                  formik.values.dateTime &&
-                                  formik.values.dateTime.getMinutes() === minute
-                                    ? "default"
-                                    : "ghost"
-                                }
-                                className="sm:w-full shrink-0 aspect-square bg-[#0D0D0D] hover:bg-[#1F1F1F]"
-                                onClick={() =>
-                                  handleTimeChange("minute", minute.toString())
-                                }
-                              >
-                                {minute.toString().padStart(2, "0")}
-                              </Button>
-                            )
-                          )}
-                        </div>
-                        <ScrollBar
-                          orientation="horizontal"
-                          className="sm:hidden"
-                        />
-                      </ScrollArea>
-                      <ScrollArea className="">
-                        <div className="flex sm:flex-col p-2">
-                          {["AM", "PM"].map((ampm) => (
-                            <Button
-                              key={ampm}
-                              size="icon"
-                              variant={
-                                formik.values.dateTime &&
-                                ((ampm === "AM" &&
-                                  formik.values.dateTime.getHours() < 12) ||
-                                  (ampm === "PM" &&
-                                    formik.values.dateTime.getHours() >= 12))
-                                  ? "default"
-                                  : "ghost"
-                              }
-                              className="sm:w-full shrink-0 aspect-square bg-[#0D0D0D] hover:bg-[#1F1F1F]"
-                              onClick={() => handleTimeChange("ampm", ampm)}
-                            >
-                              {ampm}
-                            </Button>
-                          ))}
-                        </div>
-                      </ScrollArea>
-                    </div>
-                  </div>
-                </PopoverContent>
-              </Popover>
-              {formik.touched.dateTime && formik.errors.dateTime && (
-                <div className="text-[var(--destructive)] text-xs mt-2">
-                  {formik.errors.dateTime as string}
-                </div>
-              )}
-            </div>
-            <Input
-              name="slot"
-              type="number"
-              placeholder="Slot"
-              value={formik.values.slot || ""}
-              onChange={(e) => {
-                const value = e.target.value;
-                formik.setFieldValue(
-                  "slot",
-                  value === "" ? undefined : parseInt(value)
-                );
-              }}
-              className="w-2/4 bg-[#0D0D0D]/70 py-6 rounded-xl outline-none text-sm border-1 border-[#2F2F2F] text-[var(--background)]"
-            />
-          </div>
-
-          <div className="border-2 border-dashed border-[#2c2c2c] p-2 rounded-2xl text-center">
-            <label className="block cursor-pointer">
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleFileChange}
-              />
-              {bgPreview ? (
-                <img
-                  src={bgPreview}
-                  alt="Preview"
-                  className="w-full h-40 object-cover rounded-xl"
+    <>
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="outline">Create Event</Button>
+        </DialogTrigger>
+        <DialogContent className="max-w-[500px] bg-black/30 backdrop-blur-lg border-[#2F2F2F] rounded-3xl p-6">
+          <DialogHeader>
+            <DialogTitle className="text-white text-xl">
+              Create Event
+            </DialogTitle>
+          </DialogHeader>
+          <form onSubmit={formik.handleSubmit} className="space-y-3 text-white">
+            <div className="flex gap-3">
+              <div className="w-1/2">
+                <Input
+                  name="title"
+                  placeholder="Title"
+                  maxLength={20}
+                  value={formik.values.title}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  className="bg-[#0D0D0D]/70 border-[#2F2F2F] py-5 rounded-xl"
                 />
-              ) : (
-                <div className="my-6">
-                  <img
-                    src={UploadIcon.src}
-                    alt="upload"
-                    className="mx-auto mb-2 w-16 h-auto"
-                  />
-                  <p className="text-xs text-gray-400">
-                    Drop your image here, or{" "}
-                    <span className="text-blue-500 underline">browse</span>
-                  </p>
-                  <p className="text-[0.55rem] text-gray-500 mt-1">
-                    Supports: JPEG, JPEG2000, PNG
-                  </p>
-                </div>
-              )}
-            </label>
-            {formik.touched.backgroundImage &&
-              formik.errors.backgroundImage && (
-                <div className="text-[var(--destructive)] text-xs mt-2">
-                  {formik.errors.backgroundImage}
-                </div>
-              )}
-          </div>
-
-          <div className="w-full flex gap-3">
-            <div className="w-2/4 h-28 bg-[#0D0D0D]/70 rounded-2xl border-1 border-[#303030] p-4">
-              <div className="w-full flex items-start justify-end space-x-2 h-2/4">
-                <Checkbox
-                  id="private"
-                  checked={formik.values.isPrivate}
-                  onCheckedChange={(checked) =>
-                    formik.setFieldValue("isPrivate", checked)
-                  }
-                  className="w-6 h-auto aspect-square rounded-full bg-[#0D0D0D]/10 border-[var(--background)]/30 data-[state=checked]:bg-blue-600"
+                {formik.touched.title && formik.errors.title && (
+                  <div className="text-red-500 text-xs mt-1">
+                    {formik.errors.title}
+                  </div>
+                )}
+              </div>
+              <div className="w-1/2">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full bg-[#0D0D0D]/70 border-[#2F2F2F] py-5 rounded-xl flex justify-between"
+                    >
+                      Category <ChevronDown className="text-white/50" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="bg-[#0D0D0D] border-[#2F2F2F] text-white">
+                    {["Status Bar", "Panel"].map((cat) => (
+                      <DropdownMenuCheckboxItem
+                        key={cat}
+                        checked={formik.values.categories.includes(cat)}
+                        onCheckedChange={() => toggleCategory(cat)}
+                      >
+                        {cat}
+                      </DropdownMenuCheckboxItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                {formik.touched.categories && formik.errors.categories && (
+                  <div className="text-red-500 text-xs mt-1">
+                    {formik.errors.categories}
+                  </div>
+                )}
+              </div>
+            </div>
+            <Textarea
+              name="description"
+              placeholder="Description"
+              rows={4}
+              value={formik.values.description}
+              onChange={formik.handleChange}
+              className="bg-[#0D0D0D]/70 border-[#2F2F2F] rounded-xl p-3"
+            />
+            <div className="flex gap-3">
+              <div className="w-1/2">
+                <DateTimePicker
+                  value={formik.values.startAt}
+                  onChange={(date) => formik.setFieldValue("startAt", date)}
+                  touched={formik.touched.startAt}
+                  error={formik.errors.startAt}
                 />
               </div>
-              <div className="w-full h-2/4 flex flex-col gap-0.5">
-                <p className="text-sm text-[var(--background)]">Private</p>
-                <p className="text-xs text-[var(--background)]/50">
+              <div className="w-1/2">
+                <Input
+                  name="participantLimit"
+                  type="number"
+                  placeholder="Slot"
+                  value={formik.values.participantLimit || ""}
+                  onChange={(e) =>
+                    formik.setFieldValue(
+                      "participantLimit",
+                      e.target.value === ""
+                        ? undefined
+                        : parseInt(e.target.value)
+                    )
+                  }
+                  className="bg-[#0D0D0D]/70 border-[#2F2F2F] py-5 rounded-xl"
+                />
+              </div>
+            </div>
+            <ImageGallery
+              galleryImages={formik.values.galleryImages}
+              setGalleryImages={(urls) =>
+                formik.setFieldValue("galleryImages", urls)
+              }
+              backgroundImage={formik.values.backgroundImage}
+              setBackgroundImage={(url) =>
+                formik.setFieldValue("backgroundImage", url)
+              }
+              touched={formik.touched}
+              errors={formik.errors}
+            />
+            <div className="flex gap-3">
+              <div className="w-1/2 bg-[#0D0D0D]/70 rounded-2xl border-[#2F2F2F] p-4">
+                <div className="flex justify-end">
+                  <Checkbox
+                    id="private"
+                    checked={formik.values.isPrivate}
+                    onCheckedChange={(checked) =>
+                      formik.setFieldValue("isPrivate", checked)
+                    }
+                    className="w-6 aspect-square rounded-full bg-[#0D0D0D]/10 border-white/30 data-[state=checked]:bg-blue-600"
+                  />
+                </div>
+                <p className="text-sm">Private</p>
+                <p className="text-xs text-white/50">
                   Event secured with passcode
                 </p>
               </div>
-            </div>
-            <div className="w-2/4 h-28 bg-[#0D0D0D]/70 rounded-2xl border-1 border-[#303030] p-4">
-              <div className="w-full flex items-start justify-end space-x-2 h-2/4">
-                <Checkbox
-                  id="hideFromMap"
-                  checked={formik.values.hideFromMap}
-                  onCheckedChange={(checked) =>
-                    formik.setFieldValue("hideFromMap", checked)
-                  }
-                  className="w-6 h-auto aspect-square rounded-full bg-[#0D0D0D] border-[var(--background)]/30 data-[state=checked]:bg-blue-600"
-                />
-              </div>
-              <div className="w-full h-2/4 flex flex-col gap-0.5">
-                <p className="text-sm text-[var(--background)]">
-                  Hide from the map
-                </p>
-                <p className="text-xs text-[var(--background)]/50">
-                  Only friends can see
-                </p>
+              <div className="w-1/2 bg-[#0D0D0D]/70 rounded-2xl border-[#2F2F2F] p-4">
+                <div className="flex justify-end">
+                  <Checkbox
+                    id="hiddenFromMap"
+                    checked={formik.values.hiddenFromMap}
+                    onCheckedChange={(checked) =>
+                      formik.setFieldValue("hiddenFromMap", checked)
+                    }
+                    className="w-6 aspect-square rounded-full bg-[#0D0D0D]/10 border-white/30 data-[state=checked]:bg-blue-600"
+                  />
+                </div>
+                <p className="text-sm">Hide from map</p>
+                <p className="text-xs text-white/50">Only friends can see</p>
               </div>
             </div>
-          </div>
-
-          <div className="flex justify-between gap-3 pt-4">
             <Button
               type="submit"
-              className="flex-1 bg-blue-600 text-[var(--background)] font-bold py-6 rounded-xl hover:bg-blue-700 transition-all"
+              className="w-full bg-blue-600 rounded-xl py-5 hover:bg-blue-700"
             >
               Continue
             </Button>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog>
+          </form>
+        </DialogContent>
+      </Dialog>
+      {showPasscodeDialog && (
+        <PasscodeDialog
+          open={showPasscodeDialog}
+          onSubmit={handlePasscodeSubmit}
+          onCancel={handlePasscodeCancel}
+          eventTitle={formik.values.title || "Event"}
+        />
+      )}
+    </>
   );
 }
-
-// Ekhjin was here
