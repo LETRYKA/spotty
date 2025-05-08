@@ -12,50 +12,52 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-const GuedtInfo = () => {
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar"
+import { Ellipsis } from 'lucide-react';
+import { UserRound } from 'lucide-react';
+import { UserRoundPlus } from 'lucide-react';
+const GuestInfo = () => {
     return (
-<div>
-      <Drawer>
-        <DrawerTrigger asChild>
-          <div className="w-full bg-[#28272A] border-1 border-[#28272A] rounded-2xl mt-7 p-7 cursor-pointer hover:bg-[#333235] transition">
-            <div className="w-full flex flex-col justify-center items-center gap-2">
-              <div className="w-8 h-auto aspect-square bg-slate-400 rounded-full"></div>
-              <p className="text-xs text-[var(--background)]/50">
-                Hosted by{" "}
-                <strong className="text-[var(--background)]">LETRYKA</strong>
-              </p>
-            </div>
-            <p className="text-xs text-[var(--background)]/50 mt-4">About</p>
-            <p className="text-sm text-[var(--background)] mt-2">
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry's standard dummy text
-              ever since.
-            </p>
-          </div>
-        </DrawerTrigger>
-
-        <DrawerContent>
-          <div className="mx-auto w-full max-w-sm">
-            <DrawerHeader>
-              <DrawerTitle>Move Goal</DrawerTitle>
-              <DrawerDescription>Set your daily activity goal.</DrawerDescription>
-            </DrawerHeader>
-
-            <div className="p-4 pb-0">
-              <div className="flex items-center justify-center space-x-2">
+      <div>  
+        <Drawer>
+            <div className="w-full bg-[#28272A] border-1 border-[#28272A] rounded-2xl mt-7 p-4 cursor-pointer hover:bg-[#333235]">
+              <div className="flex w-full justify-between items-center"> 
+                <div className="flex gap-4 items-center">
+                  <Avatar className="h-[40px] w-[40px]">
+                    <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col gap-1"> 
+                    <h1 className="text-white text-lg font-semibold">LETRYKA</h1>
+                    <p className="text-white/56 text-[12px]">Mood status</p>
+                  </div>
+                </div>
+                <DrawerTrigger asChild>
+                <Ellipsis className="text-white/50"/>
+                </DrawerTrigger>
               </div>
             </div>
-
-            <DrawerFooter>
-              <Button>Submit</Button>
-              <DrawerClose asChild>
-                <Button variant="outline">Cancel</Button>
-              </DrawerClose>
-            </DrawerFooter>
-          </div>
-        </DrawerContent>
-      </Drawer>
-    </div>
+          <DrawerContent className="bg-[#252526]">
+            <div className="mx-auto w-full max-w-sm ">
+            <DrawerTitle/>
+              <DrawerFooter>
+                <Button className="bg-[#404040] flex justify-start">
+                  <UserRound />
+                  View profile
+                </Button>
+                <Button className="bg-white text-black flex justify-start">
+                  <UserRoundPlus className="text-black"/>
+                  Add friend
+                </Button>
+              </DrawerFooter>
+            </div>
+          </DrawerContent>
+        </Drawer>
+      </div>
     )
 }
-export default GuedtInfo;
+export default GuestInfo;

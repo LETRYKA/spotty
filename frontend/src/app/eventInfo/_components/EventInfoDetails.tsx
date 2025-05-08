@@ -6,7 +6,7 @@ import { Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CircleCheck } from "lucide-react";
 import DirectionEvent from "./DirectionEvent";
-import GuedtInfo from "./GuestInfo";
+import GuestInfo from "./GuestInfo";
 
 
 const EventInfoDetails = () => {
@@ -67,7 +67,7 @@ const EventInfoDetails = () => {
         <p className="text-white">Guest list 8/8</p>
         <h1 className="text-[#F45B69]">Full</h1>
       </div>
-      <GuedtInfo/>
+      <GuestInfo/>
     </div>
   );
 };
