@@ -38,14 +38,18 @@ export async function getUserById(req: Request, res: Response) {
         events: {
           select: {
             id: true,
-            name: true,
+            title: true,
             description: true,
-            startDate: true,
+            startAt: true,
             endAt: true,
             participants: true,
-            location: true,
             isPrivate: true,
             createdAt: true,
+            owner: {
+              select:{
+                name: true,
+              },
+            },
             categories: {
               select: {
                 id: true,
