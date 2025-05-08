@@ -1,21 +1,50 @@
 import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogFooter,
-    DialogTitle,
-    DialogTrigger,
-  } from "@/components/ui/dialog";
-  import { Label } from "@/components/ui/label";
-  import { Input } from "@/components/ui/input";
-  import { Button } from "@/components/ui/button";
-  import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-  
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useState, useEffect } from "react";
+import { Eye, EyeOff } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
+import { useUserStore } from "@/app/profile/_web/store/userStore";
+import { User } from "../types/User";
+import { handleSave } from "../utils/handleSave";
+import { getUserData } from "@/lib/api";
 
-  const EditProfile = () => {
-    return (
-      <div className="w-full h-auto flex flex-col items-center">
-        <Dialog>
+const EditProfile = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [localUserData, setLocalUserData] = useState<User | null>(null);
+  const { setFullUserData, setUserData: updateStoreUserData } = useUserStore();
+  const { user } = useUser();
+  const userId = user?.id;
+
+  const fetchUser = async (id: string) => {
+    try {
+      const data = await getUserData(id);
+      setLocalUserData(data);
+      setFullUserData(data);
+    } catch (error) {
+      console.error("Error", error);
+    }
+  };
+
+  useEffect(() => {
+    if (userId) {
+      fetchUser(userId);
+    }
+  }, [userId]);
+
+  return (
+    <div className="w-full h-auto flex flex-col items-center">
+      <Dialog>
         <DialogTrigger asChild>
           <Button
             variant="outline"
@@ -46,7 +75,7 @@ import {
                   First Name
                 </Label>
                 <Input
-                  id="name"
+                  id="FirstName"
                   className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020]"
                 />
               </div>
@@ -56,7 +85,12 @@ import {
                 </Label>
                 <Input
                   id="username"
-                  className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020]"
+                  value={localUserData?.name ?? ""}
+                  onChange={(e) =>
+                    setLocalUserData((prev) =>
+                      prev ? { ...prev, name: e.target.value } : prev
+                    )
+                  }
                 />
               </div>
             </div>
@@ -66,7 +100,13 @@ import {
                   Email
                 </Label>
                 <Input
-                  id="name"
+                  id="email"
+                  value={localUserData?.email ?? ""}
+                  onChange={(e) =>
+                    setLocalUserData((prev) =>
+                      prev ? { ...prev, email: e.target.value } : prev
+                    )
+                  }
                   className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020]"
                 />
               </div>
@@ -75,36 +115,83 @@ import {
                   Phonenumber
                 </Label>
                 <Input
-                  id="username"
+                  id="phonenumber"
+                  value={localUserData?.phoneNumber ?? ""}
+                  onChange={(e) =>
+                    setLocalUserData((prev) =>
+                      prev ? { ...prev, phoneNumber: e.target.value } : prev
+                    )
+                  }
                   className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020]"
                   type="number"
                 />
               </div>
             </div>
-            <div className="w-full flex justify-center mt-4 gap-4">
+            <div className="w-full flex flex-col justify-center mt-4 gap-4">
               <div className="flex w-full flex-col gap-2">
                 <Label htmlFor="name" className="text-xs">
-                  Password
+                  Old Password
                 </Label>
                 <Input
                   id="name"
                   className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020]"
+                  type="password"
                 />
+              </div>
+              <div className="flex w-full flex-col gap-2">
+                <Label htmlFor="confirm-password" className="text-xs">
+                  New Password
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="confirm-password"
+                    className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020] pr-10"
+                    type={showPassword ? "text" : "password"}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+                <div className="flex w-full flex-col gap-2">
+                  <Label htmlFor="name" className="text-xs">
+                    Confirm Password
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      id="confirm-password"
+                      className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020] pr-10"
+                      type={showPassword ? "text" : "password"}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
           <DialogFooter>
-            <div className="flex w-full mt-6 px-2 justify-center items-center gap-4">
-            <Button className="rounded-full w-2/4 py-5 border border-[#262626] bg-none"
-            > Maybe later</Button>
-            <Button className="rounded-full w-2/4 py-5 dark" type="submit">
-              Save changes
-            </Button>
-            </div>
+            <DialogClose asChild>
+              <div className="flex w-full mt-6 px-2 justify-center items-center gap-4">
+                <Button className="rounded-full w-2/4 py-5 border border-[#262626] bg-none">
+                  {" "}
+                  Maybe later
+                </Button>
+                <Button
+                  className="rounded-full w-2/4 py-5 dark"
+                  type="button"
+                  onClick={() => handleSave(localUserData, updateStoreUserData)}
+                >
+                  Save changes
+                </Button>
+              </div>
+            </DialogClose>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      </div>
-    )
-  }
-  export default EditProfile;
+    </div>
+  );
+};
+export default EditProfile;

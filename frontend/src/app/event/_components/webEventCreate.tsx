@@ -5,7 +5,7 @@ import { Switch } from "@/components/ui/switch";
 import Image from "next/image";
 import PinInput from "./pin-input";
 
-const WebEvent = () => {
+const WebEventCreate = () => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isPrivate, setIsPrivate] = useState(false);
@@ -151,4 +151,4 @@ const WebEvent = () => {
     </div>
   );
 };
-export default WebEvent;
+export default WebEventCreate;

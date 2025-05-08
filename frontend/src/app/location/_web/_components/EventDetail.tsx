@@ -11,6 +11,7 @@ import {
 import DropDown from "./Menu";
 import { useUser } from "@clerk/nextjs";
 import { toast } from "react-toastify";
+import axios from "axios";
 
 interface Event {
   id: string;
@@ -38,64 +39,12 @@ interface Event {
 
 const fetchEvent = async (eventId: string): Promise<Event | null> => {
   try {
-    const res = await fetch(
+    const res = await axios.get(
       `https://spotty-5r8n.onrender.com/api/events/${eventId}`
     );
-    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-    const data = await res.json();
-    return data.event;
+    return res.data.event;
   } catch (err) {
     console.error("Failed to fetch event:", err);
-    return null;
-  }
-};
-
-const joinEvent = async (
-  eventId: string,
-  userId: string
-): Promise<Event | null> => {
-  try {
-    const res = await fetch(
-      `https://spotty-5r8n.onrender.com/api/events/${eventId}/join`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId }),
-      }
-    );
-    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-    const data = await res.json();
-    toast.success("Joined event successfully!");
-    return data.event;
-  } catch (err) {
-    console.error("Failed to join event:", err);
-    return null;
-  }
-};
-
-const leaveEvent = async (
-  eventId: string,
-  userId: string
-): Promise<Event | null> => {
-  try {
-    const res = await fetch(
-      `https://spotty-5r8n.onrender.com/api/events/${eventId}/leave`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId }),
-      }
-    );
-    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-    const data = await res.json();
-    toast.success("Leaved!");
-    return data.event;
-  } catch (err) {
-    console.error("Failed to join event:", err);
     return null;
   }
 };
@@ -110,6 +59,52 @@ const EventDetail = ({
   const { user } = useUser();
   const [event, setEvent] = useState<Event | null>(null);
   const [joined, setJoined] = useState(false);
+
+  const joinEvent = async (
+    eventId: string,
+    userId: string
+  ): Promise<Event | null> => {
+    try {
+      const res = await axios.post(
+        `https://spotty-5r8n.onrender.com/api/events/${eventId}/join`,
+        { userId },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      toast.success("Joined event successfully!");
+      setEvent(res.data.event);
+      return res.data.event;
+    } catch (err) {
+      console.error("Failed to join event:", err);
+      return null;
+    }
+  };
+
+  const leaveEvent = async (
+    eventId: string,
+    userId: string
+  ): Promise<Event | null> => {
+    try {
+      const res = await axios.post(
+        `https://spotty-5r8n.onrender.com/api/events/${eventId}/leave`,
+        { userId },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      toast.success("See you nex time ;(");
+      setEvent(res.data.event);
+      return res.data.event;
+    } catch (err) {
+      console.error("Failed to leave event:", err);
+      return null;
+    }
+  };
 
   useEffect(() => {
     fetchEvent(eventId).then(setEvent);
@@ -182,7 +177,7 @@ const EventDetail = ({
       <div className="w-full flex justify-start bg mt-1 pl-6">
         <div className="w-full">
           <Carousel>
-            <CarouselContent>
+            <CarouselContent className="flex gap-5">
               {event.galleryImages.map((gallery, index) => (
                 <CarouselItem key={index} className="basis-3/5 py-4">
                   <div
@@ -216,7 +211,7 @@ const EventDetail = ({
               : "Full"}
           </p>
         </div>
-        <div className="w-full flex-col gap-3 mt-5">
+        <div className="w-full flex flex-col gap-3 mt-5">
           {event.participants.map((user, index) => (
             <div
               key={index}

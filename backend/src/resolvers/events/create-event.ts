@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, EventStatus } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 const createEvent = async (req: Request, res: Response): Promise<void> => {
   console.log("Creating event...");
+
   try {
     const {
       title,
@@ -24,7 +25,7 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
       backgroundImage,
       galleryImages,
     } = req.body;
-
+ 
     if (
       !title ||
       !ownerId ||
@@ -40,7 +41,6 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Check if the owner exists
     const owner = await prisma.user.findUnique({
       where: { id: ownerId },
     });
@@ -49,7 +49,6 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Validate password if needed
     if (password && password.length !== 4) {
       res.status(400).json({ error: "Password must be at least 4 characters" });
       return;
@@ -60,20 +59,22 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Check for valid participant IDs
     if (participantIds && Array.isArray(participantIds)) {
       const validParticipants = await prisma.user.findMany({
         where: { id: { in: participantIds } },
       });
+
       if (validParticipants.length !== participantIds.length) {
         res.status(400).json({ error: "One or more participant IDs are invalid" });
         return;
       }
+
       if (participantLimit && participantIds.length > participantLimit) {
         res.status(400).json({ error: `Participant limit of ${participantLimit} exceeded` });
         return;
       }
     }
+
     const existingCategories = await prisma.categories.findMany({
       where: { id: { in: categories } },
     });
@@ -82,60 +83,73 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
       res.status(400).json({ error: "One or more categories not found" });
       return;
     }
+
     if (!Array.isArray(galleryImages) || galleryImages.length > 5) {
       res.status(400).json({ error: "You must provide up to 5 gallery images as an array." });
       return;
     }
-    
-    // Optional: validate that backgroundImage is a string if provided
+
     if (backgroundImage && typeof backgroundImage !== "string") {
       res.status(400).json({ error: "backgroundImage must be a string." });
       return;
     }
 
-    console.log("Categories to connect:", categories); 
+    let eventStatus: EventStatus = EventStatus.UPCOMING;
+    const allowedStatuses: EventStatus[] = [
+      EventStatus.UPCOMING,
+      EventStatus.ONGOING,
+      EventStatus.ENDED,
+      EventStatus.CANCELLED,
+    ];
+
+    if (status && allowedStatuses.includes(status)) {
+      eventStatus = status;
+    }
 
     const event = await prisma.event.create({
       data: {
         title,
-        description: description || null,
+        description,
         lat: parseFloat(lat),
         lng: parseFloat(lng),
-        isPrivate: isPrivate ?? false,
+        isPrivate,
         hiddenFromMap: hiddenFromMap ?? false,
         password: password || null,
         backgroundImage: backgroundImage || null,
-        galleryImages: galleryImages ?? [],
+        galleryImages,
         owner: { connect: { id: ownerId } },
-        participants: participantIds  
+        participants: participantIds
           ? { connect: participantIds.map((id: string) => ({ id })) }
           : undefined,
-        status: status || "UPCOMING",
+        status: eventStatus,
         startAt: startAt ? new Date(startAt) : new Date(),
         endAt: endAt ? new Date(endAt) : null,
-        participantLimit: participantLimit !== undefined ? participantLimit : null,
+        participantLimit,
         categories: {
           connect: categories.map((id: string) => ({ id })),
         },
       },
-      include: { 
-        categories: true
-      }
+      include: {
+        categories: true,
+      },
     });
 
+    if (event.status !== EventStatus.CANCELLED) {
+      const now = new Date().getTime();
 
-    if (new Date(event.startAt).getTime() <= new Date().getTime()) {
-      await prisma.event.update({
-        where: { id: event.id },
-        data: { status: "ONGOING" },
-      });
-    }
+      if (new Date(event.startAt).getTime() <= now) {
+        await prisma.event.update({
+          where: { id: event.id },
+          data: { status: EventStatus.ONGOING },
+        });
+      }
 
-    if (event.endAt && new Date(event.endAt).getTime() <= new Date().getTime()) {
-      await prisma.event.update({
-        where: { id: event.id },
-        data: { status: "ENDED" },
-      });
+      if (event.endAt && new Date(event.endAt).getTime() <= now) {
+        await prisma.event.update({
+          where: { id: event.id },
+          data: { status: EventStatus.ENDED },
+        });
+      }
     }
 
     res.status(201).json(event);
