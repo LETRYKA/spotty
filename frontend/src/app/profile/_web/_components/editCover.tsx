@@ -7,6 +7,7 @@ const EditCover = () => {
   const { userData } = useUserStore();
   console.log("userData", userData);
   const isVerified = userData?.isVerified;
+  const hasStories = (userData?.stories ?? []).length > 0;
 
   return (
     <div className="w-full flex flex-col justify-start items-center">
@@ -25,14 +26,28 @@ const EditCover = () => {
         </Button>
       </div>
       <div className="relative">
-        <Avatar className="-mt-16 p-[0.2rem] relative rounded-full bg-gradient-to-r from-[#428CFA] via-[#7062FB] via-[#E956D1] via-[#FB5F78] to-[#F98437] w-[128px] h-[128px]">
-          <AvatarImage
-            className="rounded-full border-3 border-black object-cover"
-            src={userData?.avatarImage}
-            alt="User Profile"
-          />
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
+        {hasStories ? (
+          <div className="-mt-16 p-[0.2rem] rounded-full bg-gradient-to-r from-[#428CFA] via-[#7062FB] via-[#E956D1] via-[#FB5F78] to-[#F98437] w-[128px] h-[128px]">
+            <Avatar className="w-full h-full">
+              <AvatarImage
+                className="rounded-full border-3 border-black object-cover"
+                src={userData?.avatarImage}
+                alt="User Profile"
+              />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+          </div>
+        ) : (
+          <Avatar className="-mt-16 w-[128px] h-[128px]">
+            <AvatarImage
+              className="rounded-full border-3 border-black object-cover"
+              src={userData?.avatarImage}
+              alt="User Profile"
+            />
+            <AvatarFallback>CN</AvatarFallback>
+          </Avatar>
+        )}
+
         {isVerified && (
           <img
             src="verified-badge-profile-icon-png-one.png"
