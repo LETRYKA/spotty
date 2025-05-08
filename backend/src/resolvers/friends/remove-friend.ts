@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 
 export const removeFriend = async (req: Request, res: Response) => {
   try {
-    const userId = req.body.userId;
+    const { userId } = req.body;
     const friendId = req.params.id;
 
     await prisma.friendship.deleteMany({
@@ -19,9 +19,12 @@ export const removeFriend = async (req: Request, res: Response) => {
     });
 
     const friends = await getFriends(userId);
-    res.status(200).json({ message: "Friend removed", friends });
+
+    res.status(200).json({
+      message: `Removed friend ${friendId}`,
+      friends,
+    });
   } catch (err: any) {
-    const errorMessage = err instanceof Error ? err.message : "Unknown error";
-    res.status(400).json({ error: errorMessage });
+    res.status(400).json({ error: err.message || "Unknown error" });
   }
 };
