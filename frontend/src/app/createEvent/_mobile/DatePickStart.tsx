@@ -27,7 +27,7 @@ export default function DateTimePicker({
   const displayText = useMemo(() => {
     return value
       ? format(value, "MM/dd/yyyy hh:mm aa")
-      : "Date End Event";
+      : "Date Start Event";
   }, [value]);
 
   const handleDateSelect = (date: Date | undefined) => {
