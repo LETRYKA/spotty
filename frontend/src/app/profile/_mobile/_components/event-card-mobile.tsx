@@ -16,6 +16,7 @@ const EventCardsMobile = () => {
     const fetchUserEvents = async (id: string) => {
       try {
         const data = await getUserData(id);
+        console.log("data", data);
         if (data?.events) {
           const updatedEvents = data.events.map((event: Event) => {
             const formattedStartAt = new Date(event.startAt);
@@ -42,7 +43,7 @@ const EventCardsMobile = () => {
       fetchUserEvents(userId);
     }
   }, [userId]);
-
+  
   const getStatusStylesAndText = (status: string) => {
     switch (status) {
       case "ENDED":
