@@ -23,6 +23,8 @@ import { useState } from "react";
 import DateTimePicker from "./DateTimePicker";
 import ImageGallery from "./ImageGallery";
 import PasscodeDialog from "./Passcode";
+import { useUser } from "@clerk/nextjs";
+import { createEvent } from "@/lib/api";
 
 const eventSchema = z.object({
   title: z.string().max(20, "Title must be at most 20 characters"),
@@ -44,6 +46,7 @@ const eventSchema = z.object({
 });
 
 export default function CreateEvent() {
+  const user = useUser();
   const [showPasscodeDialog, setShowPasscodeDialog] = useState(false);
   const [pendingValues, setPendingValues] = useState<any>(null);
 
@@ -51,13 +54,13 @@ export default function CreateEvent() {
     initialValues: {
       title: "",
       description: "",
-      lat: undefined,
-      lng: undefined,
+      lat: 12,
+      lng: 12,
       isPrivate: false,
       hiddenFromMap: false,
       password: "",
-      startAt: undefined,
-      endAt: undefined,
+      startAt: "",
+      endAt: new Date(),
       participantLimit: undefined,
       categories: [] as string[],
       backgroundImage: null,
@@ -69,7 +72,10 @@ export default function CreateEvent() {
         setPendingValues(values);
         setShowPasscodeDialog(true);
       } else {
-        console.log({ ...values, password: "" });
+        console.log({ ...values, password: "", userId: user?.id });
+        if (user.user?.id) {
+          createEvent(values, user.user?.id);
+        }
       }
     },
   });
@@ -139,7 +145,7 @@ export default function CreateEvent() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="bg-[#0D0D0D] border-[#2F2F2F] text-white">
-                    {["Status Bar", "Panel"].map((cat) => (
+                    {["1", "2"].map((cat) => (
                       <DropdownMenuCheckboxItem
                         key={cat}
                         checked={formik.values.categories.includes(cat)}
@@ -213,7 +219,7 @@ export default function CreateEvent() {
                     onCheckedChange={(checked) =>
                       formik.setFieldValue("isPrivate", checked)
                     }
-                    className="w-6 aspect-square rounded-full bg-[#0D0D0D]/10 border-white/30 data-[state=checked]:bg-blue-600"
+                    className="w-6 h-auto aspect-square rounded-full bg-[#0D0D0D]/10 border-white/30 data-[state=checked]:bg-blue-600"
                   />
                 </div>
                 <p className="text-sm">Private</p>
@@ -229,7 +235,7 @@ export default function CreateEvent() {
                     onCheckedChange={(checked) =>
                       formik.setFieldValue("hiddenFromMap", checked)
                     }
-                    className="w-6 aspect-square rounded-full bg-[#0D0D0D]/10 border-white/30 data-[state=checked]:bg-blue-600"
+                    className="w-6 h-auto aspect-square rounded-full bg-[#0D0D0D]/10 border-white/30 data-[state=checked]:bg-blue-600"
                   />
                 </div>
                 <p className="text-sm">Hide from map</p>
@@ -238,7 +244,7 @@ export default function CreateEvent() {
             </div>
             <Button
               type="submit"
-              className="w-full bg-blue-600 rounded-xl py-5 hover:bg-blue-700"
+              className="w-full bg-blue-600 rounded-xl py-5 hover:bg-blue-700 mt-4"
             >
               Continue
             </Button>
