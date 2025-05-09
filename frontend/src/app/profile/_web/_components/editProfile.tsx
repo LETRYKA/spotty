@@ -58,12 +58,22 @@ const EditProfile = () => {
             <DialogTitle>Edit profile</DialogTitle>
           </DialogHeader>
           <div className="w-full flex flex-col justify-center items-center">
-            <div className="w-full h-[104px] bg-[#8D8D8D] flex flex-col rounded-3xl"></div>
+            <div className="w-full h-[104px] bg-[#8D8D8D] flex flex-col rounded-3xl">
+            {localUserData?.backgroundImage ? (
+          <img
+            src={localUserData.backgroundImage}
+            alt="Cover"
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full bg-[#8D8D8D]" />
+        )}
+            </div>
             <div className="relative">
               <Avatar className="-mt-16 p-[4px] relative rounded-full w-[111px] h-[111px]">
                 <AvatarImage
                   className="rounded-full border-4 border-black object-cover"
-                  src="https://www.angelopedia.com/NewsInPic/E0G6MS5T42Mongolia.jpg"
+                  src={localUserData?.avatarImage ?? ""}
                   alt="User Profile"
                 />
                 <AvatarFallback>CN</AvatarFallback>

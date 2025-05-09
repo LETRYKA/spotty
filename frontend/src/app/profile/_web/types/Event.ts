@@ -16,6 +16,7 @@ export type Event = {
   password: string | null;
   startAt: string;
   formattedStartAt?: string;
+  isCancelled?: boolean;
   owner: {
     name: string;
   };
