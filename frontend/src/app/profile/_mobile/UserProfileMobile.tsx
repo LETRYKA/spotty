@@ -6,7 +6,7 @@ import { ChevronDown } from "lucide-react";
 import { getUserData } from "@/lib/api";
 import { User } from "../_web/types/User";
 import HeaderMobileProfile from "./Header";
-import EventCardsMobile from "./_components/event-card-mobile";
+import EventCardsMobile from "./_components/eventCardMobile";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import EditProfile from "./EditProfile";
