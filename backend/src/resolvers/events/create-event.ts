@@ -31,11 +31,9 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
       !ownerId ||
       lat === undefined ||
       lng === undefined ||
-      !description ||
       isPrivate === undefined ||
       !participantLimit ||
       !startAt ||
-      !endAt ||
       !Array.isArray(categories) ||
       categories.length === 0
     ) {
