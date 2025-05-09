@@ -22,7 +22,7 @@ const EditCover = () => {
           <div className="w-full h-full bg-[#8D8D8D]" />
         )}
         <Button className="absolute bottom-4 right-4 z-10 opacity-80 hover:opacity-100 bg-[#141414] text-white py-2 px-4 focus-visible:ring-transparent transition-transform duration-300 ease-in-out transform hover:scale-102 hover:shadow-xl">
-          Edit Cover image
+          Ковер солих
         </Button>
       </div>
       <div className="relative">
@@ -67,7 +67,7 @@ const EditCover = () => {
               friendIds={userData?.friendships?.map((f) => f.friendId) || []}
             />
           </span>
-          friends
+          {userData?.friendships?.length === 0 ? "" : "найзтай"}
         </p>
       </div>
     </div>
