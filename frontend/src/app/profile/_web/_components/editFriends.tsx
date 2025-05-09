@@ -18,6 +18,7 @@ import { useUser } from "@clerk/nextjs";
 
 const EditFriends = ({ friendIds }: { friendIds: string[] }) => {
   const [friendsData, setFriendsData] = useState<User[]>([]);
+  
   const { user } = useUser();
   const userId = user?.id;
 
@@ -43,7 +44,7 @@ const EditFriends = ({ friendIds }: { friendIds: string[] }) => {
           variant="default"
           className="text-base font-semibold bg-transparent hover:bg-transparent border-none shadow-none hover:underline focus-visible:ring-transparent"
         >
-          {friendIds.length > 0 ? `${friendIds.length}` : "No friends yet"}
+          {friendIds.length > 0 ? `${friendIds.length}` : "Чи ганцаараа"}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] dark px-8 py-6">

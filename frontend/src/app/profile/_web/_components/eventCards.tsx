@@ -7,7 +7,7 @@ import { useUser } from "@clerk/nextjs";
 import { formatDate } from "@/utils/DateFormatter";
 import { enrichEventsWithStatus } from "@/utils/eventStatus";
 import { getStatusStylesAndText } from "@/utils/statusStyles";
-import { StatusStyles } from '@/app/profile/_web/types/statusStyles';
+import { StatusStyles } from "@/app/profile/_web/types/statusStyles";
 
 const EventCards = () => {
   const [eventData, setEventData] = useState<Event[]>([]);
@@ -37,7 +37,7 @@ const EventCards = () => {
   );
 
   return (
-    <div className="w-full h-auto grid grid-cols-6 gap-10 mt-8 px-8">
+    <div className="w-full h-auto grid grid-cols-2 lg:grid-cols-5 sm:grid-cols-4 xs:grid-cols-3 xl:grid-cols-6 gap-10 mt-8 px-8">
       {eventsWithStatus.map((event) => {
         const { background, border, text } = getStatusStylesAndText(
           event.status as keyof StatusStyles
@@ -57,7 +57,7 @@ const EventCards = () => {
                 <div className="w-full h-auto flex flex-col justify-start items-start">
                   <h5 className="text-white/50 text-sm font-medium flex gap-2 items-center">
                     <Navigation className="w-4 rounded-full" />
-                    Ulaanbaatar, MN
+                    Улаанбаатар, Монгол
                   </h5>
                   <p className="text-white text-3xl font-bold mt-2 leading-8">
                     {event.title}
@@ -83,7 +83,12 @@ const EventCards = () => {
                       @{event.owner.name}
                     </p>
                     <p className="font-regular text-[0.6rem] text-black/50">
+                      <span className="text-xs font-bold">Эхлэх: </span>{" "}
                       {event ? formatDate(event.startAt) : "Loading..."}
+                    </p>
+                    <p className="font-regular text-[0.6rem] text-black/50">
+                      <span className="text-[0.7rem] font-bold">Дуусах: </span>
+                      {event ? formatDate(event.endAt) : "Loading..."}
                     </p>
                   </div>
                   <div className="flex flex-row gap-1 justify-center items-center relative">
