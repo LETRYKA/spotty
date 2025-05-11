@@ -1,16 +1,19 @@
+"use client"
+
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { ChevronDown } from "lucide-react";
 import { getUserData } from "@/lib/api";
 import { User } from "../_web/types/User";
-import HeaderMobileProfile from "./Header";
+import HeaderMobileProfile from "./_components/Header";
 import EventCardsMobile from "./_components/EventCardMobile";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import EditProfile from "./EditProfile";
+import EditProfile from "./_components/EditProfile";
 import { Sheet, SheetClose, SheetContent, SheetHeader } from "@/components/ui/sheet";
-import EditFriends from "../_web/_components/editFriends";
 import { DialogTitle } from "@radix-ui/react-dialog";
+import FriendRequests from "./_components/FriendRequests";
+
 const UserProfileMobile = () => {
   const [userData, setLocalUserData] = useState<User | null>(null);
   const [editProfileOpen, setEditProfileOpen] = useState(false);
@@ -18,7 +21,6 @@ const UserProfileMobile = () => {
   const { user } = useUser();
   const userId = user?.id;
 
-  // Fetch user data on load
   useEffect(() => {
     const fetchUser = async (id: string) => {
       try {
@@ -52,7 +54,7 @@ const UserProfileMobile = () => {
       <div className="w-full bg-[#8D8D8D] flex flex-col rounded-3xl h-26 mt-8">
         <div className="relative">
           <img
-            src={userData?.backgroundImage || "/images/blackhole.jpg"}
+            src={userData?.backgroundImage || " https://i.imgur.com/4K6x1Zc.png"}
             alt="Background"
             className="w-full h-26 rounded-3xl object-cover"
           />
@@ -116,6 +118,7 @@ const UserProfileMobile = () => {
       {editProfileOpen && (
         <EditProfile open={editProfileOpen} onClose={() => setEditProfileOpen(false)} />
       )}
+
       <Sheet open={friendsPageOpen} onOpenChange={(open) => setFriendsPageOpen(open)}>
         <SheetContent
           side="right"
@@ -136,7 +139,7 @@ const UserProfileMobile = () => {
           </SheetHeader>
 
           <div className="mt-4">
-            <EditFriends friendIds={userData.friendships?.map(friend => friend.id) || []} />
+            <FriendRequests />
           </div>
         </SheetContent>
       </Sheet>

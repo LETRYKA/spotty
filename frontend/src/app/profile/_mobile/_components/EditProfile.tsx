@@ -21,8 +21,8 @@ import { DialogTitle } from "@radix-ui/react-dialog";
 import { useUser } from "@clerk/nextjs";
 import { getUserData } from "@/lib/api";
 import { useUserStore } from "@/app/profile/_web/store/userStore";
-import { User } from "../_web/types/User";
-import { handleSave } from "../_web/utils/handleSave";
+import { User } from "../../_web/types/User";
+import { handleSave } from "../../_web/utils/handleSave";
 
 interface EditProfileProps {
   open: boolean;
