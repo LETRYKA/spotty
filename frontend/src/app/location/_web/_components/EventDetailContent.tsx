@@ -140,7 +140,7 @@ export const EventDetailContent = ({
                   </p>
                 </div>
               </div>
-              <DropDown />
+              <DropDown friendId={participant?.id} />
             </div>
           ))}
         </div>
