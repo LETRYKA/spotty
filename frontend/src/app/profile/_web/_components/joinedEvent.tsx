@@ -17,8 +17,6 @@ const JoinedEvent = () => {
   const fetchUserEvents = async (id: string) => {
     try {
       const data = await getUserData(id);
-      console.log("Fetched events:", data.joinedEvents);
-      
       setEventData(data.joinedEvents);
     } catch (error) {
       console.error("Error fetching user events:", error);
