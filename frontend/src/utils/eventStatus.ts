@@ -12,8 +12,10 @@ export const determineEventStatus = (event: Event): string => {
 };
 
 export const enrichEventsWithStatus = (
-  events: Event[]
+  events?: Event[]
 ): (Event & { status: string })[] => {
+  if (!events) return [];
+
   return events.map((event) => ({
     ...event,
     status: determineEventStatus(event),
