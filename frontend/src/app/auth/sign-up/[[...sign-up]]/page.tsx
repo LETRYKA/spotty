@@ -7,8 +7,7 @@ export default function SignUpPage() {
     <div className="flex justify-center items-center min-h-screen">
       <div className="w-2/4 h-screen flex justify-center items-center">
         <SignUp
-          routing="path"
-          path="/auth/sign-up"
+          routing="hash"
           signInUrl="/auth/sign-in"
           afterSignUpUrl="/dashboard"
           redirectUrl="/dashboard"
