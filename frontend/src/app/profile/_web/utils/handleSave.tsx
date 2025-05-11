@@ -17,6 +17,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
         name: user.name,
         email: user.email,
         phoneNumber: user.phoneNumber,
+        moodStatus: user.moodStatus,
       }),
     });
 
