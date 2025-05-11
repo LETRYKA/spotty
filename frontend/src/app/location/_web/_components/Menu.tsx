@@ -31,7 +31,7 @@ export default function DropDown({ friendId }: DropDownProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Ellipsis className="pr-2 stroke-white/50 w-7" />
+        <Ellipsis className="pr-2 stroke-white/40 w-7" />
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="center"

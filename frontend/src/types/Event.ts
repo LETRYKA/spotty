@@ -8,7 +8,12 @@ export interface Event {
   isPrivate: boolean;
   description: string;
   categories?: { emoji: string }[];
-  participants: { name: string; avatarImage: string; moodStatus: string }[];
   participantLimit?: number;
   galleryImages: string[];
+  participants: {
+    id: string;
+    name: string;
+    avatarImage: string;
+    moodStatus: string;
+  }[];
 }

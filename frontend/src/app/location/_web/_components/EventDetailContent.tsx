@@ -70,7 +70,7 @@ export const EventDetailContent = ({
           Not going
         </Button>
       </div>
-      <div className="w-full flex justify-start bg mt-1 pl-6">
+      <div className="w-full flex justify-start bg mt-2 pl-6">
         <div className="w-full">
           <Carousel>
             <CarouselContent className="flex gap-5">
