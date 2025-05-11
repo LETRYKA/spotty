@@ -5,7 +5,10 @@ export interface Event {
   endAt: string;
   isCancelled: boolean;
   owner: { name: string };
-  categories: { emoji: string }[];
-  participants: any[];
-  participantLimit: number;
+  isPrivate: boolean;
+  description: string;
+  categories?: { emoji: string }[];
+  participants: { name: string; avatarImage: string; moodStatus: string }[];
+  participantLimit?: number;
+  galleryImages: string[];
 }

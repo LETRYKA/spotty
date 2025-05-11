@@ -11,7 +11,7 @@ const PinInput: React.FC<PinInputProps> = ({ length = 4, onChange }) => {
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
 
   const handleChange = (index: number, value: string) => {
-    if (!/^\d?$/.test(value)) return; 
+    if (!/^\d?$/.test(value)) return;
     const newValues = [...values];
     newValues[index] = value;
     setValues(newValues);

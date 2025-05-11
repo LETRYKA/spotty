@@ -19,6 +19,7 @@ type PasscodeDialogProps = {
   onSubmit: (password: string) => void;
   onCancel: () => void;
   eventTitle: string;
+  mode: "create" | "access";
 };
 
 const passcodeSchema = z.object({
@@ -33,6 +34,7 @@ export default function PasscodeDialog({
   onSubmit,
   onCancel,
   eventTitle,
+  mode,
 }: PasscodeDialogProps) {
   const formik = useFormik({
     initialValues: { pin: "" },
@@ -49,7 +51,9 @@ export default function PasscodeDialog({
           {eventTitle}
         </DialogTitle>
         <DialogDescription className="-mt-3 text-white/30 font-regular">
-          Enter private passcode for the event
+          {mode === "create"
+            ? "Set a passcode for your private event"
+            : "Enter private passcode for the event"}
         </DialogDescription>
         <form onSubmit={formik.handleSubmit} className="w-full mt-2">
           <div className="w-full flex justify-center items-center">
@@ -89,13 +93,13 @@ export default function PasscodeDialog({
               onClick={onCancel}
               className="w-2/4 py-6 rounded-full bg-[#0D0D0D]/70 hover:bg-[#1F1F1F]"
             >
-              Maybe later
+              Cancel
             </Button>
             <Button
               type="submit"
               className="w-2/4 py-6 rounded-full bg-blue-600 hover:bg-blue-700"
             >
-              Create
+              {mode === "create" ? "Create" : "Join"}
             </Button>
           </div>
         </form>

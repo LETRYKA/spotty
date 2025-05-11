@@ -14,6 +14,7 @@ const getEvent = async (
     const event = await prisma.event.findUnique({
       where: { id },
       include: {
+        categories: true, // ✅ This is all you need for implicit many-to-many
         owner: {
           select: {
             id: true,
@@ -47,7 +48,7 @@ const getEvent = async (
     }
 
     const totalParticipants = event.participants.length;
-
+    const cleanCategories = event.categories.map((ec) => ec.category);
     res.status(200).json({
       event,
       totalParticipants,
@@ -57,6 +58,5 @@ const getEvent = async (
     res.status(500).json({ message: "Server error" });
   }
 };
-
 
 export default getEvent;
