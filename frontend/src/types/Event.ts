@@ -15,5 +15,5 @@ export interface Event {
     name: string;
     avatarImage: string;
     moodStatus: string;
-  }[];
+  };
 }

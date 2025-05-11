@@ -47,7 +47,7 @@ export const EventDetailContent = ({
           minute: "2-digit",
         })}
       </p>
-      <div className="w-full flex justify-center gap-3 mt-3 px-8">
+      <div className="w-full flex justify-center gap-3 mt-2 px-8">
         {joined ? (
           <Button className="bg-[#0278FC] hover:bg-[#0277fcdc] w-2/4 text-white rounded-2xl py-8 flex flex-col gap-0 text-base hover:scale-105 transition-all">
             <CircleCheck strokeWidth={3} />
