@@ -13,7 +13,7 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
       lat,
       lng,
       isPrivate,
-      hiddenFromMap,  
+      hiddenFromMap,
       password,
       ownerId,
       participantIds,
@@ -25,7 +25,7 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
       backgroundImage,
       galleryImages,
     } = req.body;
- 
+
     if (
       !title ||
       !ownerId ||
@@ -50,12 +50,16 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
     }
 
     if (password && password.length !== 4) {
-      res.status(400).json({ error: "Password must be at least 4 characters" });
+      res
+        .status(400)
+        .json({ error: "Password must be at least 4 characters" });
       return;
     }
 
     if (isPrivate && !password) {
-      res.status(400).json({ error: "A password is required for private events." });
+      res
+        .status(400)
+        .json({ error: "A password is required for private events." });
       return;
     }
 
@@ -65,12 +69,16 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
       });
 
       if (validParticipants.length !== participantIds.length) {
-        res.status(400).json({ error: "One or more participant IDs are invalid" });
+        res
+          .status(400)
+          .json({ error: "One or more participant IDs are invalid" });
         return;
       }
 
       if (participantLimit && participantIds.length > participantLimit) {
-        res.status(400).json({ error: `Participant limit of ${participantLimit} exceeded` });
+        res
+          .status(400)
+          .json({ error: `Participant limit of ${participantLimit} exceeded` });
         return;
       }
     }
@@ -85,7 +93,9 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
     }
 
     if (!Array.isArray(galleryImages) || galleryImages.length > 5) {
-      res.status(400).json({ error: "You must provide up to 5 gallery images as an array." });
+      res
+        .status(400)
+        .json({ error: "You must provide up to 5 gallery images as an array." });
       return;
     }
 
@@ -94,6 +104,7 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
+    // Статус тохируулах
     let eventStatus: EventStatus = EventStatus.UPCOMING;
     const allowedStatuses: EventStatus[] = [
       EventStatus.UPCOMING,
@@ -105,6 +116,11 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
     if (status && allowedStatuses.includes(status)) {
       eventStatus = status;
     }
+
+    const parsedStartAt = new Date(startAt);
+    const parsedEndAt = endAt
+      ? new Date(endAt)
+      : new Date(parsedStartAt.getTime() + 24 * 60 * 60 * 1000); 
 
     const event = await prisma.event.create({
       data: {
@@ -122,8 +138,8 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
           ? { connect: participantIds.map((id: string) => ({ id })) }
           : undefined,
         status: eventStatus,
-        startAt: startAt ? new Date(startAt) : new Date(),
-        endAt: endAt ? new Date(endAt) : null,
+        startAt: parsedStartAt,
+        endAt: parsedEndAt,
         participantLimit,
         categories: {
           connect: categories.map((id: string) => ({ id })),
@@ -134,8 +150,9 @@ const createEvent = async (req: Request, res: Response): Promise<void> => {
       },
     });
 
+
     if (event.status !== EventStatus.CANCELLED) {
-      const now = new Date().getTime();
+      const now = Date.now();
 
       if (new Date(event.startAt).getTime() <= now) {
         await prisma.event.update({
