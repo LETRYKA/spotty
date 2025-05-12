@@ -32,6 +32,7 @@ export async function getUserById(req: Request, res: Response) {
             id: true,
             friendId: true,
             userId: true,
+            status: true,
           },
         },
         locations: true,
