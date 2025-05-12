@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -6,31 +7,22 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { ChevronDown } from "lucide-react";
 import { useFormik } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { z } from "zod";
-import { useState } from "react";
-import DateTimePicker from "./DateTimePicker";
-import ImageGallery from "./ImageGallery";
-import PasscodeDialog from "./Passcode";
 import { useUser } from "@clerk/nextjs";
-import { createEvent } from "@/lib/api";
+import { createEvent, getCategories } from "@/lib/api";
+import { toast } from "react-toastify";
+import CreateEventForm from "./CreateEventForm";
+import LocationSelect from "./LocationSelect";
+import PasscodeDialog from "./Passcode";
+import { EventFormValues } from "../types/Event";
 
 const eventSchema = z.object({
   title: z.string().max(20, "Title must be at most 20 characters"),
   description: z.string().optional(),
-  lat: z.number().optional(),
-  lng: z.number().optional(),
+  lat: z.number({ required_error: "Location is required" }),
+  lng: z.number({ required_error: "Location is required" }),
   isPrivate: z.boolean().default(false),
   hiddenFromMap: z.boolean().default(false),
   password: z.string().optional(),
@@ -46,69 +38,86 @@ const eventSchema = z.object({
 });
 
 export default function CreateEvent() {
-  const user = useUser();
+  const { user } = useUser();
+  const [showLocationSelect, setShowLocationSelect] = useState(false);
+  const [showCreateEventDialog, setShowCreateEventDialog] = useState(false);
   const [showPasscodeDialog, setShowPasscodeDialog] = useState(false);
-  const [pendingValues, setPendingValues] = useState<any>(null);
+  const [pendingValues, setPendingValues] = useState<EventFormValues | null>(
+    null
+  );
+  const [categories, setCategories] = useState<
+    { id: string; name: string; emoji: string }[]
+  >([]);
+  const [location, setLocation] = useState<{ lat: number; lng: number } | null>(
+    null
+  );
 
-  const formik = useFormik({
+  const formik = useFormik<EventFormValues>({
     initialValues: {
       title: "",
       description: "",
-      lat: 12,
-      lng: 12,
+      lat: location?.lat || 0,
+      lng: location?.lng || 0,
       isPrivate: false,
       hiddenFromMap: false,
       password: "",
-      startAt: "",
+      startAt: new Date(),
       endAt: new Date(),
       participantLimit: undefined,
-      categories: [] as string[],
+      categories: [],
       backgroundImage: null,
       galleryImages: [],
     },
     validationSchema: toFormikValidationSchema(eventSchema),
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
+      setShowCreateEventDialog(false);
       if (values.isPrivate) {
         setPendingValues(values);
         setShowPasscodeDialog(true);
-      } else {
-        console.log({ ...values, password: "", userId: user?.id });
-        if (user.user?.id) {
-          createEvent(values, user.user?.id);
+      } else if (user?.id) {
+        try {
+          await createEvent({ ...values, password: "" }, user.id);
+          toast.success("Event created successfully");
+          formik.resetForm();
+          setLocation(null);
+        } catch (err) {
+          console.error("Failed to create event:", err);
+          toast.error("Failed to create event");
         }
       }
     },
   });
 
-  const handlePasscodeSubmit = (password: string) => {
-    if (pendingValues) {
-      console.log({ ...pendingValues, password });
-      setShowPasscodeDialog(false);
-      setPendingValues(null);
-      formik.resetForm();
+  const handlePasscodeSubmit = async (password: string) => {
+    if (pendingValues && user?.id) {
+      try {
+        await createEvent({ ...pendingValues, password }, user.id);
+        toast.success("Event created successfully");
+        setShowPasscodeDialog(false);
+        setPendingValues(null);
+        formik.resetForm();
+        setLocation(null);
+      } catch (err) {
+        console.error("Failed to create event with passcode:", err);
+        toast.error("Failed to create event");
+        setShowPasscodeDialog(false);
+      }
     }
-  };
-
-  const handlePasscodeCancel = () => {
-    setShowPasscodeDialog(false);
-    setPendingValues(null);
-  };
-
-  const toggleCategory = (category: string) => {
-    const categories = formik.values.categories;
-    formik.setFieldValue(
-      "categories",
-      categories.includes(category)
-        ? categories.filter((c) => c !== category)
-        : [...categories, category]
-    );
   };
 
   return (
     <>
-      <Dialog>
+      <Dialog
+        open={showCreateEventDialog}
+        onOpenChange={(open) => !open && setShowCreateEventDialog(false)}
+      >
         <DialogTrigger asChild>
-          <Button variant="outline">Create Event</Button>
+          <Button
+            className="rounded-full w-14 h-14 bg-blue-600 hover:bg-blue-700"
+            onClick={() => setShowLocationSelect(true)}
+          >
+            +
+          </Button>
         </DialogTrigger>
         <DialogContent className="max-w-[500px] bg-black/30 backdrop-blur-lg border-[#2F2F2F] rounded-3xl p-6">
           <DialogHeader>
@@ -116,147 +125,32 @@ export default function CreateEvent() {
               Create Event
             </DialogTitle>
           </DialogHeader>
-          <form onSubmit={formik.handleSubmit} className="space-y-3 text-white">
-            <div className="flex gap-3">
-              <div className="w-1/2">
-                <Input
-                  name="title"
-                  placeholder="Title"
-                  maxLength={20}
-                  value={formik.values.title}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  className="bg-[#0D0D0D]/70 border-[#2F2F2F] py-5 rounded-xl"
-                />
-                {formik.touched.title && formik.errors.title && (
-                  <div className="text-red-500 text-xs mt-1">
-                    {formik.errors.title}
-                  </div>
-                )}
-              </div>
-              <div className="w-1/2">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="w-full bg-[#0D0D0D]/70 border-[#2F2F2F] py-5 rounded-xl flex justify-between"
-                    >
-                      Category <ChevronDown className="text-white/50" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="bg-[#0D0D0D] border-[#2F2F2F] text-white">
-                    {["1", "2"].map((cat) => (
-                      <DropdownMenuCheckboxItem
-                        key={cat}
-                        checked={formik.values.categories.includes(cat)}
-                        onCheckedChange={() => toggleCategory(cat)}
-                      >
-                        {cat}
-                      </DropdownMenuCheckboxItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-                {formik.touched.categories && formik.errors.categories && (
-                  <div className="text-red-500 text-xs mt-1">
-                    {formik.errors.categories}
-                  </div>
-                )}
-              </div>
-            </div>
-            <Textarea
-              name="description"
-              placeholder="Description"
-              rows={4}
-              value={formik.values.description}
-              onChange={formik.handleChange}
-              className="bg-[#0D0D0D]/70 border-[#2F2F2F] rounded-xl p-3"
-            />
-            <div className="flex gap-3">
-              <div className="w-1/2">
-                <DateTimePicker
-                  value={formik.values.startAt}
-                  onChange={(date) => formik.setFieldValue("startAt", date)}
-                  touched={formik.touched.startAt}
-                  error={formik.errors.startAt}
-                />
-              </div>
-              <div className="w-1/2">
-                <Input
-                  name="participantLimit"
-                  type="number"
-                  placeholder="Slot"
-                  value={formik.values.participantLimit || ""}
-                  onChange={(e) =>
-                    formik.setFieldValue(
-                      "participantLimit",
-                      e.target.value === ""
-                        ? undefined
-                        : parseInt(e.target.value)
-                    )
-                  }
-                  className="bg-[#0D0D0D]/70 border-[#2F2F2F] py-5 rounded-xl"
-                />
-              </div>
-            </div>
-            <ImageGallery
-              galleryImages={formik.values.galleryImages}
-              setGalleryImages={(urls) =>
-                formik.setFieldValue("galleryImages", urls)
-              }
-              backgroundImage={formik.values.backgroundImage}
-              setBackgroundImage={(url) =>
-                formik.setFieldValue("backgroundImage", url)
-              }
-              touched={formik.touched}
-              errors={formik.errors}
-            />
-            <div className="flex gap-3">
-              <div className="w-1/2 bg-[#0D0D0D]/70 rounded-2xl border-[#2F2F2F] p-4">
-                <div className="flex justify-end">
-                  <Checkbox
-                    id="private"
-                    checked={formik.values.isPrivate}
-                    onCheckedChange={(checked) =>
-                      formik.setFieldValue("isPrivate", checked)
-                    }
-                    className="w-6 h-auto aspect-square rounded-full bg-[#0D0D0D]/10 border-white/30 data-[state=checked]:bg-blue-600"
-                  />
-                </div>
-                <p className="text-sm">Private</p>
-                <p className="text-xs text-white/50">
-                  Event secured with passcode
-                </p>
-              </div>
-              <div className="w-1/2 bg-[#0D0D0D]/70 rounded-2xl border-[#2F2F2F] p-4">
-                <div className="flex justify-end">
-                  <Checkbox
-                    id="hiddenFromMap"
-                    checked={formik.values.hiddenFromMap}
-                    onCheckedChange={(checked) =>
-                      formik.setFieldValue("hiddenFromMap", checked)
-                    }
-                    className="w-6 h-auto aspect-square rounded-full bg-[#0D0D0D]/10 border-white/30 data-[state=checked]:bg-blue-600"
-                  />
-                </div>
-                <p className="text-sm">Hide from map</p>
-                <p className="text-xs text-white/50">Only friends can see</p>
-              </div>
-            </div>
-            <Button
-              type="submit"
-              className="w-full bg-blue-600 rounded-xl py-5 hover:bg-blue-700 mt-4"
-            >
-              Continue
-            </Button>
-          </form>
+          <CreateEventForm formik={formik} categories={categories} />
         </DialogContent>
       </Dialog>
+
+      <LocationSelect
+        open={showLocationSelect}
+        onSelect={(lat, lng) => {
+          setLocation({ lat, lng });
+          formik.setFieldValue("lat", lat);
+          formik.setFieldValue("lng", lng);
+          setShowLocationSelect(false);
+          setShowCreateEventDialog(true);
+        }}
+        onClose={() => setShowLocationSelect(false)}
+      />
+
       {showPasscodeDialog && (
         <PasscodeDialog
           open={showPasscodeDialog}
           onSubmit={handlePasscodeSubmit}
-          onCancel={handlePasscodeCancel}
+          onCancel={() => {
+            setShowPasscodeDialog(false);
+            setPendingValues(null);
+          }}
           eventTitle={formik.values.title || "Event"}
+          mode="create"
         />
       )}
     </>

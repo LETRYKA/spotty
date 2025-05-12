@@ -36,9 +36,11 @@ interface Event {
   participants: any[];
 }
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 const fetchEvents = async (): Promise<Event[]> => {
   try {
-    const res = await fetch("https://spotty-5r8n.onrender.com/api/events");
+    const res = await fetch(`${API_URL}/api/events`);
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     const data = await res.json();
     console.log("Fetched events:", data);
