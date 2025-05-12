@@ -5,7 +5,7 @@ import { User } from "../types/User";
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 
- export const handleSave = async (user:User | null, updateStoreUserData: (data: Partial<User>)=> void) => {
+ export const handleSaveImg = async (user:User | null, updateStoreUserData: (data: Partial<User>)=> void) => {
   const userId = user?.id;
 
   if (!userId || !user) return;
@@ -14,10 +14,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        name: user.name,
-        email: user.email,
-        phoneNumber: user.phoneNumber,
-        moodStatus: user.moodStatus,
+        backGroundImage: user.backgroundImage,
       }),
     });
 

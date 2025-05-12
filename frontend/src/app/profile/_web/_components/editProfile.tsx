@@ -25,6 +25,8 @@ const EditProfile = () => {
   const { setFullUserData, setUserData: updateStoreUserData } = useUserStore();
   const { user } = useUser();
   const userId = user?.id;
+  console.log("test", localUserData);
+  
 
   const fetchUser = async (id: string) => {
     try {

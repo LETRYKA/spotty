@@ -47,7 +47,7 @@ export async function getUserById(req: Request, res: Response) {
             isPrivate: true,
             createdAt: true,
             owner: {
-              select:{
+              select: {
                 name: true,
               },
             },
@@ -60,7 +60,31 @@ export async function getUserById(req: Request, res: Response) {
             },
           },
         },
-        joinedEvents: true,
+        joinedEvents: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            startAt: true,
+            endAt: true,
+            participants: true,
+            participantLimit: true,
+            isPrivate: true,
+            createdAt: true,
+            owner: {
+              select: {
+                name: true,
+              },
+            },
+            categories: {
+              select: {
+                id: true,
+                name: true,
+                emoji: true,
+              },
+            },
+          },
+        },
         stories: true,
       },
     });
