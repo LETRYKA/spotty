@@ -26,6 +26,13 @@ const getEvent = async (
             batteryLevel: true,
           },
         },
+        categories: {
+          select: {
+            id: true,
+            name: true,
+            emoji: true
+          }
+        },
         participants: {
           select: {
             id: true,
