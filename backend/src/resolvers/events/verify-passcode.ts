@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from "express";
 import { PrismaClient, User } from "@prisma/client";
-import bcrypt from "bcrypt";
 
 declare global {
   namespace Express {
@@ -21,7 +20,7 @@ const verifyPasscode = async (
   const { passcode } = req.body;
 
   if (!passcode) {
-    res.status(400).json({ message: "Passcode is required" });
+    res.status(400).json({ message: "Passcode is required", valid: false });
     return;
   }
 
@@ -33,54 +32,47 @@ const verifyPasscode = async (
         isPrivate: true,
         password: true,
         ownerId: true,
-        participants: {
-          select: { id: true },
-        },
+        participants: { select: { id: true } },
       },
     });
 
     if (!event) {
-      res.status(404).json({ message: "Event not found" });
+      res.status(404).json({ message: "Event not found", valid: false });
       return;
     }
 
     if (!event.isPrivate) {
-      res.status(200).json({
-        message: "Event is public",
-        valid: true,
-      });
+      res.status(200).json({ message: "Event is public", valid: true });
       return;
     }
 
     const userId = req.user?.id;
 
-    const isOwner = userId === event.ownerId;
-    const isParticipant = event.participants.some((p) => p.id === userId);
+    if (userId) {
+      const isOwner = userId === event.ownerId;
+      const isParticipant = event.participants.some((p) => p.id === userId);
 
-    if (isOwner || isParticipant) {
-      res.status(200).json({
-        message: "Access granted",
-        valid: true,
-      });
-      return;
+      if (isOwner || isParticipant) {
+        res.status(200).json({ message: "Access granted", valid: true });
+        return;
+      }
     }
+
     if (!event.password) {
-      res.status(400).json({
-        message: "This private event has no passcode set",
-        valid: false,
-      });
+      res.status(400).json({ message: "Private event has no passcode", valid: false });
       return;
     }
 
-    const validPasscode = await bcrypt.compare(passcode, event.password);
+    const isValid = passcode === event.password;
 
-    res.status(validPasscode ? 200 : 401).json({
-      message: validPasscode ? "Access granted" : "Access denied",
-      valid: validPasscode,
+    res.status(isValid ? 200 : 401).json({
+      message: isValid ? "Access granted" : "Access denied",
+      valid: isValid,
     });
+
   } catch (error) {
     console.error("Error verifying passcode:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error", valid: false });
   }
 };
 
