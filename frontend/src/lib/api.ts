@@ -67,7 +67,7 @@ export const getCategories = async () => {
     const response = await axios.get(`${API_URL}/api/categories`);
     return response.data;
   } catch (error) {
-    console.error('Error fetching categories:', error);
+    console.error("Error fetching categories:", error);
     throw error;
   }
 };
@@ -85,7 +85,7 @@ export const fetchEvent = async (eventId: string) => {
 export const verifyPasscode = async (eventId: string, passcode: string) => {
   try {
     const res = await axios.post(
-      `http://localhost:8000/api/events/${eventId}/verify-passcode`,
+      `${API_URL}/api/events/${eventId}/verify-passcode`,
       { passcode }
     );
     return res.data.valid;
@@ -148,5 +148,24 @@ export const getFriends = async (userId: string) => {
   } catch (error) {
     console.error("Failed to fetch friends:", error);
     return [];
+  }
+};
+
+// Add friend API
+export const addFriend = async (friendId: string, userId: string) => {
+  try {
+    const res = await axios.post(
+      `${API_URL}/api/friends/request/${friendId}`,
+      { userId },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return res.data.event;
+  } catch (err) {
+    console.error("Failed to leave event:", err);
+    return null;
   }
 };

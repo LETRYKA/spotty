@@ -10,10 +10,11 @@ export interface Event {
   categories?: { emoji: string }[];
   participantLimit?: number;
   galleryImages: string[];
-  participants: {
+  date: string;
+  participants: Array<{
     id: string;
     name: string;
     avatarImage: string;
     moodStatus: string;
-  };
+  }>;
 }
