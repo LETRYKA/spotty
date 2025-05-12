@@ -39,7 +39,7 @@ const Home = () => {
     <div className="w-full h-auto flex flex-col justify-start items-center bg-black p-4 relative">
       <ScrollProgress className="top-0" />
       <DockComp />
-      <div className="w-full h-[58rem] bg-[#F8F7F5] rounded-3xl overflow-hidden relative">
+      <div className="w-full h-[64rem] bg-[#F8F7F5] rounded-3xl overflow-hidden relative">
         <div className="w-full absolute top-0 flex justify-center items-start z-10">
           <p className="text-[500px] font-extrabold text-[var(--background)]/100 -mt-70">
             SPOTTY
