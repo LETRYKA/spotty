@@ -1,6 +1,14 @@
 import { Request, Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, User } from "@prisma/client";
 import bcrypt from "bcrypt";
+
+declare global {
+  namespace Express {
+    interface Request {
+      user?: User;
+    }
+  }
+}
 
 const prisma = new PrismaClient();
 
@@ -44,14 +52,11 @@ const verifyPasscode = async (
       return;
     }
 
-    // Get user ID from auth middleware
     const userId = req.user?.id;
 
-    // Check if user is owner or participant
     const isOwner = userId === event.ownerId;
     const isParticipant = event.participants.some((p) => p.id === userId);
 
-    // If user is owner or participant, grant access
     if (isOwner || isParticipant) {
       res.status(200).json({
         message: "Access granted",
@@ -59,8 +64,6 @@ const verifyPasscode = async (
       });
       return;
     }
-
-    // Verify passcode for other users
     if (!event.password) {
       res.status(400).json({
         message: "This private event has no passcode set",
