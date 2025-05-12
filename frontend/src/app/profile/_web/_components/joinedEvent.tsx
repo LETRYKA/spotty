@@ -91,7 +91,7 @@ const JoinedEvent = () => {
                   <div className="rounded-full w-5 h-5 bg-[#B7B7B7] -ml-3"></div>
                   <div className="rounded-full w-5 h-5 bg-[#939393] -ml-3"></div>
                   <p className="font-semibold text-xs ml-1">
-                    {event?.participants?.length}/{event?.participantLimit}
+                    {Array.isArray(event?.participants) ? event.participants.length : 0}/{event?.participantLimit}
                   </p>
                 </div>
               </div>

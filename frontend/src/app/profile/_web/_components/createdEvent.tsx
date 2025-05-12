@@ -63,7 +63,7 @@ const CreatedEvents = () => {
                 </div>
                 <div className="w-24 h-auto aspect-square bg-[linear-gradient(45deg,_#FAC634,_#FACF64)] rounded-full flex justify-center items-center mt-3">
                   <span className="text-3xl">
-                    {event?.categories[0]?.emoji}
+                    {event?.categories?.[0]?.emoji ?? ""}
                   </span>
                 </div>
               </div>
@@ -91,7 +91,10 @@ const CreatedEvents = () => {
                   <div className="rounded-full w-5 h-5 bg-[#B7B7B7] -ml-3"></div>
                   <div className="rounded-full w-5 h-5 bg-[#939393] -ml-3"></div>
                   <p className="font-semibold text-xs ml-1">
-                    {event.participants.length}/{event.participantLimit}
+                    {Array.isArray(event.participants)
+                      ? event.participants.length
+                      : 0}
+                    /{event.participantLimit}
                   </p>
                 </div>
               </div>

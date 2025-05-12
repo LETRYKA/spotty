@@ -5,10 +5,10 @@ import { splitText } from "motion-plus";
 import { useEffect, useRef } from "react";
 
 interface SplitTextProps {
-  tag?: keyof JSX.IntrinsicElements;
+  tag?: any;
   children: string;
   className?: string;
-  once?: boolean; // run only once or every time it enters viewport
+  once?: boolean;
 }
 
 export default function SplitText({
