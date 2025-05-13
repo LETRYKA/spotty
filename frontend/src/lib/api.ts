@@ -203,6 +203,25 @@ export const getUserByName = async (username: string) => {
     return null;
   }
 };
+
+export const generateInviteLink = async (eventId: string, userId: string) => {
+  try {
+    const response = await axios.post(
+      `${API_URL}/api/events/${eventId}/invite`,
+      {
+        eventId,
+        creatorId: userId,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        maxUses: 999,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error generating invite link:", error);
+    throw error;
+  }
+};
+
 // Accept friend request
 export const acceptFriend = async (friendId: string, userId: string) => {
   try {
