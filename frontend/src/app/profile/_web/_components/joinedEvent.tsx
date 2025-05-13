@@ -2,13 +2,14 @@ import React, { useEffect, useState, useMemo } from "react";
 import Mapping from "/public/Mapping.png";
 import { Navigation } from "lucide-react";
 import { getUserData } from "@/lib/api";
+import Link from "next/link";
 import { Event } from "@/types/Event";
 import { useUser } from "@clerk/nextjs";
 import { formatDate } from "@/utils/DateFormatter";
 import { enrichEventsWithStatus } from "@/utils/eventStatus";
 import { getStatusStylesAndText } from "@/utils/statusStyles";
 import { StatusStyles } from "@/app/profile/_web/types/statusStyles";
-
+import { InteractiveHoverButton } from "@/components/magicui/interactive-hover-button";
 const JoinedEvent = () => {
   const [eventData, setEventData] = useState<Event[]>([]);
   const { user } = useUser();
@@ -33,6 +34,20 @@ const JoinedEvent = () => {
     () => enrichEventsWithStatus(eventData),
     [eventData]
   );
+  if (eventsWithStatus.length === 0) {
+    return (
+      <div className="w-full h-auto flex flex-col justify-center items-center mt-5 gap-6">
+        <p className="text-white/70 text-2xl flex mt-20 justify-center items-center">
+          No events? Time to explore! <strong className="text-white">🧭</strong>
+        </p>
+        <Link href={`/location`}>
+          <InteractiveHoverButton className="">
+            заза нэг юм бодож олноо
+          </InteractiveHoverButton>
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-auto flex flex-wrap gap-10 mt-8 px-10">
@@ -76,7 +91,9 @@ const JoinedEvent = () => {
               </div>
               <div className="w-full h-auto flex flex-row justify-between bg-white mt-4 absolute top-43 rounded-2xl px-3 py-3 gap-3">
                 <div className="flex flex-col items-start">
-                  <p className="font-extrabold text-sm">@{event?.owner?.name}</p>
+                  <p className="font-extrabold text-sm">
+                    @{event?.owner?.name}
+                  </p>
                   <p className="font-regular text-[0.6rem] text-black/50">
                     <span className="text-xs font-bold">Эхлэх: </span>{" "}
                     {event ? formatDate(event?.startAt) : "Loading..."}
@@ -91,7 +108,10 @@ const JoinedEvent = () => {
                   <div className="rounded-full w-5 h-5 bg-[#B7B7B7] -ml-3"></div>
                   <div className="rounded-full w-5 h-5 bg-[#939393] -ml-3"></div>
                   <p className="font-semibold text-xs ml-1">
-                    {Array.isArray(event?.participants) ? event.participants.length : 0}/{event?.participantLimit}
+                    {Array.isArray(event?.participants)
+                      ? event.participants.length
+                      : 0}
+                    /{event?.participantLimit}
                   </p>
                 </div>
               </div>

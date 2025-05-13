@@ -3,11 +3,13 @@ import Mapping from "/public/Mapping.png";
 import { Navigation } from "lucide-react";
 import { getUserData } from "@/lib/api";
 import { Event } from "@/types/Event";
+import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 import { formatDate } from "@/utils/DateFormatter";
 import { enrichEventsWithStatus } from "@/utils/eventStatus";
 import { getStatusStylesAndText } from "@/utils/statusStyles";
 import { StatusStyles } from "@/app/profile/_web/types/statusStyles";
+import { InteractiveHoverButton } from "@/components/magicui/interactive-hover-button";
 
 const CreatedEvents = () => {
   const [eventData, setEventData] = useState<Event[]>([]);
@@ -34,8 +36,23 @@ const CreatedEvents = () => {
     [eventData]
   );
 
+  if (eventsWithStatus.length === 0) {
+    return (
+      <div className="w-full h-auto flex flex-col justify-center items-center mt-5 gap-6">
+        <p className="text-white/70 text-2xl flex mt-20 justify-center items-center">
+          No events? Time to explore! <strong className="text-white">🧭</strong>
+        </p>
+        <Link href={`/location`}>
+          <InteractiveHoverButton className="">
+            заза нэг юм бодож олноо
+          </InteractiveHoverButton>
+        </Link>
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full h-auto flex flex-wrap gap-10 mt-8 px-10">
+    <div className="w-full h-auto flex flex-wrap gap-20 mt-8 px-10">
       {eventsWithStatus.toReversed().map((event) => {
         const { background, border, text } = getStatusStylesAndText(
           event.status as keyof StatusStyles
@@ -48,7 +65,7 @@ const CreatedEvents = () => {
             <img
               src={Mapping.src}
               alt="Event"
-              className="w-[300px] h-auto aspect-square rounded-3xl object-cover"
+              className="w-[325px] h-auto aspect-square rounded-3xl object-cover"
             />
             <div className="absolute top-4 bottom-4 left-6 right-6">
               <div className="w-full flex justify-between items-start gap-4">
@@ -74,7 +91,7 @@ const CreatedEvents = () => {
                   {text}
                 </div>
               </div>
-              <div className="w-full h-auto flex flex-row justify-between bg-white mt-4 absolute top-43 rounded-2xl px-3 py-3 gap-3">
+              <div className="w-full h-auto flex flex-row justify-between bg-white mt-11 absolute top-43 rounded-2xl px-3 py-3 gap-3">
                 <div className="flex flex-col items-start">
                   <p className="font-extrabold text-sm">@{event.owner.name}</p>
                   <p className="font-regular text-[0.6rem] text-black/50">
