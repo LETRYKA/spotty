@@ -2,6 +2,7 @@ export interface Event {
   id: string;
   title: string;
   startAt: string;
+  backgroundImage: string;
   endAt: string;
   isCancelled: boolean;
   owner: { name: string };
