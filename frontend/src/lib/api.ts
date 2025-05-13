@@ -163,7 +163,7 @@ export const addFriend = async (friendId: string, userId: string) => {
         },
       }
     );
-    return res.data.event;
+    return res.data;
   } catch (err) {
     console.error("Failed to leave event:", err);
     return null;
@@ -173,12 +173,15 @@ export const addFriend = async (friendId: string, userId: string) => {
 // Remove friend API
 export const removeFriend = async (friendId: string, userId: string) => {
   try {
-    const res = await axios.delete(`${API_URL}/api/friends/${friendId}`, {
-      data: { userId },
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const res = await axios.post(
+      `${API_URL}/api/friends/${friendId}`,
+      { userId },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
     return res.data;
   } catch (err) {
     console.error("Failed to remove friend:", err);
@@ -213,7 +216,23 @@ export const acceptFriend = async (friendId: string, userId: string) => {
         },
       }
     );
-    return res.data.event;
+    return res.data
+  } catch (err) {
+    console.error("Failed to leave event:", err);
+    return null;
+  }
+};
+export const getPendingRequest = async (userId: string) => {
+  try {
+    const res = await axios.get(
+      `${API_URL}/api/friends/requested/${userId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return res.data;
   } catch (err) {
     console.error("Failed to leave event:", err);
     return null;
