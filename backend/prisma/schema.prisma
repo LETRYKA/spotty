@@ -22,7 +22,7 @@ model User {
   id              String    @id @default(uuid())
   email           String    @unique
   password        String
-  name            String
+  name            String    @unique
   phoneNumber     String?   @unique
   isVerified      Boolean   @default(false)
   otpCode         String?
