@@ -219,3 +219,22 @@ export const acceptFriend = async (friendId: string, userId: string) => {
     return null;
   }
 };
+
+// Generate invite link for an event
+export const generateInviteLink = async (eventId: string, userId: string) => {
+  try {
+    const res = await axios.post(
+      `${API_URL}/api/events/${eventId}/invite-link`,
+      { userId },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return res.data;
+  } catch (err) {
+    console.error("Failed to generate invite link:", err);
+    throw err;
+  }
+};
