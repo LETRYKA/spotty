@@ -1,27 +1,41 @@
+"use client";
+import { useEffect, useState } from "react";
 import { CardCarousel } from "@/components/ui/card-carousel";
-import one from "/public/1.avif";
-import two from "/public/2.avif";
-import three from "/public/3.avif";
-import four from "/public/4.avif";
-import five from "/public/5.avif";
+
+interface Event {
+  id: string;
+  title: string;
+  owner: { name: string };
+  startAt: string;
+  isPrivate: boolean;
+  backgroundImage: string;
+}
 
 const EventsCarousel = () => {
-  const images = [
-    { src: one.src, alt: "Image 1" },
-    { src: two.src, alt: "Image 2" },
-    { src: three.src, alt: "Image 3" },
-    { src: four.src, alt: "Image 4" },
-    { src: five.src, alt: "Image 5" },
-  ];
+  const [events, setEvents] = useState<Event[]>([]);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/events`);
+        if (!res.ok) throw new Error(`Error fetching events: ${res.statusText}`);
+        const data: Event[] = await res.json();
+        setEvents(data);
+      } catch (error) {
+        console.error("Failed to fetch events", error);
+      }
+    };
+
+    fetchEvents();
+  }, []);
 
   return (
-    <div className="w-full h-full rounded-3xl overflow-hidden mt-20">
-      <CardCarousel
-        images={images}
-        autoplayDelay={2000}
-        showPagination={true}
-        showNavigation={true}
-      />
+    <div className="w-full h-full pt-20 px-8">
+      {events.length > 0 ? (
+        <CardCarousel events={events} />
+      ) : (
+        <p className="text-center text-gray-400">No events available.</p>
+      )}
     </div>
   );
 };
