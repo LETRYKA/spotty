@@ -11,7 +11,7 @@ export const getUserData = async (userId: string) => {
     });
     return response.data;
   } catch (error) {
-    console.log("Axios Error shuu", error);
+    console.log("Axios Error", error);
     return error;
   }
 };
@@ -26,7 +26,7 @@ export const getFriendData = async (userId: string) => {
     });
     return response.data;
   } catch (error) {
-    console.log("Axios Error shuu", error);
+    console.log("Axios Error ", error);
     return error;
   }
 };
@@ -170,43 +170,6 @@ export const addFriend = async (friendId: string, userId: string) => {
   }
 };
 
-<<<<<<< Updated upstream
-// Remove friend API
-export const removeFriend = async (friendId: string, userId: string) => {
-  try {
-    const res = await axios.post(
-      `${API_URL}/api/friends/${friendId}`,
-      { userId },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    return res.data.event;
-  } catch (err) {
-    console.error("Failed to leave event:", err);
-    return null;
-  }
-};
-
-// Getting user data by username
-export const getUserByName = async (username: string) => {
-  try {
-    const res = await axios.get(`${API_URL}/api/users/name/${username}`, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    return res.data;
-  } catch (err) {
-    console.error("Failed to leave event:", err);
-    return null;
-  }
-};
-// Accept friend request
-=======
->>>>>>> Stashed changes
 export const acceptFriend = async (friendId: string, userId: string) => {
   try {
     const res = await axios.post(
@@ -223,8 +186,4 @@ export const acceptFriend = async (friendId: string, userId: string) => {
     console.error("Failed to leave event:", err);
     return null;
   }
-<<<<<<< Updated upstream
 };
-=======
-};
->>>>>>> Stashed changes
