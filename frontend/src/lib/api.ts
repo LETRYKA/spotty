@@ -200,3 +200,22 @@ export const getUserByName = async (username: string) => {
     return null;
   }
 };
+
+// Accept friend request
+export const acceptFriend = async (friendId: string, userId: string) => {
+  try {
+    const res = await axios.post(
+      `${API_URL}/api/friends/accept/${friendId}`,
+      { userId },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return res.data.event;
+  } catch (err) {
+    console.error("Failed to leave event:", err);
+    return null;
+  }
+};
