@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import { ChevronDown } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { getUserData } from "@/lib/api";
 import { User } from "../_web/types/User";
 import HeaderMobileProfile from "./_components/Header";
@@ -13,7 +13,7 @@ import EditProfile from "./_components/EditProfile";
 import { Sheet, SheetClose, SheetContent, SheetHeader } from "@/components/ui/sheet";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import Friends from "./_components/Friends";
-
+import DefaultAvatar from "@/img/default_avatar.png"
 const UserProfileMobile = () => {
   const [userData, setLocalUserData] = useState<User | null>(null);
   const [editProfileOpen, setEditProfileOpen] = useState(false);
@@ -56,7 +56,7 @@ const UserProfileMobile = () => {
       <div className="w-full bg-[#8D8D8D] flex flex-col rounded-3xl h-26 mt-8">
         <div className="relative">
           <img
-            src={userData?.backgroundImage || " https://i.imgur.com/4K6x1Zc.png"}
+            src={userData?.backgroundImage || ""}
             alt="Background"
             className="w-full h-26 rounded-3xl object-cover"
           />
@@ -65,7 +65,7 @@ const UserProfileMobile = () => {
             <Avatar className="-mt-16 relative rounded-full bg-gradient-to-r from-[#428CFA] via-[#7062FB] to-[#F98437] w-[128px] h-[128px]">
               <AvatarImage
                 className="rounded-full border-3 border-black object-cover"
-                src={userData?.avatarImage}
+                src={userData?.avatarImage || DefaultAvatar.src}
                 alt="User Profile"
               />
               <AvatarFallback>CN</AvatarFallback>
@@ -84,19 +84,19 @@ const UserProfileMobile = () => {
           <div className="text-white">
             {userData.friendsOf?.length ?? 0}
           </div>
-          <div className="text-white opacity-50">Friends</div>
+          <div className="text-white opacity-50">Найз</div>
         </div>
         <div className="flex flex-col items-center">
           <div className="text-white">
             {userData.events?.length ?? 0}
           </div>
-          <div className="text-white opacity-50">Events</div>
+          <div className="text-white opacity-50">Арга хэмжээ</div>
         </div>
         <div className="flex flex-col items-center">
           <div className="text-white">
             {userData.joinedEvents?.length ?? 0}
           </div>
-          <div className="text-white opacity-50">Participated</div>
+          <div className="text-white opacity-50">Хамрагдсан</div>
         </div>
       </div>
 
@@ -105,13 +105,13 @@ const UserProfileMobile = () => {
           onClick={() => setFriendsPageOpen(true)}
           className="bg-[#333333] w-2/4 h-12.25"
         >
-          Friends <ChevronDown className="ml-1 w-4 h-4" />
+          Найзууд <ChevronRight className="ml-1 w-4 h-4" />
         </Button>
         <Button
           onClick={() => setEditProfileOpen(true)}
           className="bg-[#333333] w-2/4 h-12.25"
         >
-          Edit Profile
+          Профайл засах
         </Button>
       </div>
 
@@ -130,14 +130,14 @@ const UserProfileMobile = () => {
             <div className="flex justify-between items-center w-full">
               <SheetClose asChild>
                 <button onClick={() => setFriendsPageOpen(false)} className="w-20 flex items-center justify-start">
-                  <ChevronDown className="text-white hover:bg-muted rounded w-6 h-6" />
+                  <ChevronLeft className="text-white hover:bg-muted rounded w-6 h-6" />
                 </button>
               </SheetClose>
               <div className="flex items-center text-white font-bold text-lg">
                 Friends List
               </div>
             </div>
-            <DialogTitle className="sr-only">Friends List</DialogTitle>
+            <DialogTitle className="sr-only"></DialogTitle>
           </SheetHeader>
 
           <div className="mt-4">
