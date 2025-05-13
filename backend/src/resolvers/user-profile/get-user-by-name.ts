@@ -29,6 +29,7 @@ export async function getUserByName(
             friendId: true,
             userId: true,
             status: true,
+            
           },
         },
         friendsOf: {
@@ -95,7 +96,7 @@ export async function getUserByName(
 
     if (!user) {
       res.status(404).json({ error: "Хэрэглэгч олдсонгүй" });
-      return; // 🔥 important to prevent sending multiple responses
+      return; 
     }
 
     res.status(200).json(user);
