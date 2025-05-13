@@ -3,15 +3,16 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CircleCheck, Earth, Lock } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { X } from "lucide-react";
-import GallerySection from "./GallerySection";
+import { ChevronLeft } from "lucide-react";
 import AboutCreateEvent from "./AboutCreateEvent";
-import AddPicButton from "./AddPicButton";
+// import AddPicButton from "./AddPicButton";
 import DatePickStart from "./DatePickStart";
 import DatePickEnd from "./DatePickEnd";
 import { useFormik } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { z } from "zod";
+import { useRouter } from "next/navigation";
+import GallerySection from "./GallerySection";
 
 const eventSchema = z.object({
   title: z.string().max(20, "Title must be at most 20 characters"),
@@ -32,9 +33,11 @@ const eventSchema = z.object({
   galleryImages: z.array(z.string()).max(5, "Max 5 gallery images"),
 });
 
-const CreateEventSection = () => {
+const   CreateEventSection = () => {
   const [showPasscodeDialog, setShowPasscodeDialog] = useState(false);
   const [pendingValues, setPendingValues] = useState<any>(null);
+  const [isPrivate, setIsPrivate] = useState(true);
+  const router = useRouter()
 
   const formik = useFormik({
     initialValues: {
@@ -67,15 +70,14 @@ const CreateEventSection = () => {
     <div className="w-full h-auto flex flex-col justify-center p-9">
       <div className="flex w-full h-full justify-between items-center z-40">
         <div className="w-9 h-auto aspect-square bg-[var(--background)]/15 backdrop-blur-xs rounded-full flex justify-center items-center cursor-pointer">
-          <X className="w-4 text-[var(--background)]" strokeWidth={3} />
+          <ChevronLeft className="w-4 text-[var(--background)]" strokeWidth={3} onClick={() => router.back()}/>
         </div>
         <Avatar className="w-9 h-auto aspect-square">
           <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
       </div>
-      <div className="flex flex-col w-full justify-center items-center mt-70">
-        <AddPicButton />
+      <div className="flex flex-col w-full justify-center items-center mt-70 z-50">
         <h1 className="text-white font-extrabold text-5xl text-center">
           Event title
         </h1>
@@ -83,17 +85,39 @@ const CreateEventSection = () => {
           19 May, 12pm Ulaanbaatar, kid100
         </p>
       </div>
-      <div className="w-full px-10 mt-10">
-        <div className="w-full bg-[#0A0A0B] border-1 border-[#1D1D1D] rounded-full flex justify-center items-center p-2">
-          <Button className="flex flex-col items-center text-black text-sm font-extrabold bg-[var(--background)] hover:bg-[var(--background)] rounded-full gap-0 w-2/4 py-6">
-            <Lock />
-            Private
-          </Button>
-          <Button className="flex flex-col items-center text-[var(--background)]/50 text-sm font-extrabold bg-[#0A0A0B] hover:bg-[#0A0A0B] rounded-full gap-0 w-2/4 py-6">
-            <Earth />
-            Public
-          </Button>
-        </div>
+      <div className="w-full px-10 mt-10 z-50">
+      <div className="w-full bg-[#0A0A0B] border border-[#1D1D1D] rounded-full flex justify-center items-center p-2">
+        <Button
+          onClick={() => setIsPrivate(true)}
+          className={`flex flex-col items-center text-sm font-extrabold rounded-full gap-0 w-2/4 py-6 transition-all duration-300 ${
+            isPrivate
+              ? "bg-[var(--background)] text-black"
+              : "bg-[#0A0A0B] text-[var(--background)]/50"
+          }`}
+        >
+          <Lock
+            className={`w-5 h-5 mb-1 ${
+              isPrivate ? "text-black" : "text-[var(--background)]/50"
+            }`}
+          />
+          Private
+        </Button>
+        <Button
+          onClick={() => setIsPrivate(false)}
+          className={`flex flex-col items-center text-sm font-extrabold rounded-full gap-0 w-2/4 py-6 transition-all duration-300 ${
+            !isPrivate
+              ? "bg-[var(--background)] text-black"
+              : "bg-[#0A0A0B] text-[var(--background)]/50"
+          }`}
+        >
+          <Earth
+            className={`w-5 h-5 mb-1 ${
+              !isPrivate ? "text-black" : "text-[var(--background)]/50"
+            }`}
+          />
+          Public
+        </Button>
+      </div>
       </div>
       <AboutCreateEvent />
       <div className="flex flex-col justify-center items-center w-full bg-[#28272A] border-1 border-[#28272A] rounded-2xl mt-5 p-5 text-center">
@@ -122,7 +146,20 @@ const CreateEventSection = () => {
             error={formik.errors.endAt}
           />
         </div>
-        <GallerySection />
+        <GallerySection
+          galleryImages={formik.values.galleryImages}
+          setGalleryImages={(images) => formik.setFieldValue("galleryImages", images)}
+          backgroundImage={formik.values.backgroundImage}
+          setBackgroundImage={(image) => formik.setFieldValue("backgroundImage", image)}
+          touched={{
+            galleryImages: formik.touched.galleryImages,
+            backgroundImage: formik.touched.backgroundImage,
+          }}
+          errors={{
+            galleryImages: formik.errors.galleryImages,
+            backgroundImage: formik.errors.backgroundImage,
+          }}
+        />
       </div>
     </div>
   );

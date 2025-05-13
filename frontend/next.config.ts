@@ -8,6 +8,9 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_LOCATIONIQ_API_KEY: process.env.LOCATIONIQ_API_KEY,
   },
   devIndicators: false,
+  images: {
+    domains: ['res.cloudinary.com'], 
+  },
 };
 
 export default nextConfig;

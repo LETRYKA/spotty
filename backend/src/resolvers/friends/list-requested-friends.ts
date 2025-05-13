@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export const listFriends = async (req: Request, res: Response): Promise<void> => {
+export const listRequestedFriends = async (req: Request, res: Response) => {
   try {
     const userId = req.params.id as string;
 
@@ -12,13 +12,13 @@ export const listFriends = async (req: Request, res: Response): Promise<void> =>
       return;
     }
 
-    const friends = await prisma.friendship.findMany({
+    const requests = await prisma.friendship.findMany({
       where: {
         userId,
-        status: "accepted",
+        status: "pending",
       },
       select: {
-        friend: { 
+        friend: {
           select: {
             id: true,
             name: true,
@@ -37,8 +37,8 @@ export const listFriends = async (req: Request, res: Response): Promise<void> =>
       },
     });
 
-    const result = friends.map((f) => ({
-      ...f.friend,
+    const result = requests.map((r) => ({
+      ...r.friend,
     }));
 
     res.status(200).json(result);

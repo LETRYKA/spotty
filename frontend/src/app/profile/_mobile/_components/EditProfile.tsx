@@ -174,10 +174,6 @@ const EditProfile: React.FC<EditProfileProps> = ({ open, onClose }) => {
             </div>
 
             <div className="bg-[#2c2c2c] rounded-xl p-4 flex items-center justify-between">
-              <div>
-                <label className="block text-sm text-gray-400 mb-1">Password</label>
-                <p className="text-sm font-medium">••••••••</p>
-              </div>
               <button
                 onClick={() => handleSave(localUserData, updateStoreUserData)}
                 className="bg-[#434343] text-white text-sm px-4 py-2 rounded-lg"
