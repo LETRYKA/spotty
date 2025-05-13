@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
@@ -10,7 +10,12 @@ import EventCardsMobile from "./_components/EventCardMobile";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import EditProfile from "./_components/EditProfile";
-import { Sheet, SheetClose, SheetContent, SheetHeader } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+} from "@/components/ui/sheet";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import Friends from "./_components/Friends";
 
@@ -20,6 +25,7 @@ const UserProfileMobile = () => {
   const [friendsPageOpen, setFriendsPageOpen] = useState(false);
   const { user } = useUser();
   const userId = user?.id;
+  console.log("USER ID:", userId);
 
   useEffect(() => {
     const fetchUser = async (id: string) => {
@@ -27,7 +33,6 @@ const UserProfileMobile = () => {
         const data = await getUserData(id);
         setLocalUserData(data);
         console.log("User data fetched:", data);
-        
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -56,7 +61,9 @@ const UserProfileMobile = () => {
       <div className="w-full bg-[#8D8D8D] flex flex-col rounded-3xl h-26 mt-8">
         <div className="relative">
           <img
-            src={userData?.backgroundImage || " https://i.imgur.com/4K6x1Zc.png"}
+            src={
+              userData?.backgroundImage || " https://i.imgur.com/4K6x1Zc.png"
+            }
             alt="Background"
             className="w-full h-26 rounded-3xl object-cover"
           />
@@ -81,21 +88,15 @@ const UserProfileMobile = () => {
 
       <div className="flex justify-between w-70.25 mt-6.25">
         <div className="flex flex-col items-center cursor-pointer">
-          <div className="text-white">
-            {userData.friendsOf?.length ?? 0}
-          </div>
+          <div className="text-white">{userData.friendsOf?.length ?? 0}</div>
           <div className="text-white opacity-50">Friends</div>
         </div>
         <div className="flex flex-col items-center">
-          <div className="text-white">
-            {userData.events?.length ?? 0}
-          </div>
+          <div className="text-white">{userData.events?.length ?? 0}</div>
           <div className="text-white opacity-50">Events</div>
         </div>
         <div className="flex flex-col items-center">
-          <div className="text-white">
-            {userData.joinedEvents?.length ?? 0}
-          </div>
+          <div className="text-white">{userData.joinedEvents?.length ?? 0}</div>
           <div className="text-white opacity-50">Participated</div>
         </div>
       </div>
@@ -118,10 +119,16 @@ const UserProfileMobile = () => {
       <EventCardsMobile />
 
       {editProfileOpen && (
-        <EditProfile open={editProfileOpen} onClose={() => setEditProfileOpen(false)} />
+        <EditProfile
+          open={editProfileOpen}
+          onClose={() => setEditProfileOpen(false)}
+        />
       )}
 
-      <Sheet open={friendsPageOpen} onOpenChange={(open) => setFriendsPageOpen(open)}>
+      <Sheet
+        open={friendsPageOpen}
+        onOpenChange={(open) => setFriendsPageOpen(open)}
+      >
         <SheetContent
           side="right"
           className="w-full h-screen max-w-none bg-[#19181A] flex flex-col border-none shadow-none outline-none p-7"
@@ -129,7 +136,10 @@ const UserProfileMobile = () => {
           <SheetHeader className="border-none shadow-none bg-transparent">
             <div className="flex justify-between items-center w-full">
               <SheetClose asChild>
-                <button onClick={() => setFriendsPageOpen(false)} className="w-20 flex items-center justify-start">
+                <button
+                  onClick={() => setFriendsPageOpen(false)}
+                  className="w-20 flex items-center justify-start"
+                >
                   <ChevronDown className="text-white hover:bg-muted rounded w-6 h-6" />
                 </button>
               </SheetClose>

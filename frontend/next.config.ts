@@ -7,10 +7,10 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_UPLOAD_PRESET: process.env.UPLOAD_PRESET,
     NEXT_PUBLIC_LOCATIONIQ_API_KEY: process.env.LOCATIONIQ_API_KEY,
   },
-  devIndicators: false,
   images: {
-    domains: ['res.cloudinary.com'], 
+    domains: ["res.cloudinary.com"],
   },
+  devIndicators: false,
 };
 
 export default nextConfig;
