@@ -1,150 +1,112 @@
 "use client";
 
-import React from "react";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
-
-import "swiper/css";
-import "swiper/css/effect-coverflow";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
-import { SparklesIcon } from "lucide-react";
 import {
   Autoplay,
   EffectCoverflow,
   Navigation,
   Pagination,
 } from "swiper/modules";
-
+import { Crown, Lock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Crown } from "lucide-react";
-import { Lock } from "lucide-react";
+
+import "swiper/css";
+import "swiper/css/effect-coverflow";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
+
+interface Event {
+  id: string;
+  title: string;
+  owner: { name: string };
+  startAt: string;
+  isPrivate: boolean;
+  backgroundImage: string;
+}
 
 interface CarouselProps {
-  images: { src: string; alt: string }[];
+  events: Event[];
   autoplayDelay?: number;
   showPagination?: boolean;
   showNavigation?: boolean;
 }
 
 export const CardCarousel: React.FC<CarouselProps> = ({
-  images,
-  autoplayDelay = 1500,
+  events,
+  autoplayDelay = 2500,
   showPagination = true,
   showNavigation = true,
 }) => {
-  const css = `
-  .swiper {
-    width: 100%;
-    padding-bottom: 50px;
-  }
-  
-  .swiper-slide {
-    background-position: center;
-    background-size: cover;
-    width: 80%;
-    height: 38rem;
-  }
-  
-  .swiper-slide img {
-    display: block;
-    width: 100%;
-  }
-  
-  
-  .swiper-3d .swiper-slide-shadow-left {
-    background-image: none;
-  }
-  .swiper-3d .swiper-slide-shadow-right{
-    background: none;
-  }
-  `;
   return (
-    <section className="w-ace-y-4 overflow-hidden h-full">
-      <style>{css}</style>
-      <div className="flex w-full items-center justify-center gap-0 h-full">
-        <div className="w-full h-full">
-          <Swiper
-            spaceBetween={70}
-            autoplay={{
-              delay: autoplayDelay,
-              disableOnInteraction: false,
-            }}
-            effect={"coverflow"}
-            grabCursor={true}
-            centeredSlides={true}
-            loop={true}
-            slidesPerView={"auto"}
-            coverflowEffect={{
-              rotate: 0,
-              stretch: 0,
-              depth: 100,
-              modifier: 2.5,
-            }}
-            pagination={showPagination}
-            navigation={
-              showNavigation
-                ? {
-                    nextEl: ".swiper-button-next",
-                    prevEl: ".swiper-button-prev",
-                  }
-                : undefined
-            }
-            modules={[EffectCoverflow, Pagination, Navigation]}
-            className="overflow-hidden"
-          >
-            {images.map((image, index) => (
-              <SwiperSlide key={index}>
-                <div className="size-full rounded-4xl h-full relative overflow-hidden">
-                  <Image
-                    src={image.src}
-                    width={500}
-                    height={500}
-                    className="size-full rounded-xl object-cover"
-                    alt={image.alt}
-                  />
-                </div>
-                <div className="absolute top-5 flex justify-between w-full px-5">
-                  <Badge className="backdrop-blur-xs bg-[white]/15 rounded-full px-4 py-2 flex items-center gap-1">
-                    <Crown className="w-4 text-[#FFEAC9]" />
-                    Hosted by <strong>LETRYKA</strong>
+    <section className="w-full h-full">
+      <Swiper
+        spaceBetween={70}
+        autoplay={{
+          delay: autoplayDelay,
+          disableOnInteraction: false,
+        }}
+        effect={"coverflow"}
+        grabCursor
+        centeredSlides
+        loop
+        slidesPerView={"auto"}
+        coverflowEffect={{
+          rotate: 0,
+          stretch: 0,
+          depth: 100,
+          modifier: 2.5,
+        }}
+        pagination={showPagination}
+        navigation={
+          showNavigation
+            ? {
+                nextEl: ".swiper-button-next",
+                prevEl: ".swiper-button-prev",
+              }
+            : undefined
+        }
+        modules={[EffectCoverflow, Pagination, Navigation, Autoplay]}
+        className="overflow-hidden"
+      >
+        {events.map((event, index) => (
+          <SwiperSlide key={event.id}>
+            <div className="relative w-full h-[44rem] rounded-4xl overflow-hidden">
+              <Image
+                src={event.backgroundImage || "/default-image.jpg"}
+                alt={event.title}
+                fill
+                className="object-cover rounded-3xl"
+              />
+              {/* Overlay Top */}
+              <div className="absolute top-5 w-full flex justify-between px-5 z-20">
+                <Badge className="bg-white/10 backdrop-blur-sm px-4 py-2 flex items-center gap-2 text-white">
+                  <Crown className="w-4 text-yellow-300" />
+                  Hosted by <strong>{event.owner.name}</strong>
+                </Badge>
+                {event.isPrivate && (
+                  <Badge className="bg-white/10 backdrop-blur-sm h-8 w-8 flex items-center justify-center rounded-full text-white">
+                    <Lock className="w-4" />
                   </Badge>
-                  <Badge className="backdrop-blur-xs bg-[white]/15 rounded-full flex items-center h-8 w-auto aspect-square">
-                    <Lock strokeWidth={3} />
-                  </Badge>
-                </div>
-                <div className="absolute w-full bottom-15 h-auto flex flex-col items-center gap-3 z-40">
-                  <div className="w-full flex justify-center items-center gap-2">
-                    <div className="w-8 h-auto aspect-square bg-[#A7FBE3] rounded-full mt-4"></div>
-                    <div className="w-12 h-auto aspect-square bg-[#FFAEFE] rounded-full"></div>
-                    <div className="w-8 h-auto aspect-square bg-[#D1FFA9] rounded-full mt-4"></div>
-                  </div>
-                  <p className="text-[var(--background)] font-extrabold text-4xl text-center px-14 leading-9 mt-1">
-                    Typical girls night
-                  </p>
-                  <p className="text-[var(--background)]/50 text-sm text-center px-24">
-                    19 May, 12pm Ulaanbaatar, kid100
-                  </p>
-                </div>
-                <div className="absolute w-full bottom-0 h-3/5 z-0 bg-gradient-to-t from-[#202132]/90 to-[black]/0 rounded-4xl"></div>
-              </SwiperSlide>
-            ))}
-            {/* {images.map((image, index) => (
-                  <SwiperSlide key={index}>
-                    <div className="size-full rounded-3xl">
-                      <Image
-                        src={image.src}
-                        width={200}
-                        height={200}
-                        className="size-full rounded-xl"
-                        alt={image.alt}
-                      />
-                    </div>
-                  </SwiperSlide>
-                ))} */}
-          </Swiper>
-        </div>
-      </div>
+                )}
+              </div>
+
+              {/* Overlay Bottom */}
+              <div className="absolute bottom-10 w-full z-20 flex flex-col items-center gap-2 text-white">
+                <h2 className="text-3xl font-bold text-center px-10">
+                  {event.title}
+                </h2>
+                <p className="text-sm text-center opacity-80 px-10">
+                  {new Date(event.startAt).toLocaleString()}
+                </p>
+              </div>
+
+              {/* Bottom Gradient */}
+              <div className="absolute bottom-0 w-full h-1/2 bg-gradient-to-t from-black/80 to-transparent z-10 rounded-b-3xl"></div>
+            </div>
+          </SwiperSlide>
+        ))}
+      </Swiper>
     </section>
   );
 };
