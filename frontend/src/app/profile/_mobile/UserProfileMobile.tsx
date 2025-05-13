@@ -12,7 +12,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import EditProfile from "./_components/EditProfile";
 import { Sheet, SheetClose, SheetContent, SheetHeader } from "@/components/ui/sheet";
 import { DialogTitle } from "@radix-ui/react-dialog";
-import FriendRequests from "./_components/FriendRequests";
+import Friends from "./_components/Friends";
 
 const UserProfileMobile = () => {
   const [userData, setLocalUserData] = useState<User | null>(null);
@@ -26,6 +26,8 @@ const UserProfileMobile = () => {
       try {
         const data = await getUserData(id);
         setLocalUserData(data);
+        console.log("User data fetched:", data);
+        
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -80,7 +82,7 @@ const UserProfileMobile = () => {
       <div className="flex justify-between w-70.25 mt-6.25">
         <div className="flex flex-col items-center cursor-pointer">
           <div className="text-white">
-            {userData.friendships?.length ?? 0}
+            {userData.friendsOf?.length ?? 0}
           </div>
           <div className="text-white opacity-50">Friends</div>
         </div>
@@ -139,7 +141,7 @@ const UserProfileMobile = () => {
           </SheetHeader>
 
           <div className="mt-4">
-            <FriendRequests />
+            <Friends />
           </div>
         </SheetContent>
       </Sheet>

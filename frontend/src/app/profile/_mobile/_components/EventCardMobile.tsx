@@ -1,29 +1,32 @@
 "use client";
+
 import React, { useEffect, useState, useMemo } from "react";
 import Image from "next/image";
 import { Navigation } from "lucide-react";
 import { getUserData } from "@/lib/api";
 import { Event } from "@/types/Event";
-
 import { useUser } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { getStatusStylesAndText } from "@/utils/statusStyles";
 import { enrichEventsWithStatus } from "@/utils/eventStatus";
 import Mapping from "/public/Mapping.png";
 import { StatusStyles } from "@/app/profile/_web/types/statusStyles";
+
 const EventCardsMobile = () => {
   const [eventData, setEventData] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
   const { user } = useUser();
   const userId = user?.id;
 
   const fetchUserEvents = async (id: string) => {
     try {
       const data = await getUserData(id);
-      setEventData(data.events || []);
-      console.log(data.events?.[4]?.startAt);
-      console.log(data.events?.[4]?.endAt);
+      setEventData(data.joinedEvents || []);
+      console.log("Fetched events:", data.joinedEvents);
     } catch (error) {
       console.error("Error fetching user events:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -38,6 +41,14 @@ const EventCardsMobile = () => {
     [eventData]
   );
 
+  if (loading) {
+    return <div className="text-white text-center mt-4">Loading events...</div>;
+  }
+
+  if (eventsWithStatus.length === 0) {
+    return <div className="text-white text-center mt-4">No events joined yet.</div>;
+  }
+
   return (
     <>
       {eventsWithStatus.map((event) => {
@@ -48,42 +59,42 @@ const EventCardsMobile = () => {
         return (
           <div
             key={event.id}
-            className="w-full h-24.75 bg-[#19191b] rounded-[5px] mt-5 flex justify-between items-center gap-2.5 px-2"
+            className="w-full h-[100px] bg-[#19191b] rounded-md mt-4 flex justify-between items-center px-2 py-2"
           >
-            <div className="flex">
+            <div className="flex items-center">
               <Image
-                src={Mapping.src}
-                alt={event.title}
-                className="w-19 h-19"
-                width={1000}
-                height={1000}
+                src={event.backgroundImage || Mapping}
+                alt={event.title || "Event image"}
+                className="w-[64px] h-[64px] object-cover rounded"
+                width={64}
+                height={64}
               />
-              <div className="flex flex-col justify-center ml-3">
-                <div className="text-white text-[18px]">{event.title}</div>
-                <div className="flex gap-3">
-                  <span className="text-[12px] text-white opacity-50">
-                    Owner name
-                  </span>
-                  <span className="flex text-[12px] text-white opacity-50 items-center">
-                    <Navigation className="w-4 h-4 mr-1" /> Ulaanbaatar, MN
+              <div className="flex flex-col justify-center ml-3 space-y-1">
+                <div className="text-white text-sm font-medium leading-tight truncate max-w-[140px]">
+                  {event.title}
+                </div>
+                <div className="flex gap-2 text-xs text-white opacity-50">
+                  <span>{event.owner?.name ?? "Owner"}</span>
+                  <span className="flex items-center">
+                    <Navigation className="w-3.5 h-3.5 mr-1" /> Ulaanbaatar
                   </span>
                 </div>
               </div>
             </div>
-            <div className="flex flex-col h-16 justify-between">
+            <div className="flex flex-col items-end h-full justify-between py-1">
               <Button
-                className={`w-[84px] h-5 text-[8px] border ${border} ${background}`}
+                className={`w-[70px] h-[20px] text-[10px] px-1 py-0 border ${border} ${background}`}
               >
                 {text}
               </Button>
-              <div className="flex items-center relative">
-                <div className="flex absolute">
-                  <div className="bg-[#939393] w-5 h-5 rounded-full relative"></div>
-                  <div className="bg-[#b7b7b7] w-5 h-5 rounded-full relative right-2"></div>
-                  <div className="bg-[#d9d9d9] w-5 h-5 rounded-full relative right-4"></div>
+              <div className="flex items-center mt-2">
+                <div className="relative w-14 h-5">
+                  <div className="absolute left-0 bg-[#939393] w-4 h-4 rounded-full z-10" />
+                  <div className="absolute left-3 bg-[#b7b7b7] w-4 h-4 rounded-full z-20" />
+                  <div className="absolute left-6 bg-[#d9d9d9] w-4 h-4 rounded-full z-30" />
                 </div>
-                <div className="text-white pl-13">
-                  {event.participants.length}/{event.participantLimit ?? "∞"}
+                <div className="text-white text-xs ml-2 whitespace-nowrap">
+                  {event.participants?.length ?? 0}/{event.participantLimit ?? "∞"}
                 </div>
               </div>
             </div>

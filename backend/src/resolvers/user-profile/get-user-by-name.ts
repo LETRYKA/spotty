@@ -11,7 +11,7 @@ export async function getUserByName(
 
   try {
     const user = await prisma.user.findUnique({
-      where: { name },
+      where: { name }, 
       select: {
         id: true,
         email: true,
