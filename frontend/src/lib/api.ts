@@ -173,19 +173,13 @@ export const addFriend = async (friendId: string, userId: string) => {
 // Remove friend API
 export const removeFriend = async (friendId: string, userId: string) => {
   try {
-    const res = await axios.post(
-      `${API_URL}/api/friends/${friendId}`,
-      { userId },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    return res.data;
-  } catch (err) {
-    console.error("Failed to remove friend:", err);
-    throw err;
+    const response = await axios.delete(`${API_URL}/api/friends/${friendId}`, {
+      data: { userId }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error removing friend:", error);
+    throw error;
   }
 };
 
@@ -282,5 +276,18 @@ export const joinViaInvite = async (token: string, userId: string, accept: boole
   } catch (err) {
     console.error("Failed to join via invite:", err);
     throw err;
+  }
+};
+
+// Cancel friend request
+export const cancelFriendRequest = async (friendId: string, userId: string) => {
+  try {
+    const response = await axios.delete(`${API_URL}/api/friends/${friendId}`, {
+      data: { userId }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error canceling friend request:", error);
+    throw error;
   }
 };
