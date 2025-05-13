@@ -173,19 +173,16 @@ export const addFriend = async (friendId: string, userId: string) => {
 // Remove friend API
 export const removeFriend = async (friendId: string, userId: string) => {
   try {
-    const res = await axios.post(
-      `${API_URL}/api/friends/${friendId}`,
-      { userId },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    return res.data.event;
+    const res = await axios.delete(`${API_URL}/api/friends/${friendId}`, {
+      data: { userId },
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return res.data;
   } catch (err) {
-    console.error("Failed to leave event:", err);
-    return null;
+    console.error("Failed to remove friend:", err);
+    throw err;
   }
 };
 
@@ -198,24 +195,6 @@ export const getUserByName = async (username: string) => {
       },
     });
     return res.data;
-  } catch (err) {
-    console.error("Failed to leave event:", err);
-    return null;
-  }
-};
-// Accept friend request
-export const acceptFriend = async (friendId: string, userId: string) => {
-  try {
-    const res = await axios.post(
-      `${API_URL}/api/friends/accept/${friendId}`,
-      { userId },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    return res.data.event;
   } catch (err) {
     console.error("Failed to leave event:", err);
     return null;
