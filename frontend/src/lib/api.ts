@@ -254,3 +254,33 @@ export const generateInviteLink = async (eventId: string, userId: string) => {
     throw err;
   }
 };
+
+// Get invite details
+export const getInvite = async (token: string) => {
+  try {
+    const res = await axios.get(`${API_URL}/api/invite/${token}`);
+    return res.data;
+  } catch (err) {
+    console.error("Failed to get invite:", err);
+    throw err;
+  }
+};
+
+// Join via invite
+export const joinViaInvite = async (token: string, userId: string, accept: boolean) => {
+  try {
+    const res = await axios.post(
+      `${API_URL}/api/invite/${token}/join`,
+      { userId, accept },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return res.data;
+  } catch (err) {
+    console.error("Failed to join via invite:", err);
+    throw err;
+  }
+};

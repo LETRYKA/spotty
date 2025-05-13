@@ -3,14 +3,11 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
-import { fetchEvent } from "@/lib/api";
+import { fetchEvent, getInvite, joinViaInvite } from "@/lib/api";
 import { formatDate } from "@/utils/DateFormatter";
 import { CircleCheck, Lock } from "lucide-react";
-import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
-
-const BASE_URL = "http://localhost:8000";
 
 export default function InvitePage() {
   const { user } = useUser();
@@ -38,9 +35,7 @@ export default function InvitePage() {
       if (typeof token !== "string") return;
 
       try {
-        const {
-          data: { invite },
-        } = await axios.get(`${BASE_URL}/api/invite/${token}`);
+        const { invite } = await getInvite(token);
         if (!invite?.eventId) throw new Error("Өө эвeнт олдсонгүй");
         setState((prev) => ({ ...prev, eventId: invite.eventId }));
       } catch (err: any) {
@@ -78,10 +73,7 @@ export default function InvitePage() {
     setState((prev) => ({ ...prev, loading: true, message: "", error: null }));
 
     try {
-      const { data } = await axios.post(
-        `${BASE_URL}/api/invite/${token}/join`,
-        { userId: user.id, accept }
-      );
+      const data = await joinViaInvite(token, user.id, accept);
       const successMessage =
         data.message || (accept ? "Нэгдлээ!" : "Татгалзлаа.");
       setState((prev) => ({ ...prev, message: successMessage }));
