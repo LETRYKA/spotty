@@ -16,7 +16,7 @@ function generateId(length: number = 8): string {
 }
 
 const createInvite = async (req: Request, res: Response): Promise<void> => {
-  const { id: eventId } = req.params;
+  const { eventId } = req.params;
   const { creatorId, expiresAt, maxUses } = req.body;
 
   if (!eventId) {
