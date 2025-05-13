@@ -28,6 +28,7 @@ export async function getUserByName(
             id: true,
             friendId: true,
             userId: true,
+            status: true,
           },
         },
         friendsOf: {
@@ -35,7 +36,6 @@ export async function getUserByName(
             id: true,
             friendId: true,
             userId: true,
-            status: true,
           },
         },
         locations: true,
