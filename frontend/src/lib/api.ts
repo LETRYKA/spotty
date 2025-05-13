@@ -170,6 +170,7 @@ export const addFriend = async (friendId: string, userId: string) => {
   }
 };
 
+<<<<<<< Updated upstream
 // Remove friend API
 export const removeFriend = async (friendId: string, userId: string) => {
   try {
@@ -204,6 +205,8 @@ export const getUserByName = async (username: string) => {
   }
 };
 // Accept friend request
+=======
+>>>>>>> Stashed changes
 export const acceptFriend = async (friendId: string, userId: string) => {
   try {
     const res = await axios.post(
@@ -220,4 +223,8 @@ export const acceptFriend = async (friendId: string, userId: string) => {
     console.error("Failed to leave event:", err);
     return null;
   }
+<<<<<<< Updated upstream
 };
+=======
+};
+>>>>>>> Stashed changes
