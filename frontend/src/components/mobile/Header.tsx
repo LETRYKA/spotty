@@ -2,22 +2,65 @@
 
 import { ChevronLeft, Bell, EllipsisVertical } from "lucide-react";
 import Image from "next/image";
-import VerifiedIcon from "@/img/icons8-verified-16.png";
 import { useRouter } from "next/navigation";
-const Header = ()  => {
-    const router = useRouter();
-    return (
-        <div className="flex w-full justify-between">
-        <ChevronLeft className="text-white mr-9.25" onClick={() => router.back()}/>
-        <div className="flex text-white text-[18px] font-bold items-center justify-center">
-            Enji
-            <Image src={VerifiedIcon} alt="verified" className="w-4 h-4 ml-1" />
-        </div>
-        <div className="flex gap-2.75 items-center justify-center">
-            <Bell className="text-white w-[30px] h-[30px] bg-[#434343] rounded-full p-2" />
-            <EllipsisVertical className="text-white w-4.5 h-4.5" />
-        </div>
+import { useUser } from "@clerk/nextjs";
+import { useEffect, useState } from "react";
+import VerifiedIcon from "@/img/icons8-verified-16.png";
+import DefaultAvatar from "@/img/default_avatar.png";
+import { getUserData } from "@/lib/api";
+import { User } from "@/app/profile/_web/types/User";
+
+const Header = () => {
+  const router = useRouter();
+  const { user } = useUser();
+  const [userData, setUserData] = useState<User | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (user?.id) {
+        const data = await getUserData(user.id);
+        setUserData(data);
+      }
+    };
+    fetchData();
+  }, [user]);
+
+  return (
+    <div className="flex items-center justify-between w-full px-4 py-2 bg-transparent">
+      {/* Back Button */}
+      <button
+        aria-label="Go back"
+        onClick={() => router.back()}
+        className="text-white"
+      >
+        <ChevronLeft className="w-6 h-6" />
+      </button>
+
+      <div className="flex items-center text-white font-bold text-lg">
+        {userData?.name || user?.firstName || "User"}
+        <Image
+          src={VerifiedIcon}
+          alt="Verified"
+          width={16}
+          height={16}
+          className="ml-1"
+        />
+      </div>
+
+      <div className="flex items-center gap-2">
+        {/* <button
+          aria-label="Notifications"
+          className="bg-[#434343] p-2 rounded-full"
+        >
+          <Bell className="text-white w-5 h-5" />
+        </button>
+
+        <button aria-label="More options">
+          <EllipsisVertical className="text-white w-5 h-5" />
+        </button> */}
+      </div>
     </div>
-    )
-}
+  );
+};
+
 export default Header;
