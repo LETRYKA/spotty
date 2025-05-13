@@ -48,7 +48,8 @@ const EditCover = () => {
       if (!response.ok) {
         toast.error("Хадгалах үед алдаа гарлаа.");
         return;
-      }      const updated = await response.json();
+      }
+      const updated = await response.json();
       setUserData(updated);
       setShowSaveButton(false);
       toast.success("Ковер амжилттай хадгалсан2.");
@@ -100,25 +101,25 @@ const EditCover = () => {
         </div>
         ;
       </div>
-      <div className="relative w-[128px] h-[128px] mt-4">
-        <EditAvatar/>
+      <div className="relative w-[128px] h-[128px] -mt-10 mb-13">
+        <EditAvatar />
+      </div>
+      <p className="text-white font-extrabold text-4xl -mt-8 flex items-center w-auto gap-1">
+        {userData?.name}
         {isVerified && (
           <img
             src="verified-badge-profile-icon-png-one.png"
-            className="w-7 h-auto aspect-square absolute bottom-18 right-2"
+            className="w-5 h-auto aspect-square"
             alt="Verified Badge"
           />
         )}
-      </div>
-      <p className="text-white font-extrabold text-4xl -mt-8">
-        {userData?.name}
       </p>
       <div className="text-white/50 mt-3 flex gap-4">
         <p className="text-base">
           @{userData?.name}
           <span className="text-white font-semibold">
             <EditFriends
-              friendIds={userData?.friendships?.map((f) => f.friendId) || []}
+              friendIds={userData?.friendsOf?.map((f) => f.friendId) || []}
             />
           </span>
           {userData?.friendships?.length === 0 ? "" : "найзтай"}

@@ -45,6 +45,7 @@ export async function getUserById(req: Request, res: Response) {
             endAt: true,
             participants: true,
             participantLimit: true,
+            backgroundImage: true,
             isPrivate: true,
             createdAt: true,
             owner: {
@@ -70,6 +71,7 @@ export async function getUserById(req: Request, res: Response) {
             endAt: true,
             participants: true,
             participantLimit: true,
+            backgroundImage: true,
             isPrivate: true,
             createdAt: true,
             owner: {
