@@ -240,8 +240,8 @@ export const getPendingRequest = async (userId: string) => {
 export const generateInviteLink = async (eventId: string, userId: string) => {
   try {
     const res = await axios.post(
-      `${API_URL}/api/events/${eventId}/invite-link`,
-      { userId },
+      `${API_URL}/api/invite/${eventId}`,
+      { creatorId: userId },
       {
         headers: {
           "Content-Type": "application/json",
