@@ -1,7 +1,9 @@
 "use client";
 
+import { Plus } from "lucide-react";
 import { motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
 import { useUserStore } from "@/app/profile/_web/store/userStore";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -10,12 +12,11 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import { toast } from "react-toastify";
-import { uploadImageToCloudinary } from "@/utils/Cloudinary";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+import {
+  useSyncMoodFromUserData,
+  handleMoodBlur,
+  handleImageUpload,
+} from "@/app/profile/_web/utils/editAvatarSupport";
 
 const EditAvatar = () => {
   const { userData, setUserData } = useUserStore();
@@ -25,84 +26,7 @@ const EditAvatar = () => {
   const [mood, setMood] = useState("");
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (userData?.moodStatus) {
-      setMood(userData.moodStatus);
-    }
-  }, [userData]);
-
-  const handleBlur = async () => {
-    setIsEditing(false);
-  
-    const userId = userData?.id;
-    if (!userId) {
-      toast.error("Хэрэглэгчийн ID олдсонгүй.");
-      return;
-    }
-  
-    try {
-      const response = await fetch(`${API_URL}/api/users/${userId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ moodStatus: mood }),
-      });
-  
-      if (!response.ok) {
-        throw new Error("Сэтгэл хөдлөлийг хадгалах үед алдаа гарлаа.");
-      }
-  
-      const updated = await response.json();
-      setUserData(updated);
-      toast.success("Сэтгэл хөдлөл амжилттай шинэчлэгдлээ.");
-    } catch (error) {
-      console.error("Mood update error:", error);
-      toast.error("Сэтгэл хөдлөлийг шинэчлэх үед алдаа гарлаа.");
-    }
-  };
-
-  const handleImgUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    try {
-      setLoading(true);
-      const url = await uploadImageToCloudinary(file);
-
-      const userId = userData?.id;
-      if (!userId) {
-        toast.error("Хэрэглэгчийн ID олдсонгүй.");
-        return;
-      }
-
-      const response = await fetch(`${API_URL}/api/users/${userId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ avatarImage: url }),
-      });
-
-      if (!response.ok) {
-        toast.error("Аватар хадгалах үед алдаа гарлаа.");
-        return;
-      }
-
-      const updated = await response.json();
-      setUserData(updated);
-      toast.success("Аватар амжилттай шинэчлэгдлээ.");
-
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
-    } catch (error) {
-      console.error("Зураг байршуулах үед алдаа гарлаа:", error);
-      toast.error("Зураг upload амжилтгүй боллоо.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  useSyncMoodFromUserData(userData, setMood);
 
   const hasStories = (userData?.stories ?? []).length > 0;
 
@@ -125,6 +49,7 @@ const EditAvatar = () => {
           delay: 0.3,
         }}
       >
+        {/* Animated dots */}
         <motion.div
           className="rounded-full w-2 h-2 bg-black -mb-4"
           animate={{ y: [0, -2, 0] }}
@@ -147,17 +72,50 @@ const EditAvatar = () => {
           }}
         />
 
+        {/* Input or Text */}
         {isEditing ? (
-          <motion.input
-            type="text"
-            value={mood}
-            onChange={(e) => setMood(e.target.value)}
-            onBlur={handleBlur}
-            autoFocus
-            className="font-semibold text-center rounded-2xl -ml-4 -mt-2 px-2 py-1 w-30  text-white text-xs bg-black"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          />
+          <div className="flex flex-col items-center -ml-4 -mt-2">
+            <motion.input
+              type="text"
+              value={mood}
+              placeholder="Өнөөдөр би..."
+              onChange={(e) => {
+                const value = e.target.value;
+                if ([...value].length <= 20) {
+                  setMood(value);
+                }
+              }}
+              onBlur={() => {
+                const trimmed = mood.trim();
+                if (trimmed) {
+                  handleMoodBlur({
+                    userData,
+                    mood: trimmed,
+                    setIsEditing,
+                    setUserData,
+                  });
+                } else {
+                  setIsEditing(false);
+                }
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  (e.target as HTMLInputElement).blur();
+                }
+              }}
+              autoFocus
+              className="font-semibold text-center rounded-2xl px-3 py-1 max-w-xs text-white text-xs bg-black focus:outline-none focus:ring-2 focus:ring-blue-400"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            />
+            <p
+              className={`text-[10px] mt-1 ${
+                20 - [...mood].length <= 5 ? "text-red-400" : "text-white"
+              }`}
+            >
+              {20 - [...mood].length} тэмдэгт бичих боломжтой
+            </p>
+          </div>
         ) : (
           <motion.p
             className="font-semibold text-center rounded-2xl -ml-4 -mt-2 px-2 py-1 w-30 text-white text-xs bg-black cursor-pointer"
@@ -167,12 +125,12 @@ const EditAvatar = () => {
             }}
             transition={{
               repeat: Infinity,
-              duration: 2.4,
+              duration: 1.8,
               ease: "easeInOut",
             }}
             onClick={() => setIsEditing(true)}
           >
-            {mood || "Set mood"}
+            {mood || "Өнөөдөр би..."}
           </motion.p>
         )}
       </motion.div>
@@ -185,7 +143,7 @@ const EditAvatar = () => {
               src={userData?.avatarImage || ""}
               alt="User Profile"
             />
-            <AvatarFallback>SP</AvatarFallback>
+            <AvatarFallback>Spotty</AvatarFallback>
           </Avatar>
         </div>
       ) : (
@@ -195,14 +153,22 @@ const EditAvatar = () => {
             src={userData?.avatarImage || ""}
             alt="User Profile"
           />
-          <AvatarFallback>SP</AvatarFallback>
+          <AvatarFallback>Spotty</AvatarFallback>
         </Avatar>
       )}
 
       <input
         type="file"
         accept="image/*"
-        onChange={handleImgUpload}
+        onChange={(e) =>
+          handleImageUpload({
+            event: e,
+            setLoading,
+            fileInputRef,
+            userData,
+            setUserData,
+          })
+        }
         ref={fileInputRef}
         className="hidden"
         id="upload-input"
@@ -223,7 +189,9 @@ const EditAvatar = () => {
           <label htmlFor="upload-input">
             <DropdownMenuItem>Аватар солих</DropdownMenuItem>
           </label>
+          <a href="/story">
           <DropdownMenuItem>Стори хийх</DropdownMenuItem>
+          </a>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

@@ -25,7 +25,6 @@ const EditProfile = () => {
   const { setFullUserData, setUserData: updateStoreUserData } = useUserStore();
   const { user } = useUser();
   const userId = user?.id;
-  
 
   const fetchUser = async (id: string) => {
     try {
@@ -60,15 +59,15 @@ const EditProfile = () => {
           </DialogHeader>
           <div className="w-full flex flex-col justify-center items-center">
             <div className="w-full h-[104px] bg-[#8D8D8D] flex flex-col rounded-3xl">
-            {localUserData?.backgroundImage ? (
-          <img
-            src={localUserData.backgroundImage}
-            alt="Cover"
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <div className="w-full h-full bg-[#8D8D8D]" />
-        )}
+              {localUserData?.backgroundImage ? (
+                <img
+                  src={localUserData.backgroundImage}
+                  alt="Cover"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full bg-[#8D8D8D]" />
+              )}
             </div>
             <div className="relative">
               <Avatar className="-mt-16 p-[4px] relative rounded-full w-[111px] h-[111px]">
@@ -92,7 +91,7 @@ const EditProfile = () => {
               </div>
               <div className="flex flex-col gap-2 w-full">
                 <Label htmlFor="username" className="text-xs">
-                  Хэрэглэгчийн нэр 
+                  Хэрэглэгчийн нэр
                 </Label>
                 <Input
                   id="username"
@@ -113,12 +112,8 @@ const EditProfile = () => {
                 <Input
                   id="email"
                   value={localUserData?.email ?? ""}
-                  onChange={(e) =>
-                    setLocalUserData((prev) =>
-                      prev ? { ...prev, email: e.target.value } : prev
-                    )
-                  }
-                  className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020]"
+                  disabled
+                  className="col-span-3 bg-[#202020] text-white cursor-not-allowed border-none"
                 />
               </div>
               <div className="flex flex-col gap-2 w-full">
@@ -151,7 +146,7 @@ const EditProfile = () => {
               </div>
               <div className="flex w-full flex-col gap-2">
                 <Label htmlFor="confirm-password" className="text-xs">
-                 Шинэ нууц үг
+                  Шинэ нууц үг
                 </Label>
                 <div className="relative">
                   <Input
