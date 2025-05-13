@@ -39,7 +39,8 @@ model User {
   joinedEvents Event[]      @relation("EventParticipants")
   stories      Story[]
 
-  createdAt DateTime @default(now())
+  createdAt   DateTime      @default(now())
+  EventInvite EventInvite[]
 }
 
 model Friendship {
@@ -66,25 +67,26 @@ model Location {
 }
 
 model Event {
-  id            String      @id @default(uuid())
-  title         String
-  description   String?
-  lat           Float
-  lng           Float
-  isPrivate     Boolean
-  hiddenFromMap Boolean
-  password      String?
-  backgroundImage String?
-  galleryImages String[]
-  owner         User        @relation("EventOwner", fields: [ownerId], references: [id])
-  ownerId       String
-  participants  User[]      @relation("EventParticipants")
+  id               String        @id @default(uuid())
+  title            String
+  description      String?
+  lat              Float
+  lng              Float
+  isPrivate        Boolean
+  hiddenFromMap    Boolean
+  password         String?
+  backgroundImage  String?
+  galleryImages    String[]
+  owner            User          @relation("EventOwner", fields: [ownerId], references: [id])
+  ownerId          String
+  participants     User[]        @relation("EventParticipants")
   participantLimit Int?
-  createdAt     DateTime    @default(now())
-  startAt       DateTime
-  endAt         DateTime?
-  status        EventStatus @default(UPCOMING)
-  categories    Categories[] @relation("EventCategories")
+  createdAt        DateTime      @default(now())
+  startAt          DateTime
+  endAt            DateTime?
+  status           EventStatus   @default(UPCOMING)
+  categories       Categories[]  @relation("EventCategories")
+  EventInvite      EventInvite[]
 }
 
 model Story {
@@ -97,9 +99,24 @@ model Story {
   createdAt DateTime @default(now())
   expiresAt DateTime
 }
+
 model Categories {
+  id     String  @id @default(uuid())
+  name   String
+  emoji  String
+  events Event[] @relation("EventCategories")
+}
+
+model EventInvite {
   id        String    @id @default(uuid())
-  name      String 
-  emoji     String
-  events    Event[] @relation("EventCategories")
+  event     Event     @relation(fields: [eventId], references: [id])
+  eventId   String
+  creator   User      @relation(fields: [creatorId], references: [id])
+  creatorId String
+  token     String    @unique
+  expiresAt DateTime?
+  maxUses   Int?
+  uses      Int       @default(0)
+
+  createdAt DateTime @default(now())
 }
