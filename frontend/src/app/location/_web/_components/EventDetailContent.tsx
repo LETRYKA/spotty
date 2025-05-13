@@ -172,4 +172,4 @@ export const EventDetailContent = ({
       </div>
     </div>
   );
-};
+}; 

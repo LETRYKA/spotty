@@ -130,7 +130,7 @@ export default function InvitePage() {
         >
           <div className="w-full absolute bottom-6 left-6 z-20 flex flex-col justify-start items-start">
             <p className="text-[var(--background)] text-xl">
-              Та <strong>{eventData?.title}</strong> уригдлаа ✨
+              Та <strong>{eventData?.title}</strong>-д уригдлаа ✨
             </p>
             <p className="text-[var(--background)]/50 text-base">
               {formatDate(eventData?.startAt || "")}

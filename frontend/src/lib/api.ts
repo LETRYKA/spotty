@@ -236,7 +236,7 @@ export const getPendingRequest = async (userId: string) => {
   }
 };
 
-// Generate invite link for an event
+// invite link gen
 export const generateInviteLink = async (eventId: string, userId: string) => {
   try {
     const res = await axios.post(
