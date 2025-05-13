@@ -18,7 +18,7 @@ export const listFriends = async (req: Request, res: Response): Promise<void> =>
         status: "accepted",
       },
       select: {
-        friend: {
+        friend: { 
           select: {
             id: true,
             name: true,
