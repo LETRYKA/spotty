@@ -20,7 +20,23 @@ export type Event = {
   owner: {
     name: string;
   };
-  participants: [];
+  participants: [
+    {
+      id: string;
+      name: string;
+      email: string;
+      avatarImage?: string;
+      phoneNumber?: string;
+      isVerified: boolean;
+      batteryLevel?: number;
+      moodStatus?: string;
+      backgroundImage?: string;
+      locations: {
+        lat: number;
+        lng: number;
+      }[];
+    }
+  ];
   categories: [
     {
       id: string;
