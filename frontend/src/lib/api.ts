@@ -184,8 +184,8 @@ export const removeFriend = async (friendId: string, userId: string) => {
     );
     return res.data;
   } catch (err) {
-    console.error("Failed to leave event:", err);
-    return null;
+    console.error("Failed to remove friend:", err);
+    throw err;
   }
 };
 
@@ -203,6 +203,7 @@ export const getUserByName = async (username: string) => {
     return null;
   }
 };
+
 // Accept friend request
 export const acceptFriend = async (friendId: string, userId: string) => {
   try {
