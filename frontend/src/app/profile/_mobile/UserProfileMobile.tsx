@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 import { getUserData } from "@/lib/api";
 import { User } from "../_web/types/User";
 import HeaderMobileProfile from "./_components/Header";
@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/sheet";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import Friends from "./_components/Friends";
-import DefaultAvatar from "@/img/default_avatar.png"
+import DefaultAvatar from "@/img/default_avatar.png";
 const UserProfileMobile = () => {
   const [userData, setLocalUserData] = useState<User | null>(null);
   const [editProfileOpen, setEditProfileOpen] = useState(false);
@@ -61,9 +61,7 @@ const UserProfileMobile = () => {
       <div className="w-full bg-[#8D8D8D] flex flex-col rounded-3xl h-26 mt-8">
         <div className="relative">
           <img
- 
             src={userData?.backgroundImage || ""}
- 
             alt="Background"
             className="w-full h-26 rounded-3xl object-cover"
           />
@@ -88,24 +86,16 @@ const UserProfileMobile = () => {
 
       <div className="flex justify-between w-70.25 mt-6.25">
         <div className="flex flex-col items-center cursor-pointer">
- 
-          <div className="text-white">
-            {userData.friendsOf?.length ?? 0}
-          </div>
+          <div className="text-white">{userData.friendsOf?.length ?? 0}</div>
           <div className="text-white opacity-50">Найз</div>
         </div>
         <div className="flex flex-col items-center">
-          <div className="text-white">
-            {userData.events?.length ?? 0}
-          </div>
+          <div className="text-white">{userData.events?.length ?? 0}</div>
           <div className="text-white opacity-50">Арга хэмжээ</div>
         </div>
         <div className="flex flex-col items-center">
-          <div className="text-white">
-            {userData.joinedEvents?.length ?? 0}
-          </div>
+          <div className="text-white">{userData.joinedEvents?.length ?? 0}</div>
           <div className="text-white opacity-50">Хамрагдсан</div>
- 
         </div>
       </div>
 
@@ -144,13 +134,11 @@ const UserProfileMobile = () => {
           <SheetHeader className="border-none shadow-none bg-transparent">
             <div className="flex justify-between items-center w-full">
               <SheetClose asChild>
- 
                 <button
                   onClick={() => setFriendsPageOpen(false)}
                   className="w-20 flex items-center justify-start"
                 >
                   <ChevronDown className="text-white hover:bg-muted rounded w-6 h-6" />
-
                 </button>
               </SheetClose>
               <div className="flex items-center text-white font-bold text-lg">
