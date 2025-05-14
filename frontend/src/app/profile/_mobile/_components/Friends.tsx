@@ -71,6 +71,7 @@ const Friends = () => {
                 alt={pendingRequests[0]?.name || 'User'}
               />
             </Avatar>
+            {pendingRequests.length===1 && (<p className='text-white/70'>{pendingRequests[0]?.name}</p>)}
             {pendingRequests.length > 1 && (
               <div>
                 <p className="text-xs text-white/70">

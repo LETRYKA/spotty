@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/nextjs";
 import DefaultAvatar from "@/img/default_avatar.png";
 import { getPendingRequest, acceptFriend } from "@/lib/api";
-
+import { cancelFriendRequest } from "@/lib/api";
 type FriendRequest = {
   id: string;
   name: string;
@@ -51,9 +51,20 @@ const AllRequest = () => {
     }
   };
 
-  const handleDelete = (requesterId: string) => {
+
+const handleDelete = async (requesterId: string) => {
+  if (!user?.id) return;
+
+  try {
+    await cancelFriendRequest(requesterId, user.id);
     setRequests((prev) => prev.filter((r) => r.id !== requesterId));
-  };
+  } catch (error) {
+    console.error("Error deleting request:", error);
+    alert("Failed to delete request.");
+  }
+
+  
+};
 
   return (
     <div className="gap-6 flex flex-col mt-10">
