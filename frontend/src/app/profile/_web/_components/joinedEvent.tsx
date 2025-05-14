@@ -50,7 +50,7 @@ const JoinedEvent = () => {
     );
   }
   return (
-    <div className="w-full h-auto flex flex-wrap gap-10 mt-8 px-10">
+    <div className="w-full h-auto flex flex-wrap gap-20 mt-8 px-10">
       {eventsWithStatus.map((event) => {
         const { background, border, text } = getStatusStylesAndText(
           event.status as keyof StatusStyles
@@ -89,7 +89,7 @@ const JoinedEvent = () => {
                   {text}
                 </div>
               </div>
-              <div className="w-full h-auto flex flex-row justify-between bg-white mt-4 absolute top-43 rounded-2xl px-3 py-3 gap-3">
+              <div className="w-full h-auto flex flex-row justify-between bg-white mt-11 absolute top-43 rounded-2xl px-3 py-3 gap-3">
                 <div className="flex flex-col items-start">
                   <p className="font-extrabold text-sm">
                     @{event?.owner?.name}

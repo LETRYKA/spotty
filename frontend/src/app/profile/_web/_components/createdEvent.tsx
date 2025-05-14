@@ -96,7 +96,9 @@ const CreatedEvents = () => {
               </div>
               <div className="w-full h-auto flex flex-row justify-between bg-white mt-11 absolute top-43 rounded-2xl px-3 py-3 gap-3">
                 <div className="flex flex-col items-start">
-                  <p className="font-extrabold text-sm">@{event.owner.name}</p>
+                  <p className="font-extrabold text-sm">
+                    @{event.owner.name}
+                    </p>
                   <p className="font-regular text-[0.6rem] text-black/50">
                     <span className="text-xs font-bold">Эхлэх: </span>{" "}
                     {event ? formatDate(event.startAt) : "Loading..."}
