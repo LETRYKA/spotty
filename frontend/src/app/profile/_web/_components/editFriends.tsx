@@ -7,7 +7,7 @@ import {
   DialogTrigger,
   DialogHeader,
   DialogTitle,
-  DialogClose
+  DialogClose,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import UnfAlert from "./unfAlert";
@@ -15,10 +15,11 @@ import { getFriendData } from "@/lib/api";
 import { useEffect, useState } from "react";
 import { User } from "../types/User";
 import { useUser } from "@clerk/nextjs";
+import { Separator } from "@/components/ui/separator";
 
 const EditFriends = ({ friendIds }: { friendIds: string[] }) => {
   const [friendsData, setFriendsData] = useState<User[]>([]);
-  
+
   const { user } = useUser();
   const userId = user?.id;
 
@@ -34,8 +35,7 @@ const EditFriends = ({ friendIds }: { friendIds: string[] }) => {
     if (userId) {
       fetchFriends(userId);
     }
-  }
-  , [userId]);
+  }, [userId]);
 
   return (
     <Dialog>
@@ -48,6 +48,10 @@ const EditFriends = ({ friendIds }: { friendIds: string[] }) => {
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] dark px-8 py-6">
+        <DialogHeader>
+          <DialogTitle className="text-white">Friend request</DialogTitle>
+        </DialogHeader>
+        <Separator/>
         <DialogHeader>
           <DialogTitle className="text-white">All friends</DialogTitle>
         </DialogHeader>
@@ -79,13 +83,24 @@ const EditFriends = ({ friendIds }: { friendIds: string[] }) => {
                       @{friendsData.name}
                     </p>
                   </div>
-                  <Button className="ml-auto bg-[#D9D9D9]/30 text-white hover:bg-[#141414] hover:text-white/50 border-none shadow-none text-sm font-semibold">
-                    Invite
-                  </Button>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button className="ml-auto bg-[#D9D9D9]/30 text-white hover:bg-[#141414] hover:text-white/50 border-none shadow-none text-sm font-semibold">
+                        Invite
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="dark p-10">
+                      <DialogHeader>
+                        <DialogTitle className="text-3xl text-white flex justify-center items-center">Тун удахгүй😅</DialogTitle>
+                      </DialogHeader>
+                      <img src={`/amjihgui.jpeg`} className=""/>
+                      <p className="text-3xl text-white flex justify-center items-center">Амжкуээшдэээ 😭</p>
+                    </DialogContent>
+                  </Dialog>
                   <DialogClose asChild>
-                  {userId && friendsData.id && (
-                    <UnfAlert userId={userId} friendId={friendsData.id} />
-                  )}
+                    {userId && friendsData.id && (
+                      <UnfAlert userId={userId} friendId={friendsData.id} />
+                    )}
                   </DialogClose>
                 </div>
               );
