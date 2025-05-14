@@ -59,7 +59,9 @@ const verifyPasscode = async (
     }
 
     if (!event.password) {
-      res.status(400).json({ message: "Private event has no passcode", valid: false });
+      res
+        .status(400)
+        .json({ message: "Private event has no passcode", valid: false });
       return;
     }
 
@@ -69,7 +71,6 @@ const verifyPasscode = async (
       message: isValid ? "Access granted" : "Access denied",
       valid: isValid,
     });
-
   } catch (error) {
     console.error("Error verifying passcode:", error);
     res.status(500).json({ message: "Server error", valid: false });

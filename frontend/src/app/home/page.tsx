@@ -7,8 +7,7 @@ import {
   SignUpButton,
   UserButton,
 } from "@clerk/nextjs";
-//a
-import { DockComp } from "../../components/Dock";
+import { DockComp } from "@/components/Dock";
 import { CardCarousel } from "./_components/Carousel";
 import { InteractiveHoverButton } from "@/components/magicui/interactive-hover-button";
 import SplitText from "@/components/SplitText";
