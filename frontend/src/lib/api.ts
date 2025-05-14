@@ -299,3 +299,25 @@ export const cancelFriendRequest = async (friendId: string, userId: string) => {
     throw error;
   }
 };
+
+// up event
+export const updateEvent = async (eventId: string, data: any) => {
+  return fetch(`${API_URL}/api/events/${eventId}/update`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+};
+
+// del event
+export const deleteEvent = async (eventId: string, userId: string) => {
+  return fetch(`${API_URL}/api/events/${eventId}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ userId }),
+  });
+};

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -17,6 +17,7 @@ import CreateEventForm from "./CreateEventForm";
 import LocationSelect from "./LocationSelect";
 import PasscodeDialog from "./Passcode";
 import { EventFormValues } from "../types/Event";
+import { Plus } from "lucide-react";
 
 const eventSchema = z.object({
   title: z.string().max(20, "Title must be at most 20 characters"),
@@ -48,9 +49,35 @@ export default function CreateEvent() {
   const [categories, setCategories] = useState<
     { id: string; name: string; emoji: string }[]
   >([]);
+  const [isLoadingCategories, setIsLoadingCategories] = useState(false);
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(
     null
   );
+
+  useEffect(() => {
+    const fetchCategoriesForForm = async () => {
+      if (showCreateEventDialog) {
+        setIsLoadingCategories(true);
+        try {
+          const fetchedCategories = await getCategories();
+          if (Array.isArray(fetchedCategories)) {
+            setCategories(fetchedCategories);
+          } else {
+            setCategories([]);
+            toast.error("Could not load categories.");
+          }
+        } catch (error) {
+          console.error("Failed to fetch categories:", error);
+          toast.error("Failed to load categories for the form.");
+          setCategories([]);
+        } finally {
+          setIsLoadingCategories(false);
+        }
+      }
+    };
+
+    fetchCategoriesForForm();
+  }, [showCreateEventDialog]);
 
   const formik = useFormik<EventFormValues>({
     initialValues: {
@@ -109,14 +136,20 @@ export default function CreateEvent() {
     <>
       <Dialog
         open={showCreateEventDialog}
-        onOpenChange={(open) => !open && setShowCreateEventDialog(false)}
+        onOpenChange={(open) => {
+          if (!open) {
+            setShowCreateEventDialog(false);
+          }
+        }}
       >
         <DialogTrigger asChild>
           <Button
-            className="rounded-full w-14 h-14 bg-blue-600 hover:bg-blue-700"
-            onClick={() => setShowLocationSelect(true)}
+            className="rounded-full w-14 h-14 bg-[var(--background)] hover:bg-[var(--background)]/80 text-[var(--foreground)] text-2xl font-bod"
+            onClick={() => {
+              setShowLocationSelect(true);
+            }}
           >
-            +
+           <Plus />
           </Button>
         </DialogTrigger>
         <DialogContent className="max-w-[500px] bg-black/30 backdrop-blur-lg border-[#2F2F2F] rounded-3xl p-6">
@@ -125,7 +158,11 @@ export default function CreateEvent() {
               Create Event
             </DialogTitle>
           </DialogHeader>
-          <CreateEventForm formik={formik} categories={categories} />
+          {isLoadingCategories ? (
+            <div className="text-white text-center py-4">Loading categories...</div>
+          ) : (
+            <CreateEventForm formik={formik} categories={categories} />
+          )}
         </DialogContent>
       </Dialog>
 

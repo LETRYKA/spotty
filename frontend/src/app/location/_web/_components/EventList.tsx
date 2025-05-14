@@ -112,9 +112,8 @@ const EventList = ({
                 <div
                   className="h-full w-auto aspect-square rounded-2xl bg-cover bg-center"
                   style={{
-                    backgroundImage: `url(${
-                      event?.backgroundImage || "event.owner.avatarImage"
-                    })`,
+                    backgroundImage: `url(${event?.backgroundImage || "event.owner.avatarImage"
+                      })`,
                   }}
                 />
                 <div className="h-full flex flex-col justify-center ml-4">
@@ -131,14 +130,11 @@ const EventList = ({
                   </p>
                 </div>
               </div>
-              <div className="h-full flex flex-col mr-1 items-end">
-                <Button className="bg-[#4B4AFE] h-auto aspect-square hover:bg-[#4B4AFE]/80 transition-all w-8">
-                  <Heart strokeWidth={3} width={12} />
-                </Button>
-                <div className="flex items-center mt-4">
-                  <div className="w-6 h-auto aspect-square rounded-full bg-slate-300 -ml-2"></div>
+              <div className="h-full flex flex-col mr-1 items-end relative">
+                <div className="absolute bottom-0 flex items-center mt-4">
+                  {/* <div className="w-6 h-auto aspect-square rounded-full bg-slate-300 -ml-2"></div>
                   <div className="w-6 h-auto aspect-square rounded-full bg-slate-500 -ml-2"></div>
-                  <div className="w-6 h-auto aspect-square rounded-full bg-slate-700 -ml-2"></div>
+                  <div className="w-6 h-auto aspect-square rounded-full bg-slate-700 -ml-2"></div> */}
                   <p className="text-[var(--background)] ml-3 text-sm">
                     {event.participants.length}/{event.participantLimit || 10}
                   </p>

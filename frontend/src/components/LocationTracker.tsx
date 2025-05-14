@@ -8,11 +8,29 @@ type FriendLocation = {
   lng: number;
 };
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 export default function LiveLocation({ userId }: { userId: string }) {
   const [friendLocations, setFriendLocations] = useState<FriendLocation[]>([]);
 
   useEffect(() => {
-    const socket = new WebSocket("ws://localhost:8000");
+    if (!API_URL) {
+      console.error("NEXT_PUBLIC_API_URL is not defined");
+      return;
+    }
+
+    let socketUrl = API_URL.replace(/^http/, 'ws');
+    if (API_URL.startsWith("https://")) {
+      socketUrl = API_URL.replace("https://", "wss://");
+    } else if (API_URL.startsWith("http://")) {
+      socketUrl = API_URL.replace("http://", "ws://");
+    } else if (API_URL.startsWith("ws://") || API_URL.startsWith("wss://")) {
+      socketUrl = API_URL;
+    } else {
+      socketUrl = `ws://${API_URL}`;
+    }
+
+    const socket = new WebSocket(socketUrl);
 
     socket.onopen = () => {
       console.log("websocket working");
