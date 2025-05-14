@@ -1,6 +1,6 @@
 export type Event = {
   id: string;
-  title: string
+  title: string;
   description: string;
   lat: number;
   lng: number;
@@ -20,23 +20,7 @@ export type Event = {
   owner: {
     name: string;
   };
-  participants: [
-    {
-      id: string;
-      name: string;
-      email: string;
-      avatarImage?: string;
-      phoneNumber?: string;
-      isVerified: boolean;
-      batteryLevel?: number;
-      moodStatus?: string;
-      backgroundImage?: string;
-      locations: {
-        lat: number;
-        lng: number;
-      }[];
-    }
-  ];
+  participants: [];
   categories: [
     {
       id: string;

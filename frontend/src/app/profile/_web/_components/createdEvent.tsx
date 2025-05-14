@@ -1,11 +1,10 @@
-import React, { useEffect, useState, useMemo } from "react";
-import Mapping from "/public/Mapping.png";
-import { Navigation } from "lucide-react";
-import { getUserData } from "@/lib/api";
-import { Event } from "@/types/Event";
 import Link from "next/link";
+import { Event } from "@/types/Event";
 import { useUser } from "@clerk/nextjs";
+import { getUserData } from "@/lib/api";
+import { Navigation } from "lucide-react";
 import { formatDate } from "@/utils/DateFormatter";
+import React, { useEffect, useState, useMemo } from "react";
 import { enrichEventsWithStatus } from "@/utils/eventStatus";
 import { getStatusStylesAndText } from "@/utils/statusStyles";
 import { StatusStyles } from "@/app/profile/_web/types/statusStyles";
@@ -15,6 +14,7 @@ const CreatedEvents = () => {
   const [eventData, setEventData] = useState<Event[]>([]);
   const { user } = useUser();
   const userId = user?.id;
+  console.log("eventbackground", eventData);
 
   const fetchUserEvents = async (id: string) => {
     try {
@@ -40,11 +40,14 @@ const CreatedEvents = () => {
     return (
       <div className="w-full h-auto flex flex-col justify-center items-center mt-5 gap-6">
         <p className="text-white/70 text-2xl flex mt-20 justify-center items-center">
-          No events? Time to explore! <strong className="text-white">🧭</strong>
+          Өөөө ямар ч эвент байхгүй байна шд{" "}
+          <strong className="text-white">🥲</strong> Доор байгаа товч дээр
+          дараад гоё эвентэд нэгдэж болно шүү
+          <strong className="text-white"> 🙂‍↕️ </strong>
         </p>
         <Link href={`/location`}>
           <InteractiveHoverButton className="">
-            заза нэг юм бодож олноо
+            Эвэнт харах 🤩
           </InteractiveHoverButton>
         </Link>
       </div>
@@ -63,9 +66,9 @@ const CreatedEvents = () => {
             className="bg-[#313034] flex flex-col rounded-3xl items-center relative transition-transform duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl"
           >
             <img
-              src={Mapping.src}
+              src={event.backgroundImage}
               alt="Event"
-              className="w-[325px] h-auto aspect-square rounded-3xl object-cover"
+              className="w-[325px] h-auto aspect-square opacity-55 rounded-3xl object-cover blur-xs"
             />
             <div className="absolute top-4 bottom-4 left-6 right-6">
               <div className="w-full flex justify-between items-start gap-4">

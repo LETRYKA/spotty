@@ -1,9 +1,9 @@
-import ProfileWeb from "./_web/Profile";
+import ViewUserProfileMobile from "./_mobile/Profile";
 
 const Profile = () => {
   return (
     <div className="w-full h-auto flex justify-center items-enter">
-      <ProfileWeb />
+      <ViewUserProfileMobile />
     </div>
   );
 };
