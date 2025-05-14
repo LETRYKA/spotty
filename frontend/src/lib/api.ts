@@ -174,7 +174,7 @@ export const addFriend = async (friendId: string, userId: string) => {
 export const removeFriend = async (friendId: string, userId: string) => {
   try {
     const response = await axios.delete(`${API_URL}/api/friends/${friendId}`, {
-      data: { userId }
+      data: { userId },
     });
     return response.data;
   } catch (error) {
@@ -211,14 +211,18 @@ export const acceptFriend = async (friendId: string, userId: string) => {
       }
     );
     return res.data;
-  } catch (err) {
-    console.error("Failed to leave event:", err);
+  } catch (err: any) {
+    console.error(
+      "Failed to accept friend request:",
+      err.response?.data || err.message
+    );
     return null;
   }
 };
+
 export const getPendingRequest = async (userId: string) => {
   try {
-    const res = await axios.get(`${API_URL}/api/friends/requested/${userId}`, {
+    const res = await axios.get(`${API_URL}/api/friends/pending/${userId}`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -261,7 +265,11 @@ export const getInvite = async (token: string) => {
 };
 
 // Join via invite
-export const joinViaInvite = async (token: string, userId: string, accept: boolean) => {
+export const joinViaInvite = async (
+  token: string,
+  userId: string,
+  accept: boolean
+) => {
   try {
     const res = await axios.post(
       `${API_URL}/api/invite/${token}/join`,
@@ -283,7 +291,7 @@ export const joinViaInvite = async (token: string, userId: string, accept: boole
 export const cancelFriendRequest = async (friendId: string, userId: string) => {
   try {
     const response = await axios.delete(`${API_URL}/api/friends/${friendId}`, {
-      data: { userId }
+      data: { userId },
     });
     return response.data;
   } catch (error) {

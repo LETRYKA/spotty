@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { Dock, DockIcon } from "@/components/magicui/dock";
+import Notification from "@/components/Notification";
 
 export type IconProps = React.HTMLAttributes<SVGElement>;
 
@@ -54,6 +55,7 @@ export function DockComp() {
               </Tooltip>
             </DockIcon>
           ))}
+          <Notification />
         </Dock>
       </TooltipProvider>
     </div>
