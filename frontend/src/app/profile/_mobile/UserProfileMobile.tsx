@@ -10,6 +10,7 @@ import EventCardsMobile from "./_components/EventCardMobile";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import EditProfile from "./_components/EditProfile";
+import Blackhole from "@/img/wallpapersden.com_black-hole-hd-digital_3840x1620.jpg";
 import {
   Sheet,
   SheetClose,
@@ -61,7 +62,7 @@ const UserProfileMobile = () => {
       <div className="w-full bg-[#8D8D8D] flex flex-col rounded-3xl h-26 mt-8">
         <div className="relative">
           <img
-            src={userData?.backgroundImage || ""}
+            src={userData?.backgroundImage || Blackhole.src}
             alt="Background"
             className="w-full h-26 rounded-3xl object-cover"
           />

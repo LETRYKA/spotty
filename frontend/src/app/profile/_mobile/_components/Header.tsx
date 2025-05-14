@@ -3,16 +3,17 @@
 import { ChevronLeft, Bell, EllipsisVertical } from "lucide-react";
 import Image from "next/image";
 import VerifiedIcon from "@/img/icons8-verified-16.png";
-
+import { useRouter } from "next/navigation";
 interface HeaderMobileProfileProps {
   name: string;
   isVerified: boolean;
 }
 
 const HeaderMobileProfile = ({ name, isVerified }: HeaderMobileProfileProps) => {
+  const router = useRouter();
   return (
     <div className="flex w-full justify-between">
-      <ChevronLeft className="text-white mr-9.25 " />
+      <ChevronLeft onClick={()=>router.replace("/location")} className="text-white mr-9.25 " />
       <div className="flex text-white text-[18px] font-bold items-center justify-center">
         {name}
         {isVerified && (
