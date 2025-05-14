@@ -7,6 +7,7 @@ import { useUser } from "@clerk/nextjs";
 import DefaultAvatar from "@/img/default_avatar.png";
 import { getPendingRequest, acceptFriend } from "@/lib/api";
 import { cancelFriendRequest } from "@/lib/api";
+import { toast } from "react-toastify";
 type FriendRequest = {
   id: string;
   name: string;
@@ -52,19 +53,21 @@ const AllRequest = () => {
   };
 
 
-const handleDelete = async (requesterId: string) => {
-  if (!user?.id) return;
 
-  try {
-    await cancelFriendRequest(requesterId, user.id);
-    setRequests((prev) => prev.filter((r) => r.id !== requesterId));
-  } catch (error) {
-    console.error("Error deleting request:", error);
-    alert("Failed to delete request.");
-  }
+  const handleDelete = async (requesterId: string) => {
+    if (!user?.id) return;
 
-  
-};
+    try {
+      await cancelFriendRequest(requesterId, user.id);
+
+      setRequests((prev) => prev.filter((r) => r.id !== requesterId));
+
+      toast.success("Friend request deleted successfully.");
+    } catch (error) {
+      toast.error("Failed to delete the friend request.");
+    }
+  };
+
 
   return (
     <div className="gap-6 flex flex-col mt-10">

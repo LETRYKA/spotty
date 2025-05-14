@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import HeaderMobileProfile from "./_components/Header";
 import EventCardsMobile from "./_components/EventCardMobile";
 import Friends from "./_components/Friends";
+import Blackhole from "@/img/wallpapersden.com_black-hole-hd-digital_3840x1620.jpg";
 import {
   Sheet,
   SheetClose,
@@ -69,7 +70,7 @@ const ViewUserProfileMobile = () => {
       <div className="w-full bg-[#8D8D8D] flex flex-col rounded-3xl h-26 mt-8">
         <div className="relative">
           <img
-            src={userData?.backgroundImage || "https://i.imgur.com/4K6x1Zc.png"}
+            src={userData?.backgroundImage || Blackhole.src}
             alt="Background"
             className="w-full h-26 rounded-3xl object-cover"
           />
