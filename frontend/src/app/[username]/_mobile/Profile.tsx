@@ -24,7 +24,7 @@ const ViewUserProfileMobile = () => {
   const [friendsPageOpen, setFriendsPageOpen] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
-  // Always call useEffect — even if username is missing
+  // Fetch user data based on username
   useEffect(() => {
     if (!username) return;
 
@@ -42,7 +42,7 @@ const ViewUserProfileMobile = () => {
     fetchUser();
   }, [username]);
 
-  // This useEffect must stay at top-level!
+  // Retrieve current user's ID from localStorage on mount
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedUserId = localStorage.getItem("userId");
@@ -58,9 +58,6 @@ const ViewUserProfileMobile = () => {
       </div>
     );
   }
-  console.log("currentUserId:", currentUserId);
-  console.log("profileUserId:", userData.id);
-  localStorage.setItem("userId", "user_2wwsxmEGbNArtou3KBYNlemZ3D4");
 
   return (
     <div className="w-full h-full flex flex-col justify-start items-center p-9">
@@ -72,9 +69,7 @@ const ViewUserProfileMobile = () => {
       <div className="w-full bg-[#8D8D8D] flex flex-col rounded-3xl h-26 mt-8">
         <div className="relative">
           <img
-            src={
-              userData?.backgroundImage || " https://i.imgur.com/4K6x1Zc.png"
-            }
+            src={userData?.backgroundImage || "https://i.imgur.com/4K6x1Zc.png"}
             alt="Background"
             className="w-full h-26 rounded-3xl object-cover"
           />
@@ -122,7 +117,7 @@ const ViewUserProfileMobile = () => {
         {currentUserId && currentUserId !== userData.id && (
           <AddFriendButton
             friendId={userData.id}
-            userId={currentUserId}
+            userId={currentUserId} // Use dynamically fetched userId here
             refreshFriends={() => setFriendsPageOpen(false)}
           />
         )}
