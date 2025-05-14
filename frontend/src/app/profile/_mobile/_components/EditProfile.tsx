@@ -47,7 +47,6 @@ const DEFAULT_USER: User = {
   isVerified: false,
 };
 
-
 const EditProfile: React.FC<EditProfileProps> = ({ open, onClose }) => {
   const [localUserData, setLocalUserData] = useState<User>(DEFAULT_USER);
   const { user } = useUser();
@@ -79,15 +78,22 @@ const EditProfile: React.FC<EditProfileProps> = ({ open, onClose }) => {
         <SheetHeader className="border-none shadow-none bg-transparent">
           <div className="flex justify-between items-center w-full">
             <SheetClose asChild>
-              <button onClick={onClose} className="w-20 flex items-center justify-start">
+              <button
+                onClick={onClose}
+                className="w-20 flex items-center justify-start"
+              >
                 <ChevronLeft className="text-white hover:bg-muted rounded w-6 h-6" />
               </button>
             </SheetClose>
             <div className="flex items-center text-white font-bold text-lg">
               {localUserData.name || "User"}
-              <Image src={VerifiedIcon} alt="verified" className="ml-1 w-4 h-4" />
+              <Image
+                src={VerifiedIcon}
+                alt="verified"
+                className="ml-1 w-4 h-4"
+              />
             </div>
-            <div className="w-20 flex gap-3 justify-center">
+            <div className="w-20 flex gap-3 justify-center items-center invisible">
               <Bell className="text-white w-7 h-7 bg-[#434343] rounded-full p-1.5" />
               <EllipsisVertical className="text-white w-5 h-5" />
             </div>
@@ -135,7 +141,9 @@ const EditProfile: React.FC<EditProfileProps> = ({ open, onClose }) => {
           <div className="max-w-md mx-auto space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-[#2c2c2c] rounded-xl p-4">
-                <label className="block text-sm text-gray-400 mb-1">Username</label>
+                <label className="block text-sm text-gray-400 mb-1">
+                  Username
+                </label>
                 <input
                   className="bg-transparent text-sm w-full text-white focus:outline-none"
                   value={localUserData.name}
@@ -144,11 +152,12 @@ const EditProfile: React.FC<EditProfileProps> = ({ open, onClose }) => {
               </div>
 
               <div className="bg-[#2c2c2c] rounded-xl p-4">
-                <label className="block text-sm text-gray-400 mb-1">Phone</label>
+                <label className="block text-sm text-gray-400 mb-1">
+                  Phone
+                </label>
                 <input
                   className="bg-transparent text-sm w-full text-white focus:outline-none"
                   value={localUserData.phoneNumber ?? ""}
-
                   onChange={(e) => handleChange("phoneNumber", e.target.value)}
                 />
               </div>
@@ -164,11 +173,12 @@ const EditProfile: React.FC<EditProfileProps> = ({ open, onClose }) => {
             </div>
 
             <div className="bg-[#2c2c2c] rounded-xl p-4">
-              <label className="block text-sm text-gray-400 mb-1">Mood Status</label>
+              <label className="block text-sm text-gray-400 mb-1">
+                Mood Status
+              </label>
               <textarea
                 className="bg-transparent text-sm w-full text-white focus:outline-none resize-none"
                 value={localUserData.moodStatus ?? ""}
-
                 onChange={(e) => handleChange("moodStatus", e.target.value)}
               />
             </div>
