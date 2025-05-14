@@ -1,11 +1,11 @@
+"use client";
+
+import ProfileWeb from "./_web/Profile";
 import ViewUserProfileMobile from "./_mobile/Profile";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
-const Profile = () => {
-  return (
-    <div className="w-full h-auto flex justify-center items-enter">
-      <ViewUserProfileMobile />
-    </div>
-  );
-};
+export default function Profile() {
+  const isMobile = useMediaQuery("(max-width:768px)");
 
-export default Profile;
+  return <div>{isMobile ? <ViewUserProfileMobile /> : <ProfileWeb />}</div>;
+}

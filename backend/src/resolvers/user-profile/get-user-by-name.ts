@@ -29,7 +29,6 @@ export async function getUserByName(
             friendId: true,
             userId: true,
             status: true,
-            
           },
         },
         friendsOf: {
@@ -37,6 +36,7 @@ export async function getUserByName(
             id: true,
             friendId: true,
             userId: true,
+            status: true,
           },
         },
         locations: true,
@@ -99,7 +99,17 @@ export async function getUserByName(
       return; 
     }
 
-    res.status(200).json(user);
+    const allFriendships = [
+      ...user.friendships,
+      ...user.friendsOf
+    ];
+
+    const userWithCombinedFriendships = {
+      ...user,
+      friendships: allFriendships
+    };
+
+    res.status(200).json(userWithCombinedFriendships);
   } catch (error) {
     console.error("Failed to fetch user:", (error as Error).message);
     res.status(500).json({ error: "Алдаа гарлаа. Дахин оролдоно уу." });
