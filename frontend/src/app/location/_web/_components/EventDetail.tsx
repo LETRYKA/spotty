@@ -45,7 +45,7 @@ const EventDetail = ({
   useEffect(() => {
     if (!event || !user || !hasAccess) return;
     const isJoined = event.participants.some(
-      (participant) => participant.name === user.fullName
+      (participant) => participant.name === user.username
     );
     setJoined(isJoined);
   }, [event, user, hasAccess]);

@@ -12,6 +12,7 @@ import { storiesRoute } from "./routes/stories-routes";
 import { locationRoute } from "./routes/location-routes";
 import { eventsRoute } from "./routes/events-routes";
 import { categoriesRoute } from "./routes/categories-routes";
+import { inviteRoute } from "./routes/invite-route";
 
 const allowedOrigins = [
   "http://localhost:3000",
@@ -53,6 +54,7 @@ app.use("/api/stories", storiesRoute);
 app.use("/api/events", eventsRoute);
 app.use("/api/webhooks", webhooksRouter);
 app.use("/api/categories", categoriesRoute);
+app.use("/api/invite", inviteRoute);
 
 app.get("/api", (req, res) => {
   res.send("API is running...");

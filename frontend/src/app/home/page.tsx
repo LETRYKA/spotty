@@ -80,10 +80,7 @@ const Home = () => {
           playsInline
           className="absolute inset-0 w-full h-full object-cover z-0"
         >
-          <source
-            src="https://cdn.yourcreative.com.au/wp-content/uploads/2024/11/12061906/V1-Draft.mp4"
-            type="video/mp4"
-          />
+          <source src="/bg-vid.mp4" type="video/mp4" />
         </video>
       </div>
       <div className="w-full h-auto mt-20 overflow-hidden relative">

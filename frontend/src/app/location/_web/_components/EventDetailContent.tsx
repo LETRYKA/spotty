@@ -7,6 +7,10 @@ import {
 } from "@/components/ui/carousel";
 import { Event } from "@/types/Event";
 import DropDown from "./Menu";
+import { useState } from "react";
+import { useUser } from "@clerk/clerk-react";
+import { generateInviteLink } from "@/lib/api";
+import { toast } from "react-toastify";
 
 interface EventDetailContentProps {
   event: Event;
@@ -23,6 +27,24 @@ export const EventDetailContent = ({
   onJoin,
   onLeave,
 }: EventDetailContentProps) => {
+  const user = useUser();
+  const [inviteLink, setInviteLink] = useState("");
+  const userId = user.user?.id;
+
+  const handleShare = async (id: String) => {
+    if (!userId) return;
+
+    try {
+      const { inviteLink } = await generateInviteLink(id as string, userId);
+      setInviteLink(inviteLink);
+      await navigator.clipboard.writeText(inviteLink);
+      toast.success("Линк copied");
+    } catch (error) {
+      console.error("Error generating invite link:", error);
+      toast.error("Өө алдаа гарлаа");
+    }
+  };
+
   return (
     <div className="w-full flex flex-col gap-3 overflow-y-scroll pb-20">
       <div className="w-full flex justify-between px-8 pt-8">
@@ -32,7 +54,10 @@ export const EventDetailContent = ({
         >
           <ChevronLeft />
         </Button>
-        <Button className="bg-white/20 hover:bg-[#3c3a3f] text-white rounded-full w-fit px-4 aspect-square">
+        <Button
+          onClick={() => handleShare(event.id)}
+          className="bg-white/20 hover:bg-[#3c3a3f] text-white rounded-full w-fit px-4 aspect-square"
+        >
           <Share />
         </Button>
       </div>
@@ -95,14 +120,14 @@ export const EventDetailContent = ({
             {event.description}
           </p>
         </div>
-        <div className="w-full mt-2 flex justify-start items-center gap-3">
+        <div className="w-full mt-6 flex flex-wrap justify-start items-center gap-3">
           {event.categories &&
             event.categories.map((category, index) => (
               <p
                 key={index}
                 className="w-fit text-[var(--background)] bg-[#D9D9D9]/10 text-sm px-4 py-2 rounded-full"
               >
-                {category?.emoji}
+                {category?.emoji} {category?.name}
               </p>
             ))}
         </div>
@@ -147,4 +172,4 @@ export const EventDetailContent = ({
       </div>
     </div>
   );
-};
+}; 
