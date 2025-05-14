@@ -49,7 +49,6 @@ const EditAvatar = () => {
           delay: 0.3,
         }}
       >
-        {/* Animated dots */}
         <motion.div
           className="rounded-full w-2 h-2 bg-black -mb-4"
           animate={{ y: [0, -2, 0] }}
@@ -71,8 +70,6 @@ const EditAvatar = () => {
             delay: 0.2,
           }}
         />
-
-        {/* Input or Text */}
         {isEditing ? (
           <div className="flex flex-col items-center -ml-4 -mt-2">
             <motion.input
@@ -173,7 +170,6 @@ const EditAvatar = () => {
         className="hidden"
         id="upload-input"
       />
-
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
