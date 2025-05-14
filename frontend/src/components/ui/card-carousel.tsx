@@ -30,13 +30,14 @@ interface CarouselProps {
   autoplayDelay?: number;
   showPagination?: boolean;
   showNavigation?: boolean;
+  onCardClick: (id: string) => void;
 }
-
 export const CardCarousel: React.FC<CarouselProps> = ({
   events,
   autoplayDelay = 2500,
   showPagination = true,
   showNavigation = true,
+  onCardClick,
 }) => {
   return (
     <section className="w-full h-full">
@@ -71,7 +72,9 @@ export const CardCarousel: React.FC<CarouselProps> = ({
       >
         {events.map((event, index) => (
           <SwiperSlide key={event.id}>
-            <div className="relative w-full h-[44rem] rounded-4xl overflow-hidden">
+            <div className="relative w-full h-[44rem] rounded-4xl overflow-hidden"
+            onClick={() => onCardClick(event.id)}
+            >  
               <Image
                 src={event.backgroundImage || "/default-image.jpg"}
                 alt={event.title}
