@@ -6,8 +6,8 @@ const prisma = new PrismaClient();
 
 export const acceptFriend = async (req: Request, res: Response) => {
   try {
-    const { userId } = req.body;
-    const requesterId = req.params.id;
+    const { userId } = req.body; // accepter
+    const requesterId = req.params.id; // sender
 
     const existing = await prisma.friendship.findFirst({
       where: {
@@ -24,13 +24,22 @@ export const acceptFriend = async (req: Request, res: Response) => {
       data: { status: "accepted" },
     });
 
-    await prisma.friendship.create({
-      data: {
+    const reverse = await prisma.friendship.findFirst({
+      where: {
         userId,
         friendId: requesterId,
-        status: "accepted",
       },
     });
+
+    if (!reverse) {
+      await prisma.friendship.create({
+        data: {
+          userId,
+          friendId: requesterId,
+          status: "accepted",
+        },
+      });
+    }
 
     const friends = await getFriends(userId);
 
