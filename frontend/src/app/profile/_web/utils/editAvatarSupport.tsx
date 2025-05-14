@@ -27,6 +27,11 @@ export const handleMoodBlur = async ({
   setUserData: (data: any) => void;
 }) => {
   setIsEditing(false);
+  const trimmedMood = mood.trim();
+  const currentMood = (userData?.moodStatus ?? "").trim();
+  if (trimmedMood === currentMood) {
+    return;
+  }
 
   const userId = userData?.id;
   if (!userId) {

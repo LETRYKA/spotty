@@ -25,6 +25,7 @@ const EditProfile = () => {
   const { setFullUserData, setUserData: updateStoreUserData } = useUserStore();
   const { user } = useUser();
   const userId = user?.id;
+  const [error, setError] = useState("");
 
   const fetchUser = async (id: string) => {
     try {
@@ -35,6 +36,26 @@ const EditProfile = () => {
       console.error("Error", error);
     }
   };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  let value = e.target.value.toLowerCase();
+
+  if (value.length > 15) {
+    setError("15 тэмдэгтээс хэтэрсэн байна. 🥲");
+    return;
+  }
+  const regex = /^[a-z0-9_]*$/;
+  if (!regex.test(value)) {
+    setError("Зөвхөн латин жижиг үсэг, тоо болон доогуур зураас ашиглаарай.😉");
+  } else if (/[A-Z]/.test(value)) {
+    setError("Том үсэг ашиглаж болохгүй. Бүгдийг жижиг үсгээр оруулна уу.");
+  } else {
+    setError("");
+  }
+  if (regex.test(value) && !/[A-Z]/.test(value)) {
+    setLocalUserData((prev) => (prev ? { ...prev, name: value } : null));
+  }
+};
 
   useEffect(() => {
     if (userId) {
@@ -96,12 +117,11 @@ const EditProfile = () => {
                 <Input
                   id="username"
                   value={localUserData?.name ?? ""}
-                  onChange={(e) =>
-                    setLocalUserData((prev) =>
-                      prev ? { ...prev, name: e.target.value } : prev
-                    )
-                  }
+                  onChange={handleChange}
                 />
+                {error && (
+                  <p className="text-red-500 text-[10px] mt-1">{error}</p>
+                )}
               </div>
             </div>
             <div className="w-full flex justify-center mt-4 gap-4">
