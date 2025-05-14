@@ -7,5 +7,8 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 export default function Profile() {
   const isMobile = useMediaQuery("(max-width:768px)");
 
-  return <div>{isMobile ? <ViewUserProfileMobile /> : <ProfileWeb />}</div>;
+  return 
+  <div>
+    {isMobile ? <ViewUserProfileMobile /> : <ProfileWeb />}
+    </div>;
 }
