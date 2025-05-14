@@ -3,9 +3,14 @@
 import { useState, useCallback } from "react";
 import axios from "axios";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
+import L from "leaflet";
+import iconUrl from "leaflet/dist/images/marker-icon.png";
+import iconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
+import shadowUrl from "leaflet/dist/images/marker-shadow.png";
 import { Button } from "@/components/ui/button";
-import { Navigation } from "lucide-react";
+import { Navigation, MapPin } from "lucide-react";
 import "leaflet/dist/leaflet.css";
+import { renderToStaticMarkup } from 'react-dom/server';
 import {
   Dialog,
   DialogContent,
@@ -16,6 +21,21 @@ import {
 import { toast } from "react-toastify";
 
 const LOCATIONIQ_KEY = process.env.NEXT_PUBLIC_LOCATIONIQ_API_KEY || "";
+
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconUrl: iconUrl.src,
+  iconRetinaUrl: iconRetinaUrl.src,
+  shadowUrl: shadowUrl.src,
+});
+
+const customMapPinIcon = L.divIcon({
+  html: renderToStaticMarkup(<MapPin size={24} color="#2563EB" />),
+  className: 'leaflet-lucide-icon',
+  iconSize: [24, 24],
+  iconAnchor: [12, 24],
+  popupAnchor: [0, -24]
+});
 
 function LocationPicker({
   onPick,
@@ -98,7 +118,7 @@ export default function LocationSelect({
               attribution="© OpenStreetMap contributors"
             />
             <LocationPicker onPick={handlePick} />
-            {latlng && <Marker position={[latlng.lat, latlng.lng]} />}
+            {latlng && <Marker position={[latlng.lat, latlng.lng]} icon={customMapPinIcon} />}
           </MapContainer>
           {latlng && (
             <div className="w-full px-6 py-4 bg-[var(--foreground)]/80 backdrop-blur-2xl text-[var(--background)] rounded-2xl border border-[#2F2F2F] transition-all duration-300 ease-in-out">

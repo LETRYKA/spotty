@@ -1,9 +1,10 @@
 "use client";
 
-import { House, UserRound } from "lucide-react";
+import { House, RefreshCcw, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 const SidebarHeader = ({
   isSideBarOpen,
   onToggle,
@@ -20,7 +21,7 @@ const SidebarHeader = ({
           onClick={onToggle}
           className="rounded-full h-auto w-auto aspect-square bg-[#28272A] hover:bg-[#3c3a3f] transition-all"
         >
-          <House />
+          <RefreshCcw />
         </Button>
         {isSideBarOpen && (
           <div className="h-full flex items-center">
@@ -37,11 +38,14 @@ const SidebarHeader = ({
         )}
       </div>
       {isSideBarOpen && (
-        <Button className="rounded-full h-full px-8 dark font-semibold">
-          Share
-        </Button>
-      )}
-    </div>
+        <Link href="/home">
+          <Button className="rounded-full h-full w-auto aspect-square bg-[var(--background)] hover:bg-[var(--background)]/80 text-black transition-all">
+            <House />
+          </Button>
+        </Link>
+      )
+      }
+    </div >
   );
 };
 

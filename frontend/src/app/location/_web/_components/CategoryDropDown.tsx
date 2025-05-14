@@ -7,8 +7,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
-import { getCategories } from "@/lib/api";
-import { toast } from "react-toastify";
 
 interface Category {
   id: string;
@@ -17,44 +15,37 @@ interface Category {
 }
 
 interface CategoryDropdownProps {
-  categories: { id: string; name: string; emoji: string }[];
+  categories: Category[];
   selectedCategories: string[];
   onToggleCategory: (categoryId: string) => void;
   error?: string | string[];
 }
 
 const CategoryDropdown = ({
+  categories,
   selectedCategories,
   onToggleCategory,
   error,
 }: CategoryDropdownProps) => {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const getDisplayValue = () => {
+    if (!selectedCategories || selectedCategories.length === 0) {
+      return "Select Categories";
+    }
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        setIsLoading(true);
-        const data = await getCategories();
-        if (Array.isArray(data)) {
-          const formattedCategories = data.map((cat) => ({
-            id: cat.id || cat._id,
-            name: cat.name,
-            emoji: cat.emoji,
-          }));
-          setCategories(formattedCategories);
-        } else {
-          toast.error("error");
-        }
-      } catch (error) {
-        toast.error("failed fetch");
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    const selectedCategoryObjects = selectedCategories
+      .map((id) => categories.find((cat) => cat.id === id))
+      .filter(Boolean) as Category[];
 
-    fetchCategories();
-  }, []);
+    const emojisToShow = selectedCategoryObjects
+      .slice(0, 3)
+      .map((cat) => cat.emoji);
+    let displayString = emojisToShow.join(" ");
+
+    if (selectedCategoryObjects.length > 3) {
+      displayString += ` +${selectedCategoryObjects.length - 3}`;
+    }
+    return displayString;
+  };
 
   return (
     <div className="w-2/4">
@@ -62,27 +53,23 @@ const CategoryDropdown = ({
         <DropdownMenuTrigger asChild>
           <Button
             variant="outline"
-            className="w-full bg-[#0D0D0D]/70 border-[#2F2F2F] py-5 rounded-xl flex justify-between"
-            disabled={isLoading}
+            className="w-full bg-[#0D0D0D]/70 border-[#2F2F2F] py-5 rounded-xl flex justify-between items-center text-white"
           >
-            {isLoading
-              ? "Loading..."
-              : categories.length > 0
-              ? "Select Categories"
-              : "No Categories Available"}
-            <ChevronDown className="text-white/50" />
+            <span className="truncate">{getDisplayValue()}</span>
+            <ChevronDown className="text-white/50 ml-2 flex-shrink-0" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="start"
-          className="bg-[#0D0D0D]/30 backdrop-blur-2xl border-[#2F2F2F] text-white w-56"
+          className="bg-[#0D0D0D]/30 backdrop-blur-2xl border-[#2F2F2F] text-white w-54 max-w-xs"
         >
-          {categories.length > 0 ? (
+          {categories && categories.length > 0 ? (
             categories.map((cat) => (
               <DropdownMenuCheckboxItem
                 key={cat.id}
                 checked={selectedCategories.includes(cat.id)}
                 onCheckedChange={() => onToggleCategory(cat.id)}
+                className="hover:!bg-[var(--background)]/20 focus:!bg-[var(--background)]/30"
               >
                 <span className="mr-2">{cat.emoji}</span>
                 {cat.name}

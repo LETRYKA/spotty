@@ -9,18 +9,30 @@ import {
 import { addFriend } from "@/lib/api";
 import { useUser } from "@clerk/nextjs";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 interface DropDownProps {
-  friendId: string;
-}
+  participant: {
+    id: string;
+    name: string;
+    email: string;
+    avatarImage?: string;
+    phoneNumber?: string;
+    isVerified: boolean;
+    batteryLevel?: number;
+    moodStatus?: string;
+    backgroundImage?: string;
 
-export default function DropDown({ friendId }: DropDownProps) {
+  };
+}
+export default function DropDown({ participant }: DropDownProps) {
   const { user } = useUser();
+  const router = useRouter();
 
   const handleAddFriend = async () => {
     if (!user?.id) return;
     try {
-      const response = await addFriend(user.id, friendId);
+      const response = await addFriend(user.id, participant.id);
       toast.success(`Амжилттай хүсэлт явууллаа 😊`);
     } catch (err) {
       console.error("Error occurred:", err);
@@ -37,7 +49,10 @@ export default function DropDown({ friendId }: DropDownProps) {
         align="center"
         className="w-56 bg-[var(--background)]/20 backdrop-blur-xl rounded-2xl border-[var(--background)]/20 p-2"
       >
-        <DropdownMenuItem className="hover:!bg-[var(--background)]/20 transition-all rounded-sm">
+        <DropdownMenuItem
+          onClick={() => router.push(`/${participant.name}`)}
+          className="hover:!bg-[var(--background)]/20 transition-all rounded-sm"
+        >
           <UserRound strokeWidth={3} className="text-[var(--background)]" />
           <span className="text-[var(--background)]">View profile</span>
           <DropdownMenuShortcut className="text-[var(--background)]/50">

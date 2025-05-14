@@ -38,7 +38,6 @@ export default function MapWithFriendsAndEvents({ setSelectedEventId, setIsSideB
   const [events, setEvents] = useState<Event[]>([]);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
 
-  // Initialize map
   useEffect(() => {
     if (!mapContainer.current) return;
     mapRef.current = new mapboxgl.Map({
@@ -60,7 +59,7 @@ export default function MapWithFriendsAndEvents({ setSelectedEventId, setIsSideB
     return () => mapRef.current?.remove();
   }, []);
 
-  // Fetch data
+  // data fetch
   useEffect(() => {
     const fetchData = async () => {
       const [friendsData, eventsData] = await Promise.all([
@@ -73,7 +72,7 @@ export default function MapWithFriendsAndEvents({ setSelectedEventId, setIsSideB
     fetchData();
   }, []);
 
-  // Render user marker
+  // redner user
   useEffect(() => {
     if (!mapRef.current || !userLocation) return;
     const userMarker = document.createElement("div");
@@ -81,7 +80,7 @@ export default function MapWithFriendsAndEvents({ setSelectedEventId, setIsSideB
     new mapboxgl.Marker(userMarker).setLngLat(userLocation).addTo(mapRef.current);
   }, [userLocation]);
 
-  // Render friend markers
+  // render friend
   useEffect(() => {
     if (!mapRef.current) return;
     friends.forEach((friend) => {
@@ -102,7 +101,7 @@ export default function MapWithFriendsAndEvents({ setSelectedEventId, setIsSideB
     });
   }, [friends]);
 
-  // Render event markers
+  // event on the map
   useEffect(() => {
     if (!mapRef.current) return;
     events.forEach((event) => {
@@ -136,7 +135,7 @@ export default function MapWithFriendsAndEvents({ setSelectedEventId, setIsSideB
     <>
       <style>{`
         .friend-marker { display: flex; flex-direction: column; align-items: center; }
-        .speech-bubble { margin-bottom: 7px; background: white; padding: 0px 8px; border-radius: 100; font-size: 10px; white-space: nowrap; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2); }
+        .speech-bubble { margin-bottom: 7px; background: white; padding: 0px 8px; border-radius: 100px; font-size: 10px; white-space: nowrap; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2); }
         .speech-bubble::after { content: ''; position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid white; }
         .event-marker { background-size: cover; background-position: center; border-radius: 50%; }
         .user-marker { width: 16px; height: 16px; background-color: #4285f4; border-radius: 50%; position: relative; border: 1px solid white; }
@@ -148,7 +147,6 @@ export default function MapWithFriendsAndEvents({ setSelectedEventId, setIsSideB
   );
 }
 
-// Helper function to validate coordinates
 const isValidCoordinates = (location: { lat: number; lng: number }) => {
   const { lat, lng } = location;
   return typeof lat === "number" && typeof lng === "number" &&

@@ -1,16 +1,22 @@
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, CircleCheck, Share } from "lucide-react";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-} from "@/components/ui/carousel";
+import { ChevronLeft, CircleCheck, Pencil, Share, Trash, Trash2 } from "lucide-react";
 import { Event } from "@/types/Event";
-import DropDown from "./Menu";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useUser } from "@clerk/clerk-react";
-import { generateInviteLink } from "@/lib/api";
+import { generateInviteLink, deleteEvent as apiDeleteEvent } from "@/lib/api";
 import { toast } from "react-toastify";
+import EditEventFormDialog from "./EditEventFormDialog";
+import { EventDisplayLayout } from "./EventDisplayLayout";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { useRouter } from 'next/navigation';
 
 interface EventDetailContentProps {
   event: Event;
@@ -18,6 +24,7 @@ interface EventDetailContentProps {
   onBack: () => void;
   onJoin: () => void;
   onLeave: () => void;
+  onRefresh?: (updatedEvent: Event) => void;
 }
 
 export const EventDetailContent = ({
@@ -26,10 +33,14 @@ export const EventDetailContent = ({
   onBack,
   onJoin,
   onLeave,
+  onRefresh,
 }: EventDetailContentProps) => {
   const user = useUser();
   const [inviteLink, setInviteLink] = useState("");
   const userId = user.user?.id;
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const router = useRouter();
 
   const handleShare = async (id: String) => {
     if (!userId) return;
@@ -45,6 +56,31 @@ export const EventDetailContent = ({
     }
   };
 
+  const handleDeleteEvent = async () => {
+    if (!event || !event.id || !userId) {
+      toast.error("Cannot delete event: missing event ID or user ID.");
+      return;
+    }
+    try {
+      await apiDeleteEvent(event.id, userId);
+      toast.success("Event deleted successfully!");
+      setIsDeleteDialogOpen(false);
+      router.push("/location");
+    } catch (error) {
+      console.error("Error deleting event:", error);
+      let errorMessage = "Failed to delete event.";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      toast.error(errorMessage);
+      setIsDeleteDialogOpen(false);
+    }
+  };
+
+  if (!event) {
+    return null;
+  }
+
   return (
     <div className="w-full flex flex-col gap-3 overflow-y-scroll pb-20">
       <div className="w-full flex justify-between px-8 pt-8">
@@ -54,122 +90,79 @@ export const EventDetailContent = ({
         >
           <ChevronLeft />
         </Button>
-        <Button
-          onClick={() => handleShare(event.id)}
-          className="bg-white/20 hover:bg-[#3c3a3f] text-white rounded-full w-fit px-4 aspect-square"
-        >
-          <Share />
-        </Button>
-      </div>
-      <h2 className="text-2xl text-[var(--background)] font-bold mt-3 px-8">
-        {event.title}
-      </h2>
-      <p className="text-sm text-[var(--background)]/50 w-44 px-8">
-        {new Date(event.startAt).toLocaleString("en-US", {
-          day: "numeric",
-          month: "short",
-          hour: "numeric",
-          minute: "2-digit",
-        })}
-      </p>
-      <div className="w-full flex justify-center gap-3 mt-2 px-8">
-        {joined ? (
-          <Button className="bg-[#0278FC] hover:bg-[#0277fcdc] w-2/4 text-white rounded-2xl py-8 flex flex-col gap-0 text-base hover:scale-105 transition-all">
-            <CircleCheck strokeWidth={3} />
-            Going
-          </Button>
-        ) : (
-          <Button
-            onClick={onJoin}
-            className="bg-[var(--background)]/10 hover:bg-[var(--background)]/15 w-2/4 text-white/50 rounded-2xl py-8 flex flex-col gap-0 text-base hover:scale-105 transition-all"
-          >
-            <CircleCheck strokeWidth={3} />
-            Join
-          </Button>
-        )}
-        <Button
-          onClick={onLeave}
-          className="bg-[var(--background)]/10 hover:bg-[var(--background)]/15 w-2/4 text-white/50 rounded-2xl py-8 flex flex-col gap-0 text-base hover:scale-105 transition-all"
-        >
-          <CircleCheck strokeWidth={3} />
-          Not going
-        </Button>
-      </div>
-      <div className="w-full flex justify-start bg mt-2 pl-6">
-        <div className="w-full">
-          <Carousel>
-            <CarouselContent className="flex gap-5">
-              {event.galleryImages.map((gallery, index) => (
-                <CarouselItem key={index} className="basis-3/5 py-4">
-                  <div
-                    className="flex aspect-6/7 items-center justify-center p-7 bg-cover bg-center rounded-3xl cursor-pointer hover:scale-105 transition-all"
-                    style={{
-                      backgroundImage: `url(${gallery})`,
-                    }}
-                  ></div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-          </Carousel>
-        </div>
-      </div>
-      <div className="flex flex-col justify-start px-8">
-        <h2 className="text-lg text-[var(--background)] font-bold">About</h2>
-        <div className="w-full bg-[#0E1217] border-1 border-[#2F2F2F] rounded-2xl p-5 mt-2">
-          <p className="text-[var(--background)] text-sm leading-6">
-            {event.description}
-          </p>
-        </div>
-        <div className="w-full mt-6 flex flex-wrap justify-start items-center gap-3">
-          {event.categories &&
-            event.categories.map((category, index) => (
-              <p
-                key={index}
-                className="w-fit text-[var(--background)] bg-[#D9D9D9]/10 text-sm px-4 py-2 rounded-full"
+        <div className="flex gap-3">
+          {userId && event.ownerId === userId && (
+            <>
+              <Button
+                onClick={() => setIsDeleteDialogOpen(true)}
+                className="bg-red-500/20 hover:bg-red-700/30 text-red-500 hover:text-red-400 rounded-full w-fit px-4 aspect-square"
               >
-                {category?.emoji} {category?.name}
-              </p>
-            ))}
-        </div>
-        <div className="w-full flex justify-between mt-8">
-          <h2 className="text-lg text-[var(--background)] font-bold">
-            Guest list {event.participants.length || 0}/
-            {event.participantLimit || 0}
-          </h2>
-          <p className="text-base text-[#F45B69]">
-            {event.participantLimit &&
-            event.participants.length >= event.participantLimit
-              ? "Full"
-              : ""}
-          </p>
-        </div>
-        <div className="w-full flex flex-col gap-3 mt-5">
-          {event.participants.map((participant, index) => (
-            <div
-              key={index}
-              className="w-full p-3 bg-[#D9D9D9]/10 hover:bg-[#D9D9D9]/15 flex justify-between items-center rounded-2xl transition-all"
-            >
-              <div className="flex h-12 gap-3">
-                <div
-                  className="h-full w-auto aspect-square rounded-full bg-cover bg-center"
-                  style={{
-                    backgroundImage: `url(${participant.avatarImage})`,
-                  }}
-                ></div>
-                <div className="h-full flex flex-col justify-center items-start">
-                  <p className="text-[var(--background)] text-base font-bold mt-1">
-                    {participant.name}
-                  </p>
-                  <p className="text-[var(--background)]/50 text-sm -mt-1">
-                    {participant.moodStatus}
-                  </p>
-                </div>
-              </div>
-              <DropDown friendId={participant?.id} />
-            </div>
-          ))}
+                <Trash2 />
+              </Button>
+              <Button
+                onClick={() => setIsEditDialogOpen(true)}
+                className="bg-white/20 hover:bg-[#3c3a3f] text-white rounded-full w-fit px-4 aspect-square"
+              >
+                <Pencil />
+              </Button>
+            </>
+          )}
+          <Button
+            onClick={() => handleShare(event.id)}
+            className="bg-white/20 hover:bg-[#3c3a3f] text-white rounded-full w-fit px-4 aspect-square"
+          >
+            <Share />
+          </Button>
         </div>
       </div>
+
+      <EventDisplayLayout
+        event={event}
+        joined={joined}
+        onJoin={onJoin}
+        onLeave={onLeave}
+      />
+
+      {event && event.ownerId === userId && (
+        <EditEventFormDialog
+          event={event}
+          isOpen={isEditDialogOpen}
+          onClose={() => setIsEditDialogOpen(false)}
+          onEventUpdate={(updatedEventFromDialog) => {
+            toast.success("Event updated successfully!");
+            if (onRefresh) {
+              onRefresh(updatedEventFromDialog);
+            }
+            setIsEditDialogOpen(false);
+          }}
+        />
+      )}
+
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-md bg-[var(--foreground)]/30 backdrop-blur-lg border-[#2F2F2F] rounded-3xl">
+          <DialogHeader>
+            <DialogTitle className="text-white/50">Эвент устгах</DialogTitle>
+            <DialogDescription className="pt-2 text-white text-base">
+              Та <strong>"{event?.title}"</strong> эвентийг усгахдаа итгэлтэй байна уу?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="pt-4">
+            <DialogClose asChild>
+              <Button type="button" variant="outline">
+                Буцах
+              </Button>
+            </DialogClose>
+            <Button
+              type="button"
+              variant="destructive"
+              className="bg-red-600 hover:bg-red-700"
+              onClick={handleDeleteEvent}
+            >
+              Устгах
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
-}; 
+};
