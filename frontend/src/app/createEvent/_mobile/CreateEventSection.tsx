@@ -14,13 +14,14 @@ import { toFormikValidationSchema } from "zod-formik-adapter";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import GallerySection from "./GallerySection";
-import CategoryDropdown from "@/app/location/_web/_components/CategoryDropDown";
 import { useUser } from "@clerk/nextjs";
 import DefaultAvatar from "@/img/default_avatar.png";
 import CreateEvent from "@/app/location/_web/_components/CreateEvent";
 import { createEvent, getUserData } from "@/lib/api";
 import { toast } from "react-toastify";
 import { FormikProps } from "formik";
+import CategorySection from "./CategorySection";
+import LocationSelect from "@/app/location/_web/_components/LocationSelect";
 
 type Friendship = {
   id: string;
@@ -52,6 +53,7 @@ interface EventFormValues {
   description: string;
   lat: number;
   lng: number;
+  address: string,
   isPrivate: boolean;
   hiddenFromMap: boolean;
   password: string;
@@ -97,7 +99,10 @@ const CreateEventSection = ({ categories }: { categories: { id: string; name: st
   const [pendingValues, setPendingValues] = useState<any>(null);
   const [isPrivate, setIsPrivate] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [showLocationSelect, setShowLocationSelect] = useState(false);
+  const [showCreateEventDialog, setShowCreateEventDialog] = useState(false);
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [address, setAddress] = useState<string | null>(null);
 
   const formik = useFormik<EventFormValues>({
     initialValues: {
@@ -105,6 +110,7 @@ const CreateEventSection = ({ categories }: { categories: { id: string; name: st
       description: "",
       lat: 0,
       lng: 0,
+      address: "",
       isPrivate: true,
       hiddenFromMap: false,
       password: "",
@@ -145,6 +151,7 @@ const CreateEventSection = ({ categories }: { categories: { id: string; name: st
             fetchUser(userId);
           }
         }, [userId]);
+    
 
   return (
     <form onSubmit={formik.handleSubmit} className="w-full h-auto flex flex-col justify-center p-9">
@@ -240,11 +247,41 @@ const CreateEventSection = ({ categories }: { categories: { id: string; name: st
         )}
       </div>
       <AboutCreateEvent />
-      <div className="flex flex-col justify-center items-center w-full bg-[#28272A] border-1 border-[#28272A] rounded-2xl mt-5 p-5 text-center">
-        <h1 className="text-white/50">Direction</h1>
-        <p className="text-white text-[12px] w-[180px]">
-          Хүүхдийн 100 өргөн чөлөө Ulaanbatar, Mongolia, Ulan Bator
-        </p>
+      <div className="flex flex-col items-center justify-center">
+        <LocationSelect
+        open={showLocationSelect}
+        onSelect={(lat: number, lng: number, selectedAddress?: string) => {
+
+          setLocation({ lat, lng });
+          if (selectedAddress) {
+            setAddress(selectedAddress);
+            formik.setFieldValue("lat", lat);
+            formik.setFieldValue("lng", lng); 
+            formik.setFieldValue("address", selectedAddress); 
+          }
+          setShowLocationSelect(false); 
+          setShowCreateEventDialog(true); 
+        }}
+        onClose={() => setShowLocationSelect(false)}
+      />
+        {!showCreateEventDialog ? (
+        <Button onClick={() => setShowLocationSelect(true)} className="mt-5 w-full">
+          Байршлаа сонгох
+        </Button>
+      ) : (
+        <div className="w-full max-w-xl space-y-5">
+          <div className="flex flex-col justify-center items-center w-full bg-[#28272A] border border-[#28272A] rounded-2xl mt-5 p-5 text-center">
+            <h1 className="text-white/50">Direction</h1>
+            <p className="text-white text-[12px] w-[180px] overflow-hidden whitespace-nowrap text-ellipsis">
+              {address ?? "Хаяг сонгогдоогүй байна"} 
+            </p>
+          </div>
+
+          <Button onClick={() => setShowLocationSelect(true)} className="w-full bg-primary text-white rounded-lg">
+            Байршлаа солих
+          </Button>
+        </div>
+      )}
       </div>
 
       <div className="flex flex-col w-full space-x-4 mt-5 gap-4">
@@ -260,8 +297,9 @@ const CreateEventSection = ({ categories }: { categories: { id: string; name: st
         {formik.touched.participantLimit && formik.errors.participantLimit && (
           <p className="text-red-500 text-sm mt-1">{formik.errors.participantLimit}</p>
         )}
+        <p className="text-white font-semibold ">Select Categorie :</p>
       <div className="w-full">
-        <CategoryDropdown
+        <CategorySection
           categories={categories}
           selectedCategories={formik.values.categories}
           onToggleCategory={(categoryId: string) => {
