@@ -9,8 +9,8 @@ export default function SignUpPage() {
         <SignUp
           routing="hash"
           signInUrl="/auth/sign-in"
-          afterSignUpUrl="/dashboard"
-          redirectUrl="/dashboard"
+          afterSignUpUrl="/home"
+          redirectUrl="/home"
         />
       </div>
       <div className="w-2/4 h-screen flex justify-center items-center py-4 px-6">

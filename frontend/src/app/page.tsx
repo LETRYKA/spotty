@@ -4,12 +4,12 @@ import axios from "axios";
 import { redirect } from "next/navigation";
 
 const ProfilePage = () => {
+  redirect(`/home`);
   const { getToken } = useAuth();
 
   const updateProfile = async () => {
     const token = await getToken();
   };
-  redirect(`/home`);
   return <button onClick={updateProfile}>Update Profile</button>;
 };
 
