@@ -6,7 +6,7 @@ import { Navigation } from "lucide-react";
 import { getUserData } from "@/lib/api";
 import { Event } from "@/types/Event";
 import { useUser } from "@clerk/nextjs";
-import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 import { getStatusStylesAndText } from "@/utils/statusStyles";
 import { enrichEventsWithStatus } from "@/utils/eventStatus";
 import Mapping from "/public/Mapping.png";
@@ -17,7 +17,7 @@ const EventCardsMobile = () => {
   const [loading, setLoading] = useState(true);
   const { user } = useUser();
   const userId = user?.id;
-
+  const router = useRouter();
   const fetchUserEvents = async (id: string) => {
     try {
       const data = await getUserData(id);
@@ -58,6 +58,7 @@ const EventCardsMobile = () => {
 
         return (
           <div
+            onClick={() => {router.push(`/eventinfo/${event.id}`);}}
             key={event.id}
             className="w-full h-[100px] bg-[#19191b] rounded-md mt-4 flex justify-between items-center px-2 py-2"
           >
@@ -82,23 +83,13 @@ const EventCardsMobile = () => {
               </div>
             </div>
             <div className="flex flex-col items-end h-full justify-between py-1">
-              <Button
-                className={`w-[70px] h-[20px] text-[10px] px-1 py-0 border ${border} ${background}`}
-              >
-                {text}
-              </Button>
               <div className="flex items-center mt-2">
-                <div className="relative w-14 h-5">
-                  <div className="absolute left-0 bg-[#939393] w-4 h-4 rounded-full z-10" />
-                  <div className="absolute left-3 bg-[#b7b7b7] w-4 h-4 rounded-full z-20" />
-                  <div className="absolute left-6 bg-[#d9d9d9] w-4 h-4 rounded-full z-30" />
-                </div>
                 <div className="text-white text-xs ml-2 whitespace-nowrap">
                   {event.participants?.length ?? 0}/{event.participantLimit ?? "∞"}
                 </div>
               </div>
             </div>
-          </div>
+          </div >
         );
       })}
     </>

@@ -16,13 +16,14 @@ import {
 } from "@/components/ui/sheet";
 import React, { useEffect, useState } from "react";
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
-import Link from "next/link";
+// import Link from "next/link"; // Removed as it is unused
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { useUser } from "@clerk/nextjs";
 import { getUserData } from "@/lib/api";
 import { useUserStore } from "@/app/profile/_web/store/userStore";
 import { User } from "../../_web/types/User";
 import { handleSave } from "../../_web/utils/handleSave";
+import BackgroundImage from "@/img/wallpapersden.com_black-hole-hd-digital_3840x1620.jpg";
 
 interface EditProfileProps {
   open: boolean;
@@ -104,12 +105,12 @@ const EditProfile: React.FC<EditProfileProps> = ({ open, onClose }) => {
           className="mt-8 h-26 rounded-2xl bg-cover bg-center"
           style={{
             backgroundImage:
-              "url(https://i.pinimg.com/1200x/b9/e6/da/b9e6da7fe10a7f908b68e552d44e15ee.jpg)",
+              localUserData.backgroundImage || `url(${BackgroundImage.src})`,
           }}
         />
 
         <div className="flex justify-center -mt-14">
-          <Avatar className="relative flex justify-center items-center">
+          <Avatar onClick={() => console.log("Avatar clicked")} className="relative flex justify-center items-center">
             <div className="rounded-full bg-gradient-to-tr from-blue-500 via-pink-500 to-orange-400 p-[3px]">
               <AvatarImage
                 className="rounded-full w-28 h-28 object-cover"
@@ -120,11 +121,9 @@ const EditProfile: React.FC<EditProfileProps> = ({ open, onClose }) => {
                 alt="User Profile"
               />
             </div>
-            <Link href="/addstory">
-              <div className="absolute bottom-0 right-0 w-9 h-9 bg-[var(--background)] rounded-full border-[3px] border-[#141414] flex justify-center items-center">
-                <ImageIcon strokeWidth={3} width={15} />
-              </div>
-            </Link>
+            <div className="absolute bottom-0 right-0 w-9 h-9 bg-[var(--background)] rounded-full border-[3px] border-[#141414] flex justify-center items-center">
+              <ImageIcon strokeWidth={3} width={15} />
+            </div>
           </Avatar>
         </div>
 

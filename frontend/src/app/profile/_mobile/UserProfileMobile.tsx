@@ -20,6 +20,8 @@ import {
 import { DialogTitle } from "@radix-ui/react-dialog";
 import Friends from "./_components/Friends";
 import DefaultAvatar from "@/img/default_avatar.png";
+import EditAvatar from "../_web/_components/editAvatar";
+
 const UserProfileMobile = () => {
   const [userData, setLocalUserData] = useState<User | null>(null);
   const [editProfileOpen, setEditProfileOpen] = useState(false);
@@ -68,14 +70,9 @@ const UserProfileMobile = () => {
           />
 
           <div className="w-full flex justify-center">
-            <Avatar className="-mt-16 relative rounded-full bg-gradient-to-r from-[#428CFA] via-[#7062FB] to-[#F98437] w-[128px] h-[128px]">
-              <AvatarImage
-                className="rounded-full border-3 border-black object-cover"
-                src={userData?.avatarImage || DefaultAvatar.src}
-                alt="User Profile"
-              />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
+            <div className="-mt-16 relative w-[128px] h-[128px]">
+              <EditAvatar />
+            </div>
           </div>
         </div>
       </div>
@@ -138,7 +135,7 @@ const UserProfileMobile = () => {
                 <button
                   onClick={() => setFriendsPageOpen(false)}
                   className="w-20 flex items-center justify-start"
-                >
+                > 
                   <ChevronDown className="text-white hover:bg-muted rounded w-6 h-6" />
                 </button>
               </SheetClose>
