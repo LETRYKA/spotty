@@ -4,7 +4,7 @@ import { Plus } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useUserStore } from "@/app/profile/_web/store/userStore";
+import { User } from "@/app/profile/_web/types/User";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -24,14 +24,13 @@ const EditAvatar = () => {
   const { user } = useUser();
   const userId = user?.id;
 
-  const { userData, setUserData } = useUserStore();
+  const [userData, setUserData] = useState<User | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [isEditing, setIsEditing] = useState(false);
   const [mood, setMood] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Fetch user data if not loaded yet
   useEffect(() => {
     if (!userData && userId) {
       getUserData(userId)
@@ -41,11 +40,8 @@ const EditAvatar = () => {
         .catch((err) => console.error("Failed to fetch user data:", err));
     }
   }, [userData, userId, setUserData]);
-
   useSyncMoodFromUserData(userData, setMood);
-
   const hasStories = (userData?.stories ?? []).length > 0;
-
   if (!userData) {
     return (
       <div className="flex items-center justify-center h-32 text-white text-sm">
@@ -129,9 +125,8 @@ const EditAvatar = () => {
               animate={{ opacity: 1 }}
             />
             <p
-              className={`text-[10px] mt-1 ${
-                20 - [...mood].length <= 5 ? "text-red-400" : "text-white"
-              }`}
+              className={`text-[10px] mt-1 ${20 - [...mood].length <= 5 ? "text-red-400" : "text-white"
+                }`}
             >
               {20 - [...mood].length} тэмдэгт бичих боломжтой
             </p>
@@ -209,9 +204,6 @@ const EditAvatar = () => {
           <label htmlFor="upload-input">
             <DropdownMenuItem>Аватар солих</DropdownMenuItem>
           </label>
-          <a href="/story">
-            <DropdownMenuItem>Стори хийх</DropdownMenuItem>
-          </a>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

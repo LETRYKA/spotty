@@ -167,9 +167,9 @@ const EditProfile: React.FC<EditProfileProps> = ({ open, onClose }) => {
                   Email
                 </label>
                 <input
-                  className="bg-transparent text-sm w-full text-white focus:outline-none"
+                  className="bg-transparent text-sm w-full focus:outline-none text-gray-300"
                   value={localUserData.email}
-                  onChange={(e) => handleChange("email", e.target.value)}
+                  disabled
                 />
               </div>
 
