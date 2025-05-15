@@ -102,7 +102,7 @@ const EventList = ({
           </Button>
         </div>
         <div className="w-full flex flex-col justify-start gap-3 overflow-y-scroll pb-12">
-          {filteredEvents.map((event) => (
+          {filteredEvents.toReversed().map((event) => (
             <div
               key={event.id}
               onClick={() => onSelectEvent(event.id)}
@@ -112,8 +112,9 @@ const EventList = ({
                 <div
                   className="h-full w-auto aspect-square rounded-2xl bg-cover bg-center"
                   style={{
-                    backgroundImage: `url(${event?.backgroundImage || "event.owner.avatarImage"
-                      })`,
+                    backgroundImage: `url(${
+                      event?.backgroundImage || "event.owner.avatarImage"
+                    })`,
                   }}
                 />
                 <div className="h-full flex flex-col justify-center ml-4">
