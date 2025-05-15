@@ -103,7 +103,7 @@ const EventList = ({
           </Button>
         </div>
         <div className="w-full flex flex-col justify-start gap-3 overflow-y-scroll pb-12">
-          {filteredEvents.map((event) => (
+          {filteredEvents.toReversed().map((event) => (
             <div
               key={event.id}
               onClick={() => onSelectEvent(event.id)}

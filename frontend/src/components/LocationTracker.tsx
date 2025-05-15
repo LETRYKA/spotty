@@ -19,7 +19,7 @@ export default function LiveLocation({ userId }: { userId: string }) {
       return;
     }
 
-    let socketUrl = API_URL.replace(/^http/, 'ws');
+    let socketUrl = API_URL.replace(/^http/, "ws");
     if (API_URL.startsWith("https://")) {
       socketUrl = API_URL.replace("https://", "wss://");
     } else if (API_URL.startsWith("http://")) {
@@ -75,15 +75,16 @@ export default function LiveLocation({ userId }: { userId: string }) {
   }, [userId]);
 
   return (
-    <div>
-      Location working {userId}
-      <ul>
-        {friendLocations.map((f) => (
-          <li key={f.userId}>
-            {f.userId}: ({f.lat.toFixed(5)}, {f.lng.toFixed(5)})
-          </li>
-        ))}
-      </ul>
-    </div>
+    <></>
+    // <div>
+    //   Location working {userId}
+    //   <ul>
+    //     {friendLocations.map((f) => (
+    //       <li key={f.userId}>
+    //         {f.userId}: ({f.lat.toFixed(5)}, {f.lng.toFixed(5)})
+    //       </li>
+    //     ))}
+    //   </ul>
+    // </div>
   );
 }
