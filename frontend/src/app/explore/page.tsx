@@ -20,6 +20,7 @@ const Explore = () => {
       if (!userId) return;
       try {
         const data = await getUserAll(userId);
+        console.log(data, "data");
         setUserData(data);
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -44,8 +45,13 @@ const Explore = () => {
           >
             <div className="w-full flex justify-between z-20">
               <div
-                className={`h-18 w-auto aspect-square rounded-full bg-slate-400 bg-cover bg-center bg-[url(${user?.avatarImage})]`}
-              ></div>
+                className={`h-18 w-auto aspect-square rounded-full bg-slate-400 bg-cover bg-center overflow-hidden bg-[url(${user?.avatarImage})]`}
+              >
+                <img
+                  src={user?.avatarImage || "/nouser.jpg"}
+                  className="w-full h-full"
+                />
+              </div>
               <div className="flex gap-3">
                 <div className="h-fit py-2 px-4 bg-[var(--foreground)]/80 backdrop-blur-sm rounded-full text-[var(--background)] text-sm">
                   <p>👋 New</p>
