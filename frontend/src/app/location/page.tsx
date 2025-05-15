@@ -4,6 +4,8 @@ import LiveLocation from "@/components/LocationTracker";
 import LocationWeb from "./_web/Location";
 import { useUser } from "@clerk/clerk-react";
 import { toast } from "react-toastify";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import MapMobile from "./_mobile/Map";
 
 const Location = () => {
   const { user, isLoaded, isSignedIn } = useUser();
@@ -15,10 +17,21 @@ const Location = () => {
     toast.error(`Хэрэглэгч олдсонгүй`);
   }
 
+  const isMobile = useMediaQuery("(max-width:768px)");
+
   return (
     <>
-      <LocationWeb />
-      {user && <LiveLocation userId={user.id} />}
+      <div>
+        {user && isMobile ? (
+          <MapMobile />
+        ) : user ? (
+          <>
+            <LocationWeb />
+            <LiveLocation userId={user.id} />
+          </>
+        ) : null}
+      </div>
+      ;
     </>
   );
 };

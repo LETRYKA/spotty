@@ -42,7 +42,7 @@
     "date-fns": "^2.30.0",
     "embla-carousel-react": "^8.6.0",
     "formik": "^2.4.6",
-    "framer-motion": "^12.10.5",
+    "framer-motion": "^12.11.4",
     "i": "^0.3.7",
     "input-otp": "^1.4.2",
     "leaflet": "^1.9.4",

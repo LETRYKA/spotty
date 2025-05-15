@@ -41,12 +41,12 @@ const Home = () => {
       <DockComp />
       <div className="w-full h-[64rem] bg-[#F8F7F5] rounded-3xl overflow-hidden relative">
         <div className="w-full absolute top-0 flex justify-center items-start z-10">
-          <p className="text-[500px] font-extrabold text-[var(--background)]/100 -mt-70">
+          {/* <p className="text-[500px] font-extrabold text-[var(--background)]/100 -mt-70">
             SPOTTY
-          </p>
+          </p> */}
         </div>
-        <div className="w-full flex justify-between items-center z-30 relative p-10 px-40">
-          <p className="font-bold text-xl text-black">Spotty.</p>
+        <div className="w-full flex justify-between items-center z-30 relative p-10 px-10  md:px-20 lg:px-40">
+          <img src={`/logo-sd.png`} className="w-24" />
           <div className="flex gap-4">
             <SignedOut>
               <div className="bg-[var(--background)] hover:bg-[var(--background)]/90 rounded-full py-2 px-6 font-medium cursor-pointer transition-all">
@@ -209,31 +209,23 @@ const Home = () => {
               as="h1"
               className="w-70 text-xl font-semibold text-[var(--foreground)]/50 mt-5"
             >
-              Spotty gives you a Figma-like design tool experience. But instead
-              of designing a picture of a website that you need to rebuild
-              later, what you design is the real thing. With all the styling and
-              typography features you’d expect and more.
+              Spotty is where friendships spark and plans come to life. Find
+              cool people, throw together awesome events, and say yes to way
+              more fun—all in one spot.
             </TextAnimate>
           </div>
-          <div className="w-[34rem] h-auto aspect-10/11 bg-slate-400 rounded-3xl"></div>
+          <div
+            className={`w-[34rem] h-auto aspect-10/11 bg-slate-400 rounded-3xl bg-cover bg-center bg-[url(/23.png)] hidden md:flex`}
+          ></div>
         </div>
-        <div className="w-full h-96 flex justify-center items-center mb-96">
-          <TextAnimate
-            animation="fadeIn"
-            by="line"
-            as="p"
-            className="text-3xl font-semibold text-[var(--foreground)]/50 mt-5"
-          >
-            Rest of the page still on development
-          </TextAnimate>
-        </div>
+        <div className="w-full h-96 flex justify-center items-center mb-96"></div>
       </div>
       <div className="w-full h-auto flex flex-col justify-center items-center">
         <img
           src={`/footer.png`}
           className="object-cover w-full -mt-[55rem] z-0"
         />
-        <div className="w-full h-96 bg-[#1E1E1E] z-30 flex flex-col justify-center items-start px-20">
+        <div className="w-full h-96 bg-[#1E1E1E] z-30 flex flex-col justify-center items-start px-8 lg:px-20">
           <div className="w-full flex justify-between items-start ">
             <TextAnimate
               animation="fadeIn"
@@ -244,7 +236,7 @@ const Home = () => {
               Spotty.
             </TextAnimate>
             <div className="flex gap-16">
-              <ul className="text-[var(--background)] text-left flex flex-col items-start">
+              <ul className="text-[var(--background)] text-left flex-col items-start hidden lg:flex">
                 <li className="text-lg font-bold">Pages</li>
                 <Link href={`/home`}>
                   <RandomLetterSwapPingPong
@@ -271,7 +263,7 @@ const Home = () => {
                   />
                 </Link>
               </ul>
-              <ul className="text-[var(--background)] text-left flex flex-col items-start">
+              <ul className="text-[var(--background)] text-left flex-col items-start hidden lg:flex">
                 <li className="text-lg font-bold">Resources</li>
                 <Link href={`/#`}>
                   <RandomLetterSwapPingPong
@@ -298,11 +290,11 @@ const Home = () => {
                   />
                 </Link>
               </ul>
-              <ul className="text-[var(--background)] text-left flex flex-col items-start">
-                <li className="text-lg font-bold">Resources</li>
+              <ul className="text-[var(--background)] text-left flex-col items-start hidden lg:flex">
+                <li className="text-lg font-bold">Socials</li>
                 <Link href={`/#`}>
                   <RandomLetterSwapPingPong
-                    label="Social"
+                    label="X"
                     className="cursor-pointer opacity-50 hover:opacity-100 transition-all font-medium text-start mt-4"
                   />
                 </Link>
@@ -334,7 +326,7 @@ const Home = () => {
             </div>
           </div>
           <div className="w-full h-px bg-[var(--background)]/15 my-6" />
-          <div className="w-full flex justify-between items-center">
+          <div className="w-full flex justify-between items-center text-xs lg:text-base">
             <p className="text-[var(--background)]">
               All rights reserved | 2025 Spotty ©.
             </p>

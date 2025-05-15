@@ -1,6 +1,6 @@
 "use client";
 
-import { UserRound, HomeIcon, Map, ArrowUpRight } from "lucide-react";
+import { UserRound, HomeIcon, Map, ArrowUpRight, Search } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import { buttonVariants } from "@/components/ui/button";
@@ -22,7 +22,7 @@ const DATA = {
     { href: "/home", icon: HomeIcon, label: "Нүүр" },
     { href: "/location", icon: Map, label: "Spotty" },
     { href: "/profile", icon: UserRound, label: "Профайл" },
-    { href: "#", icon: ArrowUpRight, label: "ФАКЮҮ" },
+    { href: "/explore", icon: Search, label: "Eplore" },
   ],
 };
 
