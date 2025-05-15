@@ -8,7 +8,7 @@ import {
   Navigation,
   Pagination,
 } from "swiper/modules";
-import { Crown, Lock } from "lucide-react";
+import { Crown, Lock, Earth } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 import "swiper/css";
@@ -87,10 +87,14 @@ export const CardCarousel: React.FC<CarouselProps> = ({
                   <Crown className="w-4 text-yellow-300" />
                   Hosted by <strong>{event.owner.name}</strong>
                 </Badge>
-                {event.isPrivate && (
+                {event.isPrivate ? (
                   <Badge className="bg-white/10 backdrop-blur-sm h-8 w-8 flex items-center justify-center rounded-full text-white">
                     <Lock className="w-4" />
                   </Badge>
+                ) : (
+                  <div className="flex justify-center items-center">
+                    <Earth className="w-4 text-[var(--background)] " strokeWidth={3} />
+                  </div>
                 )}
               </div>
 

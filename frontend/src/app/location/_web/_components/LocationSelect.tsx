@@ -67,7 +67,7 @@ export default function LocationSelect({
   onClose,
 }: {
   open: boolean;
-  onSelect: (lat: number, lng: number) => void;
+  onSelect: (lat: number, lng: number, address: string) => void;
   onClose: () => void;
 }) {
   const [latlng, setLatlng] = useState<{ lat: number; lng: number } | null>(
@@ -84,10 +84,10 @@ export default function LocationSelect({
   const handleContinue = useCallback(() => {
     if (latlng) {
       console.log("Continue clicked, selecting:", latlng);
-      onSelect(latlng.lat, latlng.lng);
+      onSelect(latlng.lat, latlng.lng, address);
       onClose();
     }
-  }, [latlng, onSelect, onClose]);
+  }, [latlng, address, onSelect, onClose]);
 
   const handleOpenChange = useCallback(
     (isOpen: boolean) => {
