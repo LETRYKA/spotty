@@ -25,7 +25,6 @@ const ViewUserProfileMobile = () => {
   const [friendsPageOpen, setFriendsPageOpen] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
-  // Fetch user data based on username
   useEffect(() => {
     if (!username) return;
 
@@ -43,7 +42,6 @@ const ViewUserProfileMobile = () => {
     fetchUser();
   }, [username]);
 
-  // Retrieve current user's ID from localStorage on mount
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedUserId = localStorage.getItem("userId");
@@ -51,7 +49,6 @@ const ViewUserProfileMobile = () => {
     }
   }, []);
 
-  // Show loading if userData hasn’t been fetched yet
   if (!userData) {
     return (
       <div className="w-full h-full flex justify-center items-center">
@@ -118,8 +115,14 @@ const ViewUserProfileMobile = () => {
         {currentUserId && currentUserId !== userData.id && (
           <AddFriendButton
             friendId={userData.id}
-            userId={currentUserId} // Use dynamically fetched userId here
+            userId={currentUserId}
             refreshFriends={() => setFriendsPageOpen(false)}
+            isFriend={userData.friendsOf?.some(
+              (f: any) => f.id === currentUserId
+            )}
+            requestPending={userData.friendRequestsSent?.some(
+              (r: any) => r.id === currentUserId
+            )}
           />
         )}
       </div>
