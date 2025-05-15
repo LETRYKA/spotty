@@ -122,7 +122,6 @@ export const EventDetailContent = ({
         onJoin={onJoin}
         onLeave={onLeave}
       />
-
       {event && event.ownerId === userId && (
         <EditEventFormDialog
           event={event}

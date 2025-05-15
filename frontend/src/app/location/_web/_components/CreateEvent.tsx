@@ -17,7 +17,7 @@ import CreateEventForm from "./CreateEventForm";
 import LocationSelect from "./LocationSelect";
 import PasscodeDialog from "./Passcode";
 import { EventFormValues } from "../types/Event";
-import { Plus } from "lucide-react";
+import { Loader, LoaderCircle, Plus } from "lucide-react";
 
 const eventSchema = z.object({
   title: z.string().max(20, "Title must be at most 20 characters"),
@@ -149,7 +149,7 @@ export default function CreateEvent() {
               setShowLocationSelect(true);
             }}
           >
-           <Plus />
+            <Plus />
           </Button>
         </DialogTrigger>
         <DialogContent className="max-w-[500px] bg-black/30 backdrop-blur-lg border-[#2F2F2F] rounded-3xl p-6">
@@ -159,7 +159,9 @@ export default function CreateEvent() {
             </DialogTitle>
           </DialogHeader>
           {isLoadingCategories ? (
-            <div className="text-white text-center py-4">Loading categories...</div>
+            <div className="text-white text-center py-4 flex justify-center items-center">
+              <LoaderCircle className="animate-spin" />
+            </div>
           ) : (
             <CreateEventForm formik={formik} categories={categories} />
           )}

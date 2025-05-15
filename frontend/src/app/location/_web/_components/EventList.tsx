@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Sparkle, Clock, Heart, Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { AvatarCircles } from "@/components/magicui/avatar-circles";
 
 interface Event {
   id: string;
@@ -112,8 +113,9 @@ const EventList = ({
                 <div
                   className="h-full w-auto aspect-square rounded-2xl bg-cover bg-center"
                   style={{
-                    backgroundImage: `url(${event?.backgroundImage || "event.owner.avatarImage"
-                      })`,
+                    backgroundImage: `url(${
+                      event?.backgroundImage || "event.owner.avatarImage"
+                    })`,
                   }}
                 />
                 <div className="h-full flex flex-col justify-center ml-4">
@@ -131,13 +133,20 @@ const EventList = ({
                 </div>
               </div>
               <div className="h-full flex flex-col mr-1 items-end relative">
-                <div className="absolute bottom-0 flex items-center mt-4">
+                <div className="absolute bottom-0 flex w-fit">
                   {/* <div className="w-6 h-auto aspect-square rounded-full bg-slate-300 -ml-2"></div>
                   <div className="w-6 h-auto aspect-square rounded-full bg-slate-500 -ml-2"></div>
                   <div className="w-6 h-auto aspect-square rounded-full bg-slate-700 -ml-2"></div> */}
-                  <p className="text-[var(--background)] ml-3 text-sm">
+                  {/* <p className="text-[var(--background)] ml-3 text-sm">
                     {event.participants.length}/{event.participantLimit || 10}
-                  </p>
+                  </p> */}
+                  <AvatarCircles
+                    numPeople={event.participants.length}
+                    avatarUrls={event.participants.map((p) => ({
+                      avatarImage: p.avatarImage || "/fallback-avatar.png",
+                      profileUrl: `/${p.name}`,
+                    }))}
+                  />
                 </div>
               </div>
             </div>
