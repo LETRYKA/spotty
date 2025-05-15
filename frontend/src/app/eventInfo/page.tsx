@@ -1,5 +1,5 @@
-import EventInfoBackgroundImg from "./_components/EventInfoBackgroundImg";
-import EventInfoDetails from "./_components/EventInfoDetails";
+import EventInfoBackgroundImg from "./[id]/_mobile/_components/EventInfoBackgroundImg";
+import EventInfoDetails from "./[id]/_mobile/_components/EventInfoDetails";
 
 const EventInfo = () => {
   return (
