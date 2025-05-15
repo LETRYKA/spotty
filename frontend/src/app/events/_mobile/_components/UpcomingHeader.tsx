@@ -12,9 +12,36 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useUser } from "@clerk/nextjs";
+import { getUserData } from "@/lib/api";
+
+interface User {
+  avatarImage: string
+}
 
 const UpcomingHeader = () => {
+  const [userData, setLocalUserData] = useState<User | null>(null);
+  const { user } = useUser();
+  const userId = user?.id;
+  console.log(userId, "userId");
+  
   const router = useRouter()
+          useEffect(() => {
+              const fetchUser = async (id: string) => {
+                try {
+                  const data = await getUserData(id);
+                  console.log(data,"datauser");
+                  
+                  setLocalUserData(data);
+                } catch (error) {
+                  console.error("Error fetching user data:", error);
+                }
+              };
+              if (userId) {
+                fetchUser(userId);
+              }
+            }, [userId])
 
   return (
     <div className="w-full flex justify-between p-8">
@@ -39,7 +66,7 @@ const UpcomingHeader = () => {
           />
         </div>
         <Avatar className="w-9 h-auto aspect-square cursor-pointer">
-          <AvatarImage src="https://github.com/shadcn.png" alt="avatar" />
+          <AvatarImage src={userData?.avatarImage} alt="avatar" onClick={() => router.replace("/profile")}/>
           <AvatarFallback>ANN</AvatarFallback>
         </Avatar>
       </div>
