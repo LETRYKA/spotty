@@ -92,7 +92,7 @@ const Friends = () => {
       ) : (
         <div className="flex flex-col gap-4">
           {friends.map((friend) => (
-            <div key={friend.id} className="flex justify-between items-center">
+            <div onClick={()=> router.push(`/${friend.name}`)} key={friend.id} className="flex justify-between items-center">
               <div className="flex gap-3 items-center">
                 <Avatar>
                   <AvatarImage
