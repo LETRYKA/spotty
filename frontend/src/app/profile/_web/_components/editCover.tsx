@@ -4,6 +4,7 @@ import EditFriends from "./editFriends";
 import { uploadImageToCloudinary } from "@/utils/Cloudinary";
 import EditAvatar from "./editAvatar";
 import { useUserStore } from "@/app/profile/_web/store/userStore";
+import { Separator } from "@/components/ui/separator";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -115,15 +116,15 @@ const EditCover = () => {
         )}
       </p>
       <div className="text-white/50 mt-3 flex gap-4">
-        <p className="text-base">
-          @{userData?.name}
+        <div className="text-base">
+          @{userData?.name} &nbsp; |
           <span className="text-white font-semibold">
             <EditFriends
               friendIds={userData?.friendsOf?.map((f) => f.friendId) || []}
             />
           </span>
           {userData?.friendships?.length === 0 ? "" : "найзтай"}
-        </p>
+        </div>
       </div>
     </div>
   );

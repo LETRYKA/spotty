@@ -6,7 +6,6 @@ export const formatDate = (isoString: string): string => {
     hour: "2-digit",
     minute: "2-digit",
     hour12: true,
-    timeZone: `UTC`,
   };
   return date.toLocaleString("en-US", options).replace(",", "");
 };

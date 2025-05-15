@@ -74,7 +74,7 @@ const EditFriends = ({ friendIds }: { friendIds: string[] }) => {
                         src={friendsData.avatarImage}
                       />
                     ) : (
-                      <AvatarFallback>CN</AvatarFallback>
+                      <AvatarFallback>Spotty</AvatarFallback>
                     )}
                   </Avatar>
                   <div className="flex flex-col justify-center items-start">

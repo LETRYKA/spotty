@@ -38,24 +38,26 @@ const EditProfile = () => {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  let value = e.target.value.toLowerCase();
+    let value = e.target.value.toLowerCase();
 
-  if (value.length > 15) {
-    setError("15 тэмдэгтээс хэтэрсэн байна. 🥲");
-    return;
-  }
-  const regex = /^[a-z0-9_]*$/;
-  if (!regex.test(value)) {
-    setError("Зөвхөн латин жижиг үсэг, тоо болон доогуур зураас ашиглаарай.😉");
-  } else if (/[A-Z]/.test(value)) {
-    setError("Том үсэг ашиглаж болохгүй. Бүгдийг жижиг үсгээр оруулна уу.");
-  } else {
-    setError("");
-  }
-  if (regex.test(value) && !/[A-Z]/.test(value)) {
-    setLocalUserData((prev) => (prev ? { ...prev, name: value } : null));
-  }
-};
+    if (value.length > 15) {
+      setError("15 тэмдэгтээс хэтэрсэн байна. 🥲");
+      return;
+    }
+    const regex = /^[a-z0-9_]*$/;
+    if (!regex.test(value)) {
+      setError(
+        "Зөвхөн латин жижиг үсэг, тоо болон доогуур зураас ашиглаарай.😉"
+      );
+    } else if (/[A-Z]/.test(value)) {
+      setError("Том үсэг ашиглаж болохгүй. Бүгдийг жижиг үсгээр оруулна уу.");
+    } else {
+      setError("");
+    }
+    if (regex.test(value) && !/[A-Z]/.test(value)) {
+      setLocalUserData((prev) => (prev ? { ...prev, name: value } : null));
+    }
+  };
 
   useEffect(() => {
     if (userId) {
@@ -162,6 +164,8 @@ const EditProfile = () => {
                   id="name"
                   className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020]"
                   type="password"
+                  disabled
+                  placeholder="Тун удахгүй орноо. Амжкуээшдээ"
                 />
               </div>
               <div className="flex w-full flex-col gap-2">
@@ -173,6 +177,8 @@ const EditProfile = () => {
                     id="confirm-password"
                     className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020] pr-10"
                     type={showPassword ? "text" : "password"}
+                    disabled
+                    placeholder="Энэ ч бас Амжкуээшдээ"
                   />
                   <button
                     type="button"
@@ -192,6 +198,8 @@ const EditProfile = () => {
                       id="confirm-password"
                       className="col-span-3 focus-visible:ring-transparent border-none bg-[#202020] pr-10"
                       type={showPassword ? "text" : "password"}
+                      disabled
+                      placeholder="Энэ ч бас"
                     />
                   </div>
                 </div>
