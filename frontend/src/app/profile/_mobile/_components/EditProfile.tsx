@@ -4,7 +4,6 @@ import {
   ChevronLeft,
   Bell,
   EllipsisVertical,
-  Image as ImageIcon,
 } from "lucide-react";
 import Image from "next/image";
 import VerifiedIcon from "@/img/icons8-verified-16.png";
@@ -16,7 +15,6 @@ import {
 } from "@/components/ui/sheet";
 import React, { useEffect, useState } from "react";
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
-// import Link from "next/link"; // Removed as it is unused
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { useUser } from "@clerk/nextjs";
 import { getUserData } from "@/lib/api";
@@ -24,11 +22,13 @@ import { useUserStore } from "@/app/profile/_web/store/userStore";
 import { User } from "../../_web/types/User";
 import { handleSave } from "../../_web/utils/handleSave";
 import BackgroundImage from "@/img/wallpapersden.com_black-hole-hd-digital_3840x1620.jpg";
+import DefaultAvatar from "@/img/default_avatar.png";
 
-interface EditProfileProps {
+export interface EditProfileProps {
   open: boolean;
   onClose: () => void;
 }
+
 const DEFAULT_USER: User = {
   id: "",
   name: "",
@@ -51,22 +51,25 @@ const DEFAULT_USER: User = {
 const EditProfile: React.FC<EditProfileProps> = ({ open, onClose }) => {
   const [localUserData, setLocalUserData] = useState<User>(DEFAULT_USER);
   const { user } = useUser();
-  const userId = user?.id;
   const { setFullUserData, setUserData: updateStoreUserData } = useUserStore();
 
   useEffect(() => {
-    if (userId) {
-      getUserData(userId)
+    if (user?.id) {
+      getUserData(user.id)
         .then((data) => {
           setLocalUserData(data);
           setFullUserData(data);
         })
-        .catch((err) => console.error("Error fetching user:", err));
+        .catch((err) => console.error("Failed to fetch user data:", err));
     }
-  }, [userId]);
+  }, [user?.id]);
 
   const handleChange = (field: keyof User, value: string) => {
     setLocalUserData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const onSaveClick = async () => {
+    await handleSave(localUserData, updateStoreUserData);
   };
 
   return (
@@ -101,91 +104,78 @@ const EditProfile: React.FC<EditProfileProps> = ({ open, onClose }) => {
           </div>
         </SheetHeader>
 
-        <div
-          className="mt-8 h-26 rounded-2xl bg-cover bg-center"
-          style={{
-            backgroundImage:
-              localUserData.backgroundImage || `url(${BackgroundImage.src})`,
-          }}
-        />
+        <div className="flex-1 min-h-0 overflow-y-auto">
+          <div
+            className="mt-8 h-26 rounded-2xl bg-cover bg-center"
+            style={{
+              backgroundImage:
+                localUserData.backgroundImage || `url(${BackgroundImage.src})`,
+            }}
+          />
 
-        <div className="flex justify-center -mt-14">
-          <Avatar onClick={() => console.log("Avatar clicked")} className="relative flex justify-center items-center">
-            <div className="rounded-full bg-gradient-to-tr from-blue-500 via-pink-500 to-orange-400 p-[3px]">
-              <AvatarImage
-                className="rounded-full w-28 h-28 object-cover"
-                src={
-                  localUserData.avatarImage ||
-                  "https://i.pinimg.com/236x/fc/3d/2a/fc3d2ab28b96352bfe48a4a8ebed81f4.jpg"
-                }
-                alt="User Profile"
-              />
-            </div>
-            <div className="absolute bottom-0 right-0 w-9 h-9 bg-[var(--background)] rounded-full border-[3px] border-[#141414] flex justify-center items-center">
-              <ImageIcon strokeWidth={3} width={15} />
-            </div>
-          </Avatar>
-        </div>
-
-        <div className="mt-4 text-center">
-          <p className="text-2xl font-semibold text-[var(--background)]">
-            @{localUserData.name || "username"}
-          </p>
-          <span className="text-sm font-light text-[var(--background)]/50 mt-1 block">
-            {localUserData.moodStatus || "Update your mood status"}
-          </span>
-        </div>
-
-        <div className="py-10 min-h-screen text-white font-sans">
-          <div className="max-w-md mx-auto space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-[#2c2c2c] rounded-xl p-4">
-                <label className="block text-sm text-gray-400 mb-1">
-                  Username
-                </label>
-                <input
-                  className="bg-transparent text-sm w-full text-white focus:outline-none"
-                  value={localUserData.name}
-                  onChange={(e) => handleChange("name", e.target.value)}
+          <div className="flex justify-center -mt-14">
+            <Avatar className="relative flex justify-center items-center">
+              <div className="rounded-full bg-gradient-to-tr from-blue-500 via-pink-500 to-orange-400 p-[3px]">
+                <AvatarImage
+                  className="rounded-full w-28 h-28 object-cover"
+                  src={localUserData.avatarImage || DefaultAvatar.src}
+                  alt="User Profile"
                 />
+              </div>
+            </Avatar>
+          </div>
+
+          <div className="mt-4 text-center">
+            <p className="text-2xl font-semibold text-[var(--background)]">
+              @{localUserData.name || "username"}
+            </p>
+            <span className="text-sm font-light text-[var(--background)]/50 mt-1 block">
+              {localUserData.moodStatus || "Update your mood status"}
+            </span>
+          </div>
+
+          <div className="py-10 text-white font-sans">
+            <div className="max-w-md mx-auto space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-[#2c2c2c] rounded-xl p-4">
+                  <label className="block text-sm text-gray-400 mb-1">
+                    Username
+                  </label>
+                  <input
+                    className="bg-transparent text-sm w-full text-white focus:outline-none"
+                    value={localUserData.name}
+                    onChange={(e) => handleChange("name", e.target.value)}
+                  />
+                </div>
+
+                <div className="bg-[#2c2c2c] rounded-xl p-4">
+                  <label className="block text-sm text-gray-400 mb-1">
+                    Phone
+                  </label>
+                  <input
+                    className="bg-transparent text-sm w-full text-white focus:outline-none"
+                    value={localUserData.phoneNumber ?? ""}
+                    onChange={(e) =>
+                      handleChange("phoneNumber", e.target.value)
+                    }
+                  />
+                </div>
               </div>
 
               <div className="bg-[#2c2c2c] rounded-xl p-4">
                 <label className="block text-sm text-gray-400 mb-1">
-                  Phone
+                  Email
                 </label>
                 <input
                   className="bg-transparent text-sm w-full text-white focus:outline-none"
-                  value={localUserData.phoneNumber ?? ""}
-                  onChange={(e) => handleChange("phoneNumber", e.target.value)}
+                  value={localUserData.email}
+                  onChange={(e) => handleChange("email", e.target.value)}
                 />
               </div>
-            </div>
 
-            <div className="bg-[#2c2c2c] rounded-xl p-4">
-              <label className="block text-sm text-gray-400 mb-1">Email</label>
-              <input
-                className="bg-transparent text-sm w-full text-white focus:outline-none"
-                value={localUserData.email}
-                onChange={(e) => handleChange("email", e.target.value)}
-              />
-            </div>
-
-            <div className="bg-[#2c2c2c] rounded-xl p-4">
-              <label className="block text-sm text-gray-400 mb-1">
-                Mood Status
-              </label>
-              <textarea
-                className="bg-transparent text-sm w-full text-white focus:outline-none resize-none"
-                value={localUserData.moodStatus ?? ""}
-                onChange={(e) => handleChange("moodStatus", e.target.value)}
-              />
-            </div>
-
-            <div className="bg-[#2c2c2c] rounded-xl p-4 flex items-center justify-between">
               <button
-                onClick={() => handleSave(localUserData, updateStoreUserData)}
-                className="bg-[#434343] text-white text-sm px-4 py-2 rounded-lg"
+                onClick={onSaveClick}
+                className="bg-[#2c2c2c] w-full text-white text-sm px-4 py-2 rounded-lg"
               >
                 Save
               </button>

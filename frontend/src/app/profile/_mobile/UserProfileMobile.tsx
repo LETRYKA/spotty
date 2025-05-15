@@ -2,13 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
+import { ChevronRight, ChevronDown } from "lucide-react";
 import { getUserData } from "@/lib/api";
 import { User } from "../_web/types/User";
 import HeaderMobileProfile from "./_components/Header";
 import EventCardsMobile from "./_components/EventCardMobile";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import EditProfile from "./_components/EditProfile";
 import Blackhole from "@/img/wallpapersden.com_black-hole-hd-digital_3840x1620.jpg";
 import {
@@ -19,8 +18,7 @@ import {
 } from "@/components/ui/sheet";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import Friends from "./_components/Friends";
-import DefaultAvatar from "@/img/default_avatar.png";
-import EditAvatar from "../_web/_components/editAvatar";
+import EditAvatar from "./_components/EditAvatar";
 
 const UserProfileMobile = () => {
   const [userData, setLocalUserData] = useState<User | null>(null);
@@ -28,22 +26,19 @@ const UserProfileMobile = () => {
   const [friendsPageOpen, setFriendsPageOpen] = useState(false);
   const { user } = useUser();
   const userId = user?.id;
-  console.log("USER ID:", userId);
 
   useEffect(() => {
-    const fetchUser = async (id: string) => {
+    const fetchUserData = async () => {
+      if (!userId) return;
       try {
-        const data = await getUserData(id);
+        const data = await getUserData(userId);
         setLocalUserData(data);
-        console.log("User data fetched:", data);
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
     };
 
-    if (userId) {
-      fetchUser(userId);
-    }
+    fetchUserData();
   }, [userId]);
 
   if (!userData) {
@@ -71,7 +66,7 @@ const UserProfileMobile = () => {
 
           <div className="w-full flex justify-center">
             <div className="-mt-16 relative w-[128px] h-[128px]">
-              <EditAvatar />
+              <EditAvatar/>
             </div>
           </div>
         </div>
@@ -79,7 +74,6 @@ const UserProfileMobile = () => {
 
       <div className="mt-17 flex justify-center items-center flex-col">
         <div className="text-white text-2xl">{userData?.name}</div>
-        <span className="text-white opacity-50">{userData?.moodStatus}</span>
       </div>
 
       <div className="flex justify-between w-70.25 mt-6.25">
@@ -135,7 +129,7 @@ const UserProfileMobile = () => {
                 <button
                   onClick={() => setFriendsPageOpen(false)}
                   className="w-20 flex items-center justify-start"
-                > 
+                >
                   <ChevronDown className="text-white hover:bg-muted rounded w-6 h-6" />
                 </button>
               </SheetClose>

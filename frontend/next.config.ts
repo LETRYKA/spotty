@@ -1,5 +1,5 @@
 import type { NextConfig } from "next";
-
+ 
 const nextConfig: NextConfig = {
   env: {
     NEXT_PUBLIC_API_URL: process.env.API_URL,
@@ -8,9 +8,14 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_LOCATIONIQ_API_KEY: process.env.LOCATIONIQ_API_KEY,
   },
   images: {
-    domains: ["res.cloudinary.com"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
+    ],
   },
   devIndicators: false,
 };
-
+ 
 export default nextConfig;
