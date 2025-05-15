@@ -43,8 +43,15 @@ const UserProfileMobile = () => {
 
   if (!userData) {
     return (
-      <div className="w-full h-full flex justify-center items-center">
-        Loading...
+      <div className="w-full h-full flex flex-col items-center p-6 animate-pulse">
+        <div className="w-32 h-32 rounded-full bg-gray-700 mb-4"></div>
+        <div className="w-2/3 h-6 bg-gray-700 rounded mb-2"></div>
+        <div className="w-1/2 h-4 bg-gray-700 rounded mb-6"></div>
+        <div className="w-full h-40 bg-gray-800 rounded-3xl mb-4"></div>
+        <div className="w-full flex gap-4">
+          <div className="flex-1 h-12 bg-gray-700 rounded"></div>
+          <div className="flex-1 h-12 bg-gray-700 rounded"></div>
+        </div>
       </div>
     );
   }
@@ -66,7 +73,7 @@ const UserProfileMobile = () => {
 
           <div className="w-full flex justify-center">
             <div className="-mt-16 relative w-[128px] h-[128px]">
-              <EditAvatar/>
+              <EditAvatar />
             </div>
           </div>
         </div>
@@ -76,12 +83,12 @@ const UserProfileMobile = () => {
         <div className="text-white text-2xl">{userData?.name}</div>
       </div>
 
-      <div className="flex justify-between w-70.25 mt-6.25">
+      <div className="flex justify-center flex-row mt-6.25 gap-10 ">
         <div className="flex flex-col items-center cursor-pointer">
           <div className="text-white">{userData.friendsOf?.length ?? 0}</div>
           <div className="text-white opacity-50">Найз</div>
         </div>
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center ml-4">
           <div className="text-white">{userData.events?.length ?? 0}</div>
           <div className="text-white opacity-50">Арга хэмжээ</div>
         </div>

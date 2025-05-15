@@ -58,7 +58,7 @@ const EventCardsMobile = () => {
 
         return (
           <div
-            // onClick={() => {router.push(`/eventinfo/${event.id}`);}}
+            onClick={() => {router.push(`/eventinfo/${event.id}`);}}
             key={event.id}
             className="w-full h-[100px] bg-[#19191b] rounded-md mt-4 flex justify-between items-center px-2 py-2"
           >
