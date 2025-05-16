@@ -23,7 +23,10 @@ const Location = () => {
     <>
       <div>
         {user && isMobile ? (
-          <MapMobile />
+          <>
+            <MapMobile />
+            <LiveLocation userId={user.id} />
+          </>
         ) : user ? (
           <>
             <LocationWeb />

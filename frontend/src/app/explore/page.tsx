@@ -120,7 +120,7 @@ const Explore = () => {
     <div className="w-full h-auto flex flex-col justify-start items-start px-8 md:px-10 lg:px-20 xl:px-40">
       {/* Search */}
       {isSearchOpen && (
-        <div className="absolute w-full h-screen bg-white/10 backdrop-blur-2xl flex justify-center items-start z-50 inset-0">
+        <div className="absolute w-full h-screen bg-white/10 backdrop-blur-2xl flex justify-center items-start z-50 inset-0 px-14">
           <form
             onSubmit={handleSearch}
             className="w-[60rem] h-20 border-b border-white/30 flex justify-start items-center mt-50"
