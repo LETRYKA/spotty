@@ -38,6 +38,7 @@ export default function MapWithFriendsAndEvents({
   setIsSideBarOpen,
 }: MapProps) {
   const { user } = useUser();
+  const userId = user?.id;
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const friendMarkersRef = useRef<mapboxgl.Marker[]>([]);
@@ -71,7 +72,7 @@ export default function MapWithFriendsAndEvents({
   // Fetch friends 5 socnd
   useEffect(() => {
     const fetchFriends = async () => {
-      const friendsData = await getFriends("user_2wTOJwIWXyv5OyMIQnLu9WQEPS0");
+      const friendsData = await getFriends(`${userId}`);
       setFriends(friendsData);
     };
 
