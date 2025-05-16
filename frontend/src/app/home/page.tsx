@@ -22,6 +22,7 @@ import { ScrollProgress } from "@/components/magicui/scroll-progress";
 import { motion } from "framer-motion";
 import RandomLetterSwapForward from "@/fancy/components/text/random-letter-swap-forward-anim";
 import RandomLetterSwapPingPong from "@/fancy/components/text/random-letter-swap-pingpong-anim";
+import FlipLink from "@/components/ui/text-effect-flipper";
 
 const Home = () => {
   const images = [
@@ -62,11 +63,31 @@ const Home = () => {
           </div>
         </div>
         <div className="w-full relative z-30">
-          <CardCarousel
-            autoplayDelay={80000}
-            showPagination={true}
-            showNavigation={true}
-          />
+          <div className="w-full group flex  flex-col items-center justify-center mt-60 lg-mt-20 text-black font-extrabold text-3lx lg:text-2xl lg:hidden">
+            <TextAnimate
+              animation="fadeIn"
+              by="line"
+              as="p"
+              className="text-5xl font-extrabold text-[var(--foreground)] mt-5"
+            >
+              Explore World
+            </TextAnimate>
+            <TextAnimate
+              animation="fadeIn"
+              by="line"
+              as="p"
+              className="text-5xl font-extrabold text-[var(--foreground)] "
+            >
+              with Spotty
+            </TextAnimate>
+          </div>
+          <div className="hidden lg:flex">
+            <CardCarousel
+              autoplayDelay={80000}
+              showPagination={true}
+              showNavigation={true}
+            />
+          </div>
         </div>
         <Link href={`/auth/sign-up`}>
           <InteractiveHoverButton className="absolute right-14 bottom-10 z-40">
