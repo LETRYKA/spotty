@@ -10,7 +10,6 @@ import { getStatusStylesAndText } from "@/utils/statusStyles";
 import { StatusStyles } from "@/app/profile/_web/types/statusStyles";
 import { InteractiveHoverButton } from "@/components/magicui/interactive-hover-button";
 
-
 const JoinedEvent = () => {
   const [eventData, setEventData] = useState<Event[]>([]);
   const { user } = useUser();
@@ -39,11 +38,14 @@ const JoinedEvent = () => {
     return (
       <div className="w-full h-auto flex flex-col justify-center items-center mt-5 gap-6">
         <p className="text-white/70 text-2xl flex mt-20 justify-center items-center">
-          Өөөө ямар ч эвент байхгүй байна шд <strong className="text-white">🥲</strong> Доор байгаа товч дээр дараад гоё эвентэд нэгдэж болно шүү<strong className="text-white"> 🙂‍↕️ </strong>
+          Өөөө ямар ч эвент байхгүй байна шд{" "}
+         <strong className="text-white"> &nbsp;🥲.</strong>&nbsp;Доор байгаа товч дээр
+          дараад гоё эвентэд нэгдэж болно шүү
+          <strong className="text-white">&nbsp;😌 </strong>
         </p>
         <Link href={`/location`}>
           <InteractiveHoverButton className="">
-           Эвэнт харах 🤩
+            Эвэнт харах 🤩
           </InteractiveHoverButton>
         </Link>
       </div>

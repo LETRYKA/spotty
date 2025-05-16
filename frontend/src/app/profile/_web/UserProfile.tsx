@@ -18,7 +18,7 @@ const UserProfile = () => {
   }, []);
 
   return (
-    <div className="w-full h-auto flex flex-col bg-[#141414] p-9 space-y-6">
+    <div className="w-full h-auto flex flex-col bg-[#141414] px-10 pt-12 pb-26 space-y-6">
       {isLoading ? (
         <Skeleton className="w-full flex justify-center items-center h-64 rounded-xl" />
       ) : (

@@ -14,7 +14,6 @@ const CreatedEvents = () => {
   const [eventData, setEventData] = useState<Event[]>([]);
   const { user } = useUser();
   const userId = user?.id;
-  console.log("eventbackground", eventData);
 
   const fetchUserEvents = async (id: string) => {
     try {
@@ -41,9 +40,9 @@ const CreatedEvents = () => {
       <div className="w-full h-auto flex flex-col justify-center items-center mt-5 gap-6">
         <p className="text-white/70 text-2xl flex mt-20 justify-center items-center">
           Өөөө ямар ч эвент байхгүй байна шд{" "}
-          <strong className="text-white">🥲</strong> Доор байгаа товч дээр
+          <strong className="text-white"> &nbsp;🥲.</strong>&nbsp;Доор байгаа товч дээр
           дараад гоё эвентэд нэгдэж болно шүү
-          <strong className="text-white"> 🙂‍↕️ </strong>
+          <strong className="text-white">&nbsp;😌</strong>
         </p>
         <Link href={`/location`}>
           <InteractiveHoverButton className="">
