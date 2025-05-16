@@ -22,7 +22,10 @@ import { Ellipsis, UserRound, UserRoundPlus } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { getUserAll } from "@/lib/api";
 import { log } from "node:console";
+import { addFriend } from "@/lib/api";
+import { toast } from "react-toastify";
 interface Participant {
+  id: string;
   name: string;
   avatarImage: string;
   moodStatus: string;
@@ -73,6 +76,28 @@ const GuestInfo = () => {
       };
       fetchUserData();
     }, [userId]);
+    const handleAddFriend = async (participant: Participant, userId: string | undefined) => {
+      if (!userId) {
+        alert("You need to be logged in to add friends");
+        return;
+      }
+      const friendId = participant.id;
+      if (!friendId) {
+        console.error("Participant ID missing");
+        return;
+      }
+      try {
+        const result = await addFriend(friendId, userId);
+        if (result) {
+          toast.success(`Friend request sent to ${participant.name}`)
+        } else {
+          toast.error(`Failed to send friend request`)
+        }
+      } catch (error: any) {
+        console.error("Error adding friend:", error.message || error);
+        alert("Error sending friend request");
+      }
+    };
 
   return (
     <div>
@@ -107,7 +132,10 @@ const GuestInfo = () => {
                   <UserRound />
                   View profile
                 </Button>
-                <Button className="bg-white text-black flex justify-start gap-2">
+                <Button
+                  className="bg-white text-black flex justify-start gap-2"
+                  onClick={() => handleAddFriend(participant, userId)}
+                >
                   <UserRoundPlus />
                   Add friend
                 </Button>
