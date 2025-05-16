@@ -10,13 +10,14 @@ import HeaderMobileProfile from "./_components/Header";
 import EventCardsMobile from "./_components/EventCardMobile";
 import Friends from "./_components/Friends";
 import Blackhole from "@/img/wallpapersden.com_black-hole-hd-digital_3840x1620.jpg";
+import { DialogTitle } from "@radix-ui/react-dialog";
 import {
   Sheet,
   SheetClose,
   SheetContent,
   SheetHeader,
 } from "@/components/ui/sheet";
-import { DialogTitle } from "@radix-ui/react-dialog";
+
 import AddFriendButton from "./_components/AddFriendButton";
 
 const ViewUserProfileMobile = () => {
@@ -90,18 +91,18 @@ const ViewUserProfileMobile = () => {
         <span className="text-white opacity-50">@{userData?.name}</span>
       </div>
 
-      <div className="flex justify-between w-70.25 mt-6.25">
+      <div className="flex justify-center flex-row mt-6.25 gap-10">
         <div className="flex flex-col items-center cursor-pointer">
           <div className="text-white">{userData.friendsOf?.length ?? 0}</div>
-          <div className="text-white opacity-50">Friends</div>
+          <div className="text-white opacity-50">Найз</div>
         </div>
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center mt-[1px]">
           <div className="text-white">{userData.events?.length ?? 0}</div>
-          <div className="text-white opacity-50">Events</div>
+          <div className="text-white opacity-50">Арга хэмжээ</div>
         </div>
         <div className="flex flex-col items-center">
           <div className="text-white">{userData.joinedEvents?.length ?? 0}</div>
-          <div className="text-white opacity-50">Participated</div>
+          <div className="text-white opacity-50">Хамрагдсан</div>
         </div>
       </div>
 
@@ -135,10 +136,13 @@ const ViewUserProfileMobile = () => {
         onOpenChange={(open) => setFriendsPageOpen(open)}
       >
         <SheetContent
-          side="right"
-          className="w-full h-screen max-w-none bg-[#19181A] flex flex-col border-none shadow-none outline-none p-7"
+          side="bottom"
+          className="w-full max-h-[90vh] rounded-t-2xl bg-[#19181A] flex flex-col border-none shadow-none outline-none p-6"
         >
+          <DialogTitle className="sr-only">Friends List</DialogTitle>{" "}
+          {/* ADD THIS */}
           <SheetHeader className="border-none shadow-none bg-transparent">
+            <div className="w-12 h-1.5 rounded-full bg-zinc-500 mx-auto mb-4" />
             <div className="flex justify-between items-center w-full">
               <SheetClose asChild>
                 <button
@@ -152,11 +156,9 @@ const ViewUserProfileMobile = () => {
                 Friends List
               </div>
             </div>
-            <DialogTitle className="sr-only">Friends List</DialogTitle>
           </SheetHeader>
-
-          <div className="mt-4">
-            <Friends />
+          <div className="mt-4 overflow-y-auto max-h-[75vh]">
+            <Friends profileUserId={userData.id} />
           </div>
         </SheetContent>
       </Sheet>

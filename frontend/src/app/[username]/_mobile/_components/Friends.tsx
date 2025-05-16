@@ -1,56 +1,49 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react';
-import { ChevronRight, X } from 'lucide-react';
+import { useEffect, useState } from "react";
+import { ChevronRight } from "lucide-react";
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import axios from 'axios';
-import { useUser } from "@clerk/nextjs";
+import axios from "axios";
 
 interface Friend {
   id: string;
   name: string;
   email: string;
   avatarImage?: string;
-  phoneNumber?: string;
-  isVerified: boolean;
-  batteryLevel?: number;
   moodStatus?: string;
-  backgroundImage?: string;
-  locations: {
-    lat: number;
-    lng: number;
-  }[];
 }
 
-const Friends = () => {
+interface FriendsProps {
+  profileUserId: string;
+}
+
+const Friends = ({ profileUserId }: FriendsProps) => {
   const [friends, setFriends] = useState<Friend[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
-  const { user } = useUser();
-  const userId = user?.id;
 
   useEffect(() => {
-    if (!userId) return;
+    if (!profileUserId) return;
 
     const fetchFriends = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/friends/${userId}`);
+        const res = await axios.get(`${API_URL}/api/friends/${profileUserId}`);
         setFriends(res.data);
       } catch (error) {
-        console.error('Error fetching friends:', error);
+        console.error("Error fetching friends:", error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchFriends();
-  }, [userId]);
+  }, [profileUserId]);
 
   const handleClick = () => {
-    router.push('/requests');
+    router.push("/requests");
   };
 
   if (loading) {
@@ -59,27 +52,6 @@ const Friends = () => {
 
   return (
     <div className="flex flex-col gap-6">
-      <div
-        className="w-full flex justify-between items-center cursor-pointer"
-        onClick={handleClick}
-      >
-        <div className="flex items-center gap-3">
-          <Avatar className="relative h-[60px] w-[60px]">
-            <AvatarImage
-              className="rounded-full object-cover w-full h-full"
-              src={friends[0]?.avatarImage || '/default-avatar.png'}
-              alt={friends[0]?.name || 'User'}
-            />
-          </Avatar>
-          <div>
-            <p className="text-xs text-white/70">
-              {friends[0]?.name} + {friends.length - 1} others
-            </p>
-          </div>
-        </div>
-        <ChevronRight className="text-white" />
-      </div>
-
       <h1 className="text-white text-xl font-bold">All Friends</h1>
 
       {friends.length === 0 ? (
@@ -92,7 +64,7 @@ const Friends = () => {
                 <Avatar>
                   <AvatarImage
                     className="rounded-full object-cover w-[50px] h-[50px]"
-                    src={friend.avatarImage || '/default-avatar.png'}
+                    src={friend.avatarImage || "/default-avatar.png"}
                     alt={friend.name}
                   />
                 </Avatar>
