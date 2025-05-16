@@ -10,12 +10,12 @@ import { getStatusStylesAndText } from "@/utils/statusStyles";
 import { enrichEventsWithStatus } from "@/utils/eventStatus";
 import Mapping from "/public/Mapping.png";
 import { StatusStyles } from "@/app/profile/_web/types/statusStyles";
-
+import { useRouter } from "next/navigation";
 // Accept userId as a prop
 const EventCardsMobile = ({ userId }: { userId: string }) => {
   const [eventData, setEventData] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const router = useRouter();
   // Fetch the events of the given userId
   const fetchUserEvents = async (id: string) => {
     try {
@@ -59,8 +59,9 @@ const EventCardsMobile = ({ userId }: { userId: string }) => {
 
         return (
           <div
+            onClick={() => router.replace(`/eventInfo/${event.id}`)}
             key={event.id}
-            className="w-full h-[100px] bg-[#19191b] rounded-md mt-4 flex justify-between items-center px-2 py-2"
+            className="w-full h-[100px] bg-[#19191b] rounded-md mt-4 flex justify-between items-center px-2 py-2 cursor-pointer"
           >
             <div className="flex items-center">
               <Image

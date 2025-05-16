@@ -10,11 +10,17 @@ interface HeaderMobileProfileProps {
   isVerified: boolean;
 }
 
-const HeaderMobileProfile = ({ name, isVerified }: HeaderMobileProfileProps) => {
+const HeaderMobileProfile = ({
+  name,
+  isVerified,
+}: HeaderMobileProfileProps) => {
   const router = useRouter();
   return (
     <div className="flex w-full justify-between">
-      <ChevronLeft onClick={() => router.replace("/location")} className="text-white mr-9.25 " />
+      <ChevronLeft
+        onClick={() => router.replace("/location")}
+        className="text-white mr-9.25 cursor-pointer"
+      />
       <div className="flex text-white text-[18px] font-bold items-center justify-center mr-[42%]">
         {name}
         {isVerified && (
