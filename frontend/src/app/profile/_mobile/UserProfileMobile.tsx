@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import { ChevronRight, ChevronDown } from "lucide-react";
+import { ChevronRight, ChevronDown, ChevronLast, ChevronLeft } from "lucide-react";
 import { getUserData } from "@/lib/api";
 import { User } from "../_web/types/User";
 import HeaderMobileProfile from "./_components/Header";
@@ -86,15 +86,15 @@ const UserProfileMobile = () => {
       <div className="flex justify-center flex-row mt-6.25 gap-10 ">
         <div className="flex flex-col items-center cursor-pointer">
           <div className="text-white">{userData.friendsOf?.length ?? 0}</div>
-          <div className="text-white opacity-50">Найз</div>
+          <div className="text-white opacity-50 text-[80%]">Найз</div>
         </div>
         <div className="flex flex-col items-center ml-4">
           <div className="text-white">{userData.events?.length ?? 0}</div>
-          <div className="text-white opacity-50">Арга хэмжээ</div>
+          <div className="text-white flex flex-row opacity-50 text-[80%]">Арга хэмжээ</div>
         </div>
         <div className="flex flex-col items-center">
           <div className="text-white">{userData.joinedEvents?.length ?? 0}</div>
-          <div className="text-white opacity-50">Хамрагдсан</div>
+          <div className="text-white opacity-50 text-[80%]">Хамрагдсан</div>
         </div>
       </div>
 
@@ -137,7 +137,7 @@ const UserProfileMobile = () => {
                   onClick={() => setFriendsPageOpen(false)}
                   className="w-20 flex items-center justify-start"
                 >
-                  <ChevronDown className="text-white hover:bg-muted rounded w-6 h-6" />
+                  <ChevronLeft className="text-white hover:bg-muted rounded w-6 h-6" />
                 </button>
               </SheetClose>
               <div className="flex items-center text-white font-bold text-lg">

@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import VerifiedIcon from "@/img/icons8-verified-16.png";
-import DefaultAvatar from "@/img/default_avatar.png";
 import { getUserData } from "@/lib/api";
 import { User } from "@/app/profile/_web/types/User";
 
@@ -27,7 +26,6 @@ const Header = () => {
 
   return (
     <div className="flex items-center justify-between w-full px-4 py-2 bg-transparent">
-      {/* Back Button */}
       <button
         aria-label="Go back"
         onClick={() => router.back()}
@@ -47,18 +45,7 @@ const Header = () => {
         />
       </div>
 
-      <div className="flex items-center gap-2">
-        {/* <button
-          aria-label="Notifications"
-          className="bg-[#434343] p-2 rounded-full"
-        >
-          <Bell className="text-white w-5 h-5" />
-        </button>
-
-        <button aria-label="More options">
-          <EllipsisVertical className="text-white w-5 h-5" />
-        </button> */}
-      </div>
+      <div className="flex items-center gap-2"/>
     </div>
   );
 };

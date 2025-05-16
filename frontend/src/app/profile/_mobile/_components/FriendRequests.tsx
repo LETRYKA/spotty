@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react';
-import { ChevronRight, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
@@ -77,7 +77,7 @@ const FriendRequests = () => {
             </p>
           </div>
         </div>
-        <ChevronRight className="text-white" />
+        <ChevronLeft className="text-white" />
       </div>
 
       <h1 className="text-white text-xl font-bold">All Friends</h1>
