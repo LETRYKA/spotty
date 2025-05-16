@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/clerk-react";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -10,8 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { getUserData, addFriend, removeFriend, cancelFriendRequest } from "@/lib/api";
-import { toast } from "react-toastify";
+import { getUserData } from "@/lib/api";
 import { useRouter } from "next/navigation";
 
 interface Friendship {
@@ -24,12 +22,9 @@ interface Friendship {
 interface FriendCardProps {
   friend: any;
   onAvatarClick: (username: string) => void;
-  onAction: () => void;
-  actionText: string;
-  actionClass: string;
 }
 
-function FriendCard({ friend, onAvatarClick, onAction, actionText, actionClass }: FriendCardProps) {
+function FriendCard({ friend, onAvatarClick }: FriendCardProps) {
   return (
     <div className="w-full h-14 flex justify-between items-center mb-3">
       <div className="flex h-full items-center gap-4">
@@ -47,9 +42,6 @@ function FriendCard({ friend, onAvatarClick, onAction, actionText, actionClass }
           </p>
         </div>
       </div>
-      <Button onClick={onAction} className={actionClass}>
-        {actionText}
-      </Button>
     </div>
   );
 }
@@ -57,13 +49,10 @@ function FriendCard({ friend, onAvatarClick, onAction, actionText, actionClass }
 interface FriendsListProps {
   friends: any[];
   onAvatarClick: (username: string) => void;
-  onAction: (friendId: string) => void;
-  actionText: string;
-  actionClass: string;
   title?: string;
 }
 
-function FriendsList({ friends, onAvatarClick, onAction, actionText, actionClass, title }: FriendsListProps) {
+function FriendsList({ friends, onAvatarClick, title }: FriendsListProps) {
   if (friends.length === 0) return null;
 
   return (
@@ -74,9 +63,6 @@ function FriendsList({ friends, onAvatarClick, onAction, actionText, actionClass
           key={friend.id || idx}
           friend={friend}
           onAvatarClick={onAvatarClick}
-          onAction={() => onAction(friend.id)}
-          actionText={actionText}
-          actionClass={actionClass}
         />
       ))}
     </div>
@@ -96,28 +82,20 @@ export function FriendsDialog({
   const router = useRouter();
   const [friendData, setFriendData] = useState<any[]>([]);
   const [pendingFriendData, setPendingFriendData] = useState<any[]>([]);
-  const [userData, setUserData] = useState<any>(null);
-
-  const fetchUserData = async () => {
-    if (!user?.id) return;
-    try {
-      const data = await getUserData(user.id);
-      if (data) setUserData(data);
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-      toast.error("Failed to load user data");
-    }
-  };
 
   const fetchFriends = async (friendships: Friendship[], isPending = false) => {
     if (!friendships.length) return [];
     try {
-      const ids = friendships.map(f =>
-        isPending ? f.userId : (f.userId === profileUserId ? f.friendId : f.userId)
+      const uniqueIds = new Set(
+        friendships.map(f =>
+          isPending ? f.userId : (f.userId === profileUserId ? f.friendId : f.userId)
+        )
       );
+      
       const results = await Promise.allSettled(
-        ids.map(id => getUserData(id).catch(() => null))
+        Array.from(uniqueIds).map(id => getUserData(id).catch(() => null))
       );
+      
       return results
         .map(r => r.status === 'fulfilled' ? r.value : null)
         .filter(Boolean);
@@ -128,31 +106,16 @@ export function FriendsDialog({
   };
 
   useEffect(() => {
-    fetchUserData();
-    fetchFriends(friends).then(setFriendData);
-    fetchFriends(pendingFriends, true).then(setPendingFriendData);
-  }, [user?.id, friends, pendingFriends, profileUserId]);
-
-  const handleFriendAction = async (friendId: string, action: 'add' | 'remove' | 'cancel') => {
-    if (!user?.id) return;
-    try {
-      const actions = {
-        add: () => addFriend(friendId, user.id),
-        remove: () => removeFriend(friendId, user.id),
-        cancel: () => cancelFriendRequest(friendId, user.id)
-      };
-      await actions[action]();
-      await fetchUserData();
-      if (action === 'remove') setFriendData(prev => prev.filter(f => f.id !== friendId));
-      if (action === 'cancel') setPendingFriendData(prev => prev.filter(f => f.id !== friendId));
-      toast.success(action === 'add' ? "Friend request sent!" :
-        action === 'remove' ? "Friend removed!" :
-          "Request cancelled!");
-    } catch (error) {
-      console.error(`Error ${action}ing friend:`, error);
-      toast.error(`Failed to ${action} friend`);
-    }
-  };
+    const loadData = async () => {
+      const [friendsList, pendingList] = await Promise.all([
+        fetchFriends(friends),
+        fetchFriends(pendingFriends, true)
+      ]);
+      setFriendData(friendsList);
+      setPendingFriendData(pendingList);
+    };
+    loadData();
+  }, [friends, pendingFriends, profileUserId]);
 
   const handleAvatarClick = (username: string) => {
     router.push(username === user?.username ? '/profile' : `/${username}`);
@@ -168,22 +131,20 @@ export function FriendsDialog({
           <DialogTitle className="text-[var(--background)]">Бүх найзууд</DialogTitle>
         </DialogHeader>
 
-        <FriendsList
-          friends={pendingFriendData}
-          onAvatarClick={handleAvatarClick}
-          onAction={(id) => handleFriendAction(id, 'cancel')}
-          actionText="Cancel Request"
-          actionClass="bg-red-600 hover:bg-red-700"
-          title="Pending Requests"
-        />
+        {pendingFriendData.length > 0 && (
+          <FriendsList
+            friends={pendingFriendData}
+            onAvatarClick={handleAvatarClick}
+            title="Pending Requests"
+          />
+        )}
 
-        <FriendsList
-          friends={friendData}
-          onAvatarClick={handleAvatarClick}
-          onAction={(id) => handleFriendAction(id, 'remove')}
-          actionText="✕ Remove"
-          actionClass="bg-red-600 hover:bg-red-700"
-        />
+        {friendData.length > 0 && (
+          <FriendsList
+            friends={friendData}
+            onAvatarClick={handleAvatarClick}
+          />
+        )}
       </DialogContent>
     </Dialog>
   );

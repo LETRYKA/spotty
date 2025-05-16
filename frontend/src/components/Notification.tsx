@@ -15,7 +15,7 @@ type FriendRequest = {
   id: string;
   name: string;
   moodStatus?: string;
-  avatarUrl?: string;
+  avatarImage?: string;
 };
 
 export function Notification() {
@@ -76,7 +76,7 @@ export function Notification() {
                     className="h-full aspect-square rounded-full bg-cover bg-center bg-slate-300"
                     style={{
                       backgroundImage: `url(${
-                        request.avatarUrl || "/default-avatar.png"
+                        request.avatarImage || "/nouser.jpg"
                       })`,
                     }}
                   ></div>

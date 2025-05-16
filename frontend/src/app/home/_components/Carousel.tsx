@@ -14,6 +14,8 @@ import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
+import FlipLink from "@/components/ui/text-effect-flipper";
+import { Github } from "lucide-react";
 
 interface CarouselProps {
   autoplayDelay?: number;
@@ -90,6 +92,17 @@ export const CardCarousel: React.FC<CarouselProps> = ({
         }
         modules={[EffectCoverflow, Autoplay, Pagination, Navigation]}
       >
+        <SwiperSlide className="h-full flex flex-col justify-center items-center tex-black">
+          <div className="w-full group flex items-center justify-center -mt-20 text-black font-extrabold">
+            <FlipLink href="https://x.com/guri_who font-extrabold">
+              Meet
+            </FlipLink>
+          </div>
+          <div className="w-full group flex items-center justify-center text-black font-extrabold">
+            <FlipLink href="https://x.com/guri_who">Spotty</FlipLink>
+          </div>
+        </SwiperSlide>
+
         <SwiperSlide>
           <CardContainer className="w-full">
             <CardBody className="w-[45rem] h-auto aspect-10/6 bg-gradient-to-tr from-[#E6DAD5] to-[#E5D5ED] rounded-4xl relative bg-cover bg-center bg-[url(https://images.unsplash.com/photo-1530541930197-ff16ac917b0e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)]">

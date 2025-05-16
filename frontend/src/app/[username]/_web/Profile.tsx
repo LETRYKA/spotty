@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import {
   getUserByName,
   addFriend,
@@ -31,6 +31,7 @@ interface UserData {
 export default function ProfileWeb() {
   const { username } = useParams();
   const { user } = useUser();
+  const router = useRouter();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isNotFound, setIsNotFound] = useState(false);
@@ -85,14 +86,20 @@ export default function ProfileWeb() {
     const fetchUser = async () => {
       setIsLoading(true);
       try {
-        const user = await getUserByName(
+        const fetchedUser = await getUserByName(
           typeof username === "string" ? username : ""
         );
-        if (!user) {
+        if (!fetchedUser) {
           setIsNotFound(true);
           return;
         }
-        setUserData(user);
+        setUserData(fetchedUser);
+
+        // Redirect to profile if viewing own profile
+        if (fetchedUser.id === user?.id) {
+          router.push('/profile');
+          return;
+        }
       } catch (error) {
         console.error("Error fetching user:", error);
         setIsNotFound(true);
@@ -102,7 +109,7 @@ export default function ProfileWeb() {
     };
 
     fetchUser();
-  }, [username]);
+  }, [username, router, user?.id]);
 
   if (isNotFound) return <UserNotFound />;
   if (isLoading || !userData) return <div>Loading</div>;
@@ -132,10 +139,12 @@ export default function ProfileWeb() {
       friendship.status === "pending"
   );
 
-  console.log("All friendships:", userData.friendships);
-  console.log("Current user:", user?.id);
-  console.log("Profile user:", userData.id);
-  console.log("Is pending:", isPending);
+  // console.log("All friendships:", userData.friendships);
+  // console.log("Current user:", user?.id);
+  // console.log("Profile user:", userData.id);
+  // console.log("Is pending:", isPending);
+
+  console.log(userData);
 
   return (
     <div className="w-full h-auto flex flex-col items-center justify-center p-6">
