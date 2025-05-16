@@ -23,7 +23,10 @@ const Location = () => {
     <>
       <div>
         {user && isMobile ? (
-          <MapMobile />
+          <>
+            <LocationWeb />
+            <MapMobile />
+          </>
         ) : user ? (
           <>
             <LocationWeb />
