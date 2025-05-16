@@ -65,7 +65,7 @@ const EventCardsMobile = () => {
               router.push(`/eventInfo/${event.id}`);
             }}
             key={event.id}
-            className="w-full h-[100px] bg-[#19191b] rounded-md mt-4 flex justify-between items-center px-2 py-2"
+            className="w-full h-[100px] bg-[#19191b] rounded-md mt-4 flex justify-between items-center px-2 py-2 cursor-pointer"
           >
             <div className="flex items-center">
               <Image
@@ -74,7 +74,7 @@ const EventCardsMobile = () => {
                 className="w-[64px] h-[64px] object-cover rounded"
                 width={64}
                 height={64}
-                unoptimized={!!event.backgroundImage} 
+                unoptimized={!!event.backgroundImage}
               />
 
               <div className="flex flex-col justify-center ml-3 space-y-1">
