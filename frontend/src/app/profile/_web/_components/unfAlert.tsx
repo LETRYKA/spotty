@@ -47,7 +47,7 @@ const UnfAlert = ({ userId, friendId }: UnfAlertProps) => {
         <AlertDialogHeader>
           <AlertDialogTitle className="text-white text-sm">Итгэлтэй байна уу?</AlertDialogTitle>
           <AlertDialogDescription>
-            Unfriend хийлэээшдэ. Ингээд л харилцаандаа сэв шааж байгаа юм уу?
+            Unfriend хийлэээшдэ. Ингээд л харилцаандаа сэв хийж байгаа юм уу?
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
