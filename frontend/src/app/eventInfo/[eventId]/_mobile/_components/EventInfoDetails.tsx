@@ -242,22 +242,23 @@ const EventInfoDetails = () => {
             <Button
               onClick={handleJoinClick}
               disabled={isUserParticipant}
-              className={`flex-1 text-sm font-bold py-6 rounded-full flex flex-col items-center gap-1 ${
+              className={`flex-1 text-sm font-bold py-6 rounded-full flex flex-col items-center gap-1 transition-all ${
                 isUserParticipant
-                  ? "text-[#00ff84] bg-[var(--background)]"
+                  ? "text-[var(--background)] bg-[#0278FC] cursor-not-allowed"
                   : "text-[#5a5a5a] bg-[#1A1A1A] hover:bg-[#2A2A2A]"
               }`}
             >
               <CircleCheck />
               Going
             </Button>
+
             <Button
               onClick={handleLeave}
               disabled={!isUserParticipant}
-              className={`flex-1 text-sm font-bold py-6 rounded-full flex flex-col items-center gap-1 ${
+              className={`flex-1 text-sm font-bold py-6 rounded-full flex flex-col items-center gap-1 transition-all ${
                 isUserParticipant
-                  ? "text-[#5a5a5a] bg-[#1A1A1A] hover:bg-[#2A2A2A]"
-                  : "text-[#00ff84] bg-[var(--background)]"
+                  ? "text-[#5a5a5a] bg-[#1A1A1A] hover:brightness-110"
+                  : "text-[#5a5a5a] bg-[#1A1A1A] opacity-50 cursor-not-allowed"
               }`}
             >
               <CircleX />
