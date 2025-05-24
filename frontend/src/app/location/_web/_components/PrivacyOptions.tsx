@@ -37,9 +37,9 @@ export const PrivacyOptions = ({ formik }: PrivacyOptionsProps) => {
         </div>
         <p className="text-sm">Private</p>
         <p className="text-xs text-white/50">Event secured with passcode</p>
-      </div>
-      <div className="w-1/2 bg-[#0D0D0D]/70 rounded-2xl border-[#2F2F2F] p-4">
-        <div className="flex justify-end">
+      </div>  
+      <div className="w-1/2 p-4">
+        {/* <div className="flex justify-end">
           <Checkbox
             id="hiddenFromMap"
             checked={formik.values.hiddenFromMap}
@@ -50,7 +50,7 @@ export const PrivacyOptions = ({ formik }: PrivacyOptionsProps) => {
           />
         </div>
         <p className="text-sm">Hide from map</p>
-        <p className="text-xs text-white/50">Only friends can see</p>
+        <p className="text-xs text-white/50">Only friends can see</p> */}
       </div>
     </>
   );

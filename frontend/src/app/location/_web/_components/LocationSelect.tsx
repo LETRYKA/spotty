@@ -109,17 +109,19 @@ export default function LocationSelect({
         </DialogHeader>
         <div className="space-y-4">
           <MapContainer
+            key={`${latlng?.lat ?? 'init'}-${latlng?.lng ?? 'init'}`}
             center={[47.9184676, 106.9177016]}
             zoom={13}
             className="h-[400px] rounded-2xl"
           >
             <TileLayer
-              url={`https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png`}
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution="© OpenStreetMap contributors"
             />
             <LocationPicker onPick={handlePick} />
             {latlng && <Marker position={[latlng.lat, latlng.lng]} icon={customMapPinIcon} />}
           </MapContainer>
+
           {latlng && (
             <div className="w-full px-6 py-4 bg-[var(--foreground)]/80 backdrop-blur-2xl text-[var(--background)] rounded-2xl border border-[#2F2F2F] transition-all duration-300 ease-in-out">
               <div className="flex items-center gap-4 overflow-hidden">

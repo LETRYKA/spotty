@@ -40,7 +40,7 @@ export const CardCarousel: React.FC<CarouselProps> = ({
   onCardClick,
 }) => {
   return (
-    <section className="w-full h-full">
+    <section className="w-full h-auto">
       <Swiper
         spaceBetween={70}
         autoplay={{
@@ -68,11 +68,11 @@ export const CardCarousel: React.FC<CarouselProps> = ({
             : undefined
         }
         modules={[EffectCoverflow, Pagination, Navigation, Autoplay]}
-        className="overflow-hidden"
+        className="overflow-hidden "
       >
         {events.map((event, index) => (
           <SwiperSlide key={event.id}>
-            <div className="relative w-full h-[44rem] rounded-4xl overflow-hidden"
+            <div className="relative w-full h-[38rem] rounded-4xl overflow-hidden"
             onClick={() => onCardClick(event.id)}
             >  
               <Image
