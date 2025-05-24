@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, CircleCheck, Pencil, Share } from "lucide-react";
+import { ChevronLeft, CircleCheck, Pencil, Share, User } from "lucide-react";
 import {
   Carousel,
   CarouselContent,
@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/carousel";
 import { Event } from "@/types/Event";
 import DropDown from "./Menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface EventDisplayLayoutProps {
   event: Event;
@@ -114,12 +115,16 @@ export const EventDisplayLayout = ({
               className="w-full p-3 bg-[#D9D9D9]/10 hover:bg-[#D9D9D9]/15 flex justify-between items-center rounded-2xl transition-all"
             >
               <div className="flex h-12 gap-3">
-                <div
-                  className="h-full w-auto aspect-square rounded-full bg-cover bg-center bg-slate-400"
-                  style={{
-                    backgroundImage: `url(${participant.avatarImage})`,
-                  }}
-                ></div>
+                <Avatar className="h-12 w-12">
+                  <AvatarImage
+                    src={participant.avatarImage?.trim() || ""}
+                    alt={participant.name}
+                  />
+                  <AvatarFallback className="bg-muted text-muted-foreground flex items-center justify-center">
+                    <User className="h-5 w-5" />
+                  </AvatarFallback>
+                </Avatar>
+
                 <div className="h-full flex flex-col justify-center items-start">
                   <p className="text-[var(--background)] text-base font-bold">
                     {participant.name}
@@ -136,4 +141,4 @@ export const EventDisplayLayout = ({
       </div>
     </>
   );
-}; 
+};
