@@ -1,46 +1,52 @@
 "use client";
 
-import { ClerkProvider, SignedIn, SignedOut } from "@clerk/nextjs";
+import { ClerkProvider, SignedIn, SignedOut, useUser } from "@clerk/nextjs";
 import "./globals.css";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { PropsWithChildren, useEffect } from "react";
 
+const BY_PASS_PAGES = ["/auth/sign-in", "/auth/sign-up", "/home", "/invite"];
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  return (
+    <html lang="en">
+      <body>
+        <ClerkProvider signInUrl="/auth/sign-in" signUpUrl="/auth/sign-up">
+          <Content>{children}</Content>
+        </ClerkProvider>
+      </body>
+    </html>
+  );
+}
+
+const Content = ({ children }: PropsWithChildren) => {
   const pathname = usePathname();
   const router = useRouter();
+  const { isSignedIn } = useUser();
 
-  const isAuthPage = pathname?.startsWith("/auth");
-  const isHomePage = pathname === "/home";
+  const isPassable =
+    BY_PASS_PAGES.map((pagePath) => pathname.includes(pagePath)).filter(
+      (cur) => cur
+    ).length !== 0;
 
   useEffect(() => {
-    if (!isAuthPage && !isHomePage) {
-      const isSignedIn = document.cookie.includes("__session");
+    if (!isPassable) {
       if (!isSignedIn) {
         router.replace("/auth/sign-in");
       }
     }
   }, [pathname]);
 
+  if (isPassable || isSignedIn) return children;
   return (
-    <html lang="en">
-      <body>
-        <ClerkProvider signInUrl="/auth/sign-in" signUpUrl="/auth/sign-up">
-          {isAuthPage || isHomePage ? (
-            children
-          ) : (
-            <>
-              <SignedIn>{children}</SignedIn>
-              <SignedOut>
-                <div>Redirecting to sign in...</div>
-              </SignedOut>
-            </>
-          )}
-        </ClerkProvider>
-      </body>
-    </html>
+    <>
+      <SignedIn>{children}</SignedIn>
+      <SignedOut>
+        <div>Redirecting to sign in...</div>
+      </SignedOut>
+    </>
   );
-}
+};
