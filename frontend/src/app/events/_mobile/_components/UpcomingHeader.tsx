@@ -44,7 +44,7 @@ const UpcomingHeader = () => {
             }, [userId])
 
   return (
-    <div className="w-full flex justify-between p-8">
+    <div className="w-full flex justify-between px-8 py-5">
       <div className="flex gap-2 justify-center items-center text-white">
       <Select defaultValue="upcoming" >
         <SelectTrigger className="w-[200px] bg-black text-white border-none text-[30px] font-semibold">

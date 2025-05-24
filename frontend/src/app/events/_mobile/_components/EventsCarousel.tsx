@@ -36,7 +36,7 @@ const EventsCarousel = () => {
     };
 
   return (
-    <div className="w-full h-full pt-5 px-8">
+    <div className="w-full h-auto px-8">
       {events.length > 0 ? (
         <CardCarousel events={events} onCardClick={handleCardClick} />
       ) : (
