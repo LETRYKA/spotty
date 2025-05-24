@@ -5,7 +5,7 @@ import { Sparkle, Clock, Heart, Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { AvatarCircles } from "@/components/magicui/avatar-circles";
-
+import { useUser } from "@clerk/nextjs";
 interface Event {
   id: string;
   title: string;
@@ -38,7 +38,6 @@ interface Event {
 }
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
 const fetchEvents = async (): Promise<Event[]> => {
   try {
     const res = await fetch(`${API_URL}/api/events`);
@@ -59,7 +58,8 @@ const EventList = ({
 }) => {
   const [search, setSearch] = useState("");
   const [events, setEvents] = useState<Event[]>([]);
-
+  const { user } = useUser();
+  const userId = user?.id;
   useEffect(() => {
     fetchEvents().then(setEvents);
   }, []);
@@ -111,10 +111,14 @@ const EventList = ({
             >
               <div className="h-full flex">
                 <div
-                  className="h-full w-auto aspect-square rounded-2xl bg-cover bg-center"
+                  className={`h-full w-auto ${
+                    event.participants.some((e) => e.id === userId)
+                      ? "rounded-full"
+                      : "rounded-xl"
+                  } aspect-square bg-cover bg-center`}
                   style={{
                     backgroundImage: `url(${
-                      event?.backgroundImage || "event.owner.avatarImage"
+                      event?.backgroundImage || event.owner.avatarImage
                     })`,
                   }}
                 />
