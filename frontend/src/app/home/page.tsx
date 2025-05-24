@@ -126,14 +126,7 @@ const Home = () => {
             Designed to keep up with how you actually want and built on your
             personal experience.
           </SplitText>
-          <div className="flex gap-4">
-            <Link href={`/auth/sign-in`}>
-              <Button className="py-5 px-7 rounded-full">Sign in</Button>
-            </Link>
-            <Link href={`/auth/sign-up`}>
-              <Button className="py-5 px-7 rounded-full dark">Sign up</Button>
-            </Link>
-          </div>
+         
         </div>
         <div className="relative z-20 w-full px-6 md:px-90 mt-30">
           <div
