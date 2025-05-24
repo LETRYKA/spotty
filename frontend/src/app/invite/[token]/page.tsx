@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { fetchEvent, getInvite, joinViaInvite } from "@/lib/api";
 import { formatDate } from "@/utils/DateFormatter";
@@ -13,6 +13,8 @@ export default function InvitePage() {
   const { user } = useUser();
   const { token } = useParams();
   const router = useRouter();
+  const pathname = usePathname();
+
   const [state, setState] = useState({
     eventId: null as string | null,
     message: "",
@@ -68,7 +70,10 @@ export default function InvitePage() {
   }, [eventId]);
 
   const handleResponse = async (accept: boolean) => {
-    if (typeof token !== "string" || !user?.id) return;
+    if (typeof token !== "string" || !user?.id) {
+      router.push(`/auth/sign-in?redirect_url=${pathname}`);
+      return;
+    }
 
     setState((prev) => ({ ...prev, loading: true, message: "", error: null }));
 
@@ -100,18 +105,6 @@ export default function InvitePage() {
       setState((prev) => ({ ...prev, loading: false }));
     }
   };
-
-  if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-          <h1 className="text-2xl font-bold mb-4 text-center">
-            Нэвтрэх шаардлагатай
-          </h1>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="w-full h-screen flex items-center justify-center bg-gray-100">
