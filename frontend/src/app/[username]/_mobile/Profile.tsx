@@ -112,19 +112,25 @@ const ViewUserProfileMobile = () => {
         >
           Friends <ChevronDown className="ml-1 w-4 h-4" />
         </Button>
-        {currentUserId && currentUserId !== userData.id && (
-          <AddFriendButton
-            friendId={userData.id}
-            userId={currentUserId}
-            refreshFriends={() => setFriendsPageOpen(false)}
-            isFriend={userData.friendsOf?.some(
-              (f: any) => f.id === currentUserId
-            )}
-            requestPending={userData.friendRequestsSent?.some(
-              (r: any) => r.id === currentUserId
-            )}
-          />
-        )}
+        {typeof currentUserId === "string" &&
+          userData?.id &&
+          currentUserId !== userData.id && (
+            <AddFriendButton
+              friendId={userData.id}
+              userId={currentUserId}
+              refreshFriends={() => setFriendsPageOpen(false)}
+              isFriend={
+                Array.isArray(userData.friendsOf) &&
+                userData.friendsOf.some((f: any) => f.id === currentUserId)
+              }
+              requestPending={
+                Array.isArray(userData.friendRequestsSent) &&
+                userData.friendRequestsSent.some(
+                  (r: any) => r.id === currentUserId
+                )
+              }
+            />
+          )}
       </div>
 
       <EventCardsMobile userId={userData.id} />
