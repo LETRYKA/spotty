@@ -143,8 +143,8 @@ const EventList = ({
                   <AvatarCircles
                     numPeople={event.participants.length}
                     avatarUrls={event.participants.map((p) => ({
-                      avatarImage: p.avatarImage || "/fallback-avatar.png",
-                      profileUrl: `/${p.name}`,
+                      avatarImage: p?.avatarImage ?? "/default-avatar.png",
+                      profileUrl: `/${p?.name ?? "user"}`,
                     }))}
                   />
                 </div>
