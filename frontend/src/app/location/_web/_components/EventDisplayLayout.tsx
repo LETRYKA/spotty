@@ -38,27 +38,38 @@ export const EventDisplayLayout = ({
         })}
       </p>
       <div className="w-full flex justify-center gap-3 mt-2 px-8">
-        {joined ? (
-          <Button className="bg-[#0278FC] hover:bg-[#0277fcdc] w-2/4 text-white rounded-2xl py-8 flex flex-col gap-0 text-base hover:scale-105 transition-all">
-            <CircleCheck strokeWidth={3} />
-            Going
-          </Button>
-        ) : (
-          <Button
-            onClick={onJoin}
-            className="bg-[var(--background)]/10 hover:bg-[var(--background)]/15 w-2/4 text-white/50 rounded-2xl py-8 flex flex-col gap-0 text-base hover:scale-105 transition-all"
-          >
-            <CircleCheck strokeWidth={3} />
-            Join
-          </Button>
-        )}
-        <Button
-          onClick={onLeave}
-          className="bg-[var(--background)]/10 hover:bg-[var(--background)]/15 w-2/4 text-white/50 rounded-2xl py-8 flex flex-col gap-0 text-base hover:scale-105 transition-all"
-        >
-          <CircleCheck strokeWidth={3} />
-          Not going
-        </Button>
+          {joined ? (
+            <>
+              <Button className="bg-[#0278FC] hover:bg-[#0277fcdc] w-2/4 text-white rounded-2xl py-8 flex flex-col gap-0 text-base hover:scale-105 transition-all">
+                <CircleCheck strokeWidth={3} />
+                Going
+              </Button>
+              <Button
+                onClick={onLeave}
+                className="bg-[var(--background)]/10 hover:bg-[var(--background)]/15 w-2/4 text-white/50 rounded-2xl py-8 flex flex-col gap-0 text-base hover:scale-105 transition-all"
+              >
+                <CircleCheck strokeWidth={3} />
+                Not going
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                onClick={onJoin}
+                className="bg-[var(--background)]/10 hover:bg-[var(--background)]/15 w-2/4 text-white/50 rounded-2xl py-8 flex flex-col gap-0 text-base hover:scale-105 transition-all"
+              >
+                <CircleCheck strokeWidth={3} />
+                Join
+              </Button>
+              <Button
+                disabled
+                className="w-2/4 text-white/20 rounded-2xl py-8 flex flex-col gap-0 text-base transition-all border border-white/10 cursor-not-allowed"
+              >
+                <CircleCheck strokeWidth={3} />
+                Not going
+              </Button>
+            </>
+          )}
       </div>
       <div className="w-full flex justify-start bg mt-2 pl-6">
         <div className="w-full">
