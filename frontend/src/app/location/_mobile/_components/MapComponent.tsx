@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useRouter } from "next/navigation";
-import { getEvents } from "@/lib/api";
+import { getEvents, getFriends } from "@/lib/api";
+import { useUser } from "@clerk/nextjs";
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!;
 
@@ -19,12 +20,28 @@ interface MapComponentProps {
     onCityNameChange: (cityName: string) => void;
 }
 
+interface Location {
+    lat: number;
+    lng: number;
+}
+interface Friend {
+    id: string;
+    name: string;
+    avatarImage: string | null;
+    moodStatus: string | null;
+    locations: Location[];
+}
+
 const MapComponent = ({ onCityNameChange }: MapComponentProps) => {
     const router = useRouter();
+    const { user } = useUser();
+    const userId = user?.id;
     const mapContainer = useRef<HTMLDivElement>(null);
     const mapRef = useRef<mapboxgl.Map | null>(null);
+    const friendMarkersRef = useRef<mapboxgl.Marker[]>([]);
     const [events, setEvents] = useState<Event[]>([]);
     const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+    const [friends, setFriends] = useState<Friend[]>([]);
 
     useEffect(() => {
         if (!mapContainer.current) return;
@@ -80,6 +97,20 @@ const MapComponent = ({ onCityNameChange }: MapComponentProps) => {
         fetchEvents();
     }, []);
 
+    // friends get (fetch every 5 seconds)
+    useEffect(() => {
+        if (!userId) return;
+        let interval: NodeJS.Timeout;
+        const fetchFriends = async () => {
+            const friendsData = await getFriends(userId);
+            setFriends(friendsData);
+            console.log('Fetched friends:', friendsData);
+        };
+        fetchFriends();
+        interval = setInterval(fetchFriends, 5000);
+        return () => clearInterval(interval);
+    }, [userId]);
+
     // user marker get
     useEffect(() => {
         if (!mapRef.current || !userLocation) return;
@@ -124,6 +155,78 @@ const MapComponent = ({ onCityNameChange }: MapComponentProps) => {
                 .addTo(mapRef.current!);
         });
     }, [events, router]);
+
+    // friends marker get
+    useEffect(() => {
+        if (!mapRef.current) return;
+        // Clear previous friend markers
+        friendMarkersRef.current.forEach(marker => marker.remove());
+        friendMarkersRef.current = [];
+        if (!friends.length) return;
+        friends.forEach((friend) => {
+            friend.locations.forEach((location) => {
+                if (isValidCoordinates(location)) {
+                    const el = document.createElement("div");
+// Container for marker and bubble
+el.style.display = "flex";
+el.style.flexDirection = "column";
+el.style.alignItems = "center";
+el.style.pointerEvents = "auto";
+
+// Bubble for moodStatus
+if (friend.moodStatus) {
+    const bubble = document.createElement("div");
+    bubble.className = "friend-mood-bubble";
+    bubble.innerText = friend.moodStatus;
+    bubble.style.background = "#fff";
+    bubble.style.color = "#333";
+    bubble.style.padding = "2px 8px";
+    bubble.style.borderRadius = "16px";
+    bubble.style.boxShadow = "0 2px 8px rgba(0,0,0,0.10)";
+    bubble.style.fontSize = "10px";
+    bubble.style.marginBottom = "4px";
+    bubble.style.whiteSpace = "nowrap";
+    bubble.style.position = "relative";
+    // Add a small pointer
+    const pointer = document.createElement("div");
+    pointer.style.position = "absolute";
+    pointer.style.left = "50%";
+    pointer.style.bottom = "-6px";
+    pointer.style.transform = "translateX(-50%)";
+    pointer.style.width = "0";
+    pointer.style.height = "0";
+    pointer.style.borderLeft = "6px solid transparent";
+    pointer.style.borderRight = "6px solid transparent";
+    pointer.style.borderTop = "6px solid #fff";
+    bubble.appendChild(pointer);
+    el.appendChild(bubble);
+}
+
+// Marker avatar
+const avatar = document.createElement("div");
+avatar.className = "friend-marker-avatar";
+avatar.style.width = "48px";
+avatar.style.height = "48px";
+avatar.style.borderRadius = "24px";
+avatar.style.overflow = "hidden";
+avatar.style.border = "2px solid #fff";
+avatar.style.boxShadow = "0 0 8px rgba(0,0,0,0.18)";
+avatar.style.background = "#eee";
+if (friend.avatarImage) {
+    avatar.style.backgroundImage = `url(${friend.avatarImage})`;
+    avatar.style.backgroundSize = "cover";
+    avatar.style.backgroundPosition = "center";
+}
+el.appendChild(avatar);
+                    const marker = new mapboxgl.Marker(el)
+                        .setLngLat([location.lng, location.lat])
+                        .setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML(`<div><strong>${friend.name}</strong>${friend.moodStatus ? `<br/><span>Mood: ${friend.moodStatus}</span>` : ''}</div>`))
+                        .addTo(mapRef.current!);
+                    friendMarkersRef.current.push(marker);
+                }
+            });
+        });
+    }, [friends, mapRef]);
 
     return (
         <>
