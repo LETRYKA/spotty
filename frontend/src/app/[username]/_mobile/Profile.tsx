@@ -10,6 +10,7 @@ import HeaderMobileProfile from "./_components/Header";
 import EventCardsMobile from "./_components/EventCardMobile";
 import Friends from "./_components/Friends";
 import Blackhole from "@/img/wallpapersden.com_black-hole-hd-digital_3840x1620.jpg";
+import { motion } from "framer-motion";
 import {
   Sheet,
   SheetClose,
@@ -73,14 +74,72 @@ const ViewUserProfileMobile = () => {
           />
 
           <div className="w-full flex justify-center">
-            <Avatar className="-mt-16 relative rounded-full bg-gradient-to-r from-[#428CFA] via-[#7062FB] to-[#F98437] w-[128px] h-[128px]">
-              <AvatarImage
-                className="rounded-full border-3 border-black object-cover"
-                src={userData?.avatarImage}
-                alt="User Profile"
-              />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
+            <div className="relative">
+              <Avatar className="-mt-16 relative rounded-full bg-gradient-to-r from-[#428CFA] via-[#7062FB] to-[#F98437] w-[128px] h-[128px]">
+                <AvatarImage
+                  className="rounded-full border-3 border-black object-cover"
+                  src={userData?.avatarImage || "/default-avatar.webp"}
+                  alt="User Profile"
+                />
+                <AvatarFallback>
+                  {userData?.name?.charAt(0)?.toUpperCase() || "U"}
+                </AvatarFallback>
+              </Avatar>
+              {userData?.moodStatus && (
+                <motion.div
+                  className="flex gap-1 justify-center absolute items-center ml-30 -mt-[120px]"
+                  animate={{
+                    y: ["0%", "-10%", "0%"],
+                    rotate: [0, 2, -2, 0],
+                    scale: [1, 1.05, 1],
+                  }}
+                  transition={{
+                    repeat: Infinity,
+                    repeatType: "loop",
+                    duration: 2.8,
+                    ease: "easeInOut",
+                    times: [0, 0.3, 0.7, 1],
+                    delay: 0.3,
+                  }}
+                >
+                  <motion.div
+                    className="rounded-full w-2 h-2 bg-black -mb-4"
+                    animate={{ y: [0, -2, 0] }}
+                    transition={{
+                      repeat: Infinity,
+                      duration: 1.8,
+                      ease: "easeInOut",
+                      repeatType: "mirror",
+                    }}
+                  />
+                  <motion.div
+                    className="rounded-full w-3 h-3 bg-black -mb-1 -ml-1"
+                    animate={{ scale: [1, 1.2, 1], y: [0, -3, 0] }}
+                    transition={{
+                      repeat: Infinity,
+                      duration: 2.2,
+                      ease: "easeInOut",
+                      repeatType: "mirror",
+                      delay: 0.2,
+                    }}
+                  />
+                  <motion.p
+                    className="font-semibold text-center rounded-2xl -ml-4 -mt-2 px-2 py-1 w-30 text-white text-xs bg-black"
+                    animate={{
+                      opacity: [1, 0.9, 1],
+                      scale: [1, 1.05, 1],
+                    }}
+                    transition={{
+                      repeat: Infinity,
+                      duration: 1.8,
+                      ease: "easeInOut",
+                    }}
+                  >
+                    {userData.moodStatus}
+                  </motion.p>
+                </motion.div>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -92,7 +151,17 @@ const ViewUserProfileMobile = () => {
 
       <div className="flex justify-between w-70.25 mt-6.25">
         <div className="flex flex-col items-center cursor-pointer">
-          <div className="text-white">{userData.friendsOf?.length ?? 0}</div>
+          <div className="text-white">
+            {
+              new Set(
+                [...userData.friendships, ...userData.friendsOf]
+                  .filter((f) => f.status === "accepted")
+                  .map((f) =>
+                    f.userId === userData.id ? f.friendId : f.userId
+                  )
+              ).size
+            }
+          </div>
           <div className="text-white opacity-50">Friends</div>
         </div>
         <div className="flex flex-col items-center">
@@ -162,7 +231,10 @@ const ViewUserProfileMobile = () => {
           </SheetHeader>
 
           <div className="mt-4">
-            <Friends />
+            <Friends
+              friendships={[...userData.friendships, ...userData.friendsOf]}
+              profileUserId={userData.id}
+            />
           </div>
         </SheetContent>
       </Sheet>
