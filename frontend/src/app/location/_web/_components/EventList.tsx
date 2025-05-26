@@ -95,12 +95,12 @@ const EventList = ({
           )}
         </div>
         <div className="w-full flex items-center justify-between">
-          <p className="text-xl text-[var(--background)] font-semibold">
+          <p className="text-[26px] tracking-wider text-[var(--background)] font-semibold">
             Events
           </p>
-          <Button className="rounded-full h-auto w-auto aspect-square bg-[#28272A] hover:bg-[#3c3a3f] transition-all">
+          {/* <Button className="rounded-full h-auto w-auto aspect-square bg-[#28272A] hover:bg-[#3c3a3f] transition-all">
             <Sparkle />
-          </Button>
+          </Button> */}
         </div>
         <div className="w-full flex flex-col justify-start gap-3 overflow-y-scroll pb-12">
           {filteredEvents.toReversed().map((event) => (
