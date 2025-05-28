@@ -5,41 +5,82 @@ import { useParams, useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Lock, Earth, CircleCheck, CircleX, X } from "lucide-react";
+import type { Event } from "@/types/Event";
+import {
+  Lock,
+  Earth,
+  CircleCheck,
+  CircleX,
+  X,
+  Pencil,
+  Trash2,
+} from "lucide-react";
+import { toast } from "react-toastify";
 
 import GuestInfo from "./GuestInfo";
 import DirectionEvent from "./DirectionEvent";
+import EditEvent from "./editEvent";
 import {
   fetchEvent,
   getUserData,
   joinEvent,
   leaveEvent,
   verifyPasscode,
+  deleteEvent,
 } from "@/lib/api";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogClose,
+} from "@/components/ui/dialog";
 
 interface Owner {
   avatarImage?: string;
   name?: string;
+  id?: string;
 }
 
 interface Participant {
   userId: string;
+  id: string;
   name: string;
-  avatarImage: string;
-  moodStatus: string;
-  id?: string;
+  email: string;
+  avatarImage?: string;
+  phoneNumber?: string;
+  isVerified: boolean;
+  batteryLevel?: number;
+  moodStatus?: string;
+  backgroundImage?: string;
+  locations: Location[];
 }
+
 
 interface EventData {
+  id: string;
   description: string;
   owner: Owner;
+  ownerId: string;
   startAt: string;
+  endAt: string;
+  createdAt: string;
   title: string;
   isPrivate: boolean;
-  participantLimit: string;
+  participantLimit: number;
   participants: Participant[];
+  lat: number;
+  lng: number;
+  status: string;
+  backgroundImage: string;
+  hiddenFromMap: boolean;
+  galleryImages: string[];
+  password?: string | null;
+  categories: string[];
 }
-
 interface User {
   avatarImage: string;
 }
@@ -50,8 +91,8 @@ const EventInfoDetails = () => {
   const [isUserParticipant, setIsUserParticipant] = useState(false);
   const [showPasscodeModal, setShowPasscodeModal] = useState(false);
   const [passcode, setPasscode] = useState("");
-  const [message, setMessage] = useState<string | null>(null);
-  const [messageType, setMessageType] = useState<"success" | "error">("success");
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const params = useParams();
   const eventId = params?.eventId as string;
@@ -62,9 +103,7 @@ const EventInfoDetails = () => {
   const refreshEvent = async () => {
     if (!eventId) return;
     const data = await fetchEvent(eventId);
-    if (data) {
-      setEventData(data);
-    }
+    if (data) setEventData(data);
   };
 
   useEffect(() => {
@@ -72,15 +111,11 @@ const EventInfoDetails = () => {
   }, [eventId]);
 
   useEffect(() => {
-    if (userId) {
-      getUserData(userId)
-        .then(setUserData)
-        .catch(console.error);
-    }
+    if (userId) getUserData(userId).then(setUserData).catch(console.error);
   }, [userId]);
 
   useEffect(() => {
-    if (eventData && userId) {
+    if (eventData && userId && Array.isArray(eventData.participants)) {
       const isParticipant = eventData.participants.some(
         (p) => p.userId === userId || p.id === userId
       );
@@ -102,28 +137,24 @@ const EventInfoDetails = () => {
       if (!isValid) throw new Error("Invalid passcode");
 
       await joinEvent(eventId, userId!);
-      await refreshEvent();
       setIsUserParticipant(true);
       setShowPasscodeModal(false);
       setPasscode("");
-      setMessage("Joined the private event!");
-      setMessageType("success");
+      toast.success("Joined the private event!");
+      refreshEvent();
     } catch (err: any) {
-      setMessage(err.message || "Failed to join private event.");
-      setMessageType("error");
+      toast.error(err.message || "Failed to join private event.");
     }
   };
 
   const handlePublicJoin = async () => {
     try {
       await joinEvent(eventId, userId!);
-      await refreshEvent();
       setIsUserParticipant(true);
-      setMessage("You have successfully joined the event!");
-      setMessageType("success");
-    } catch (err) {
-      setMessage("Failed to join the event.");
-      setMessageType("error");
+      toast.success("You have successfully joined the event!");
+      refreshEvent();
+    } catch {
+      toast.error("Failed to join the event.");
     }
   };
 
@@ -131,47 +162,67 @@ const EventInfoDetails = () => {
     try {
       const wasPrivate = eventData?.isPrivate;
       await leaveEvent(eventId, userId!);
-      await refreshEvent();
       setIsUserParticipant(false);
-      setMessage("You left the event.");
-      setMessageType("success");
-      if (wasPrivate) {
-        setShowPasscodeModal(true);
-      }
-    } catch (err) {
-      setMessage("Failed to leave event.");
-      setMessageType("error");
+      toast.success("You left the event.");
+      if (wasPrivate) setShowPasscodeModal(true);
+      refreshEvent();
+    } catch {
+      toast.error("Failed to leave event.");
+    }
+  };
+
+  const handleDeleteEvent = async () => {
+    try {
+      await deleteEvent(eventId, userId!);
+      toast.success("Event deleted successfully.");
+      router.push("/events");
+    } catch {
+      toast.error("Failed to delete the event.");
     }
   };
 
   const handleJoinClick = () => {
-    if (eventData?.isPrivate) {
-      setShowPasscodeModal(true);
-    } else {
-      handlePublicJoin();
-    }
+    eventData?.isPrivate ? setShowPasscodeModal(true) : handlePublicJoin();
   };
 
   const handleCancelPasscode = () => {
     setShowPasscodeModal(false);
     router.push("/events");
   };
+  
 
   return (
     <div className="relative">
-      {message && (
-        <div
-          className={`fixed top-5 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-md shadow-lg z-50 text-white transition-all duration-300 ${
-            messageType === "success" ? "bg-green-600" : "bg-red-600"
-          }`}
-        >
-          {message}
-        </div>
-      )}
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-md bg-[var(--foreground)]/30 backdrop-blur-lg border-[#2F2F2F] rounded-3xl">
+          <DialogHeader>
+            <DialogTitle className="text-white/50">Эвент устгах</DialogTitle>
+            <DialogDescription className="pt-2 text-white text-base">
+              Та <strong>"{eventData?.title}"</strong> эвентийг устгахдаа итгэлтэй байна уу?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="pt-4">
+            <DialogClose asChild>
+              <Button type="button" variant="outline">
+                Буцах
+              </Button>
+            </DialogClose>
+            <Button
+              type="button"
+              variant="destructive"
+              className="bg-red-600 hover:bg-red-700"
+              onClick={handleDeleteEvent}
+            >
+              Устгах
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {showPasscodeModal && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center">
-          <div className="bg-[#0A0A0B] p-6 rounded-lg shadow-lg w-80 text-white relative z-[100]">
+          <div className="bg-[#0A0A0B] p-6 rounded-lg shadow-lg w-80 text-white relative">
             <button
               className="absolute top-2 right-2 text-gray-400 hover:text-white"
               onClick={handleCancelPasscode}
@@ -237,12 +288,63 @@ const EventInfoDetails = () => {
           </p>
         </div>
 
+        {userId && eventData?.ownerId === userId && (
+          <div className="w-full flex justify-end gap-2 mt-5">
+            <Button
+              className="bg-red-500/20 hover:bg-red-700/30 text-red-500 hover:text-red-400 rounded-full px-4 aspect-square"
+              onClick={() => setIsDeleteDialogOpen(true)}
+            >
+              <Trash2 />
+            </Button>
+            <Button
+              onClick={() => setIsEditDialogOpen(true)}
+              className="bg-white/20 hover:bg-[#3c3a3f] text-white rounded-full px-4 aspect-square"
+            >
+              <Pencil />
+            </Button>
+          </div>
+        )}
+
+        {eventData && eventData.ownerId === userId && (
+          <EditEvent
+            event={
+              {
+                ...eventData,
+                owner: {
+                  ...eventData.owner,
+                  name: eventData.owner?.name ?? "",
+                },
+                password: eventData?.password ?? null,
+              } as unknown as Event
+            }
+            isOpen={isEditDialogOpen}
+            onClose={() => setIsEditDialogOpen(false)}
+            onEventUpdate={(updatedEvent: Event) => {
+              const fixedParticipants = (updatedEvent.participants as any[]).map((p) => ({
+                userId: p.userId ?? p.id, 
+                ...p,
+              }));
+              setEventData({
+                ...updatedEvent,
+                participants: fixedParticipants,
+                categories: Array.isArray((updatedEvent as any).categories)
+                  ? (updatedEvent as any).categories.map((cat: any) =>
+                      typeof cat === "string" ? cat : cat.name ?? cat.id ?? ""
+                    )
+                  : [],
+              } as EventData);
+              setIsEditDialogOpen(false);
+              toast.success("Амжилттай засварлалаа!");
+            }}
+          />
+        )}
+
         <div className="mt-10">
           <div className="bg-[#0A0A0B] border border-[#1D1D1D] rounded-full flex justify-between p-2 gap-3">
             <Button
               onClick={handleJoinClick}
               disabled={isUserParticipant}
-              className={`flex-1 text-sm font-bold py-6 rounded-full flex flex-col items-center gap-1 transition-all ${
+              className={`flex-1 text-sm font-bold py-6 rounded-full flex flex-col items-center gap-1 ${
                 isUserParticipant
                   ? "text-[var(--background)] bg-[#0278FC] cursor-not-allowed"
                   : "text-[#5a5a5a] bg-[#1A1A1A] hover:bg-[#2A2A2A]"
@@ -251,14 +353,13 @@ const EventInfoDetails = () => {
               <CircleCheck />
               Going
             </Button>
-
             <Button
               onClick={handleLeave}
               disabled={!isUserParticipant}
-              className={`flex-1 text-sm font-bold py-6 rounded-full flex flex-col items-center gap-1 transition-all ${
+              className={`flex-1 text-sm font-bold py-6 rounded-full flex flex-col items-center gap-1 ${
                 isUserParticipant
                   ? "text-[#5a5a5a] bg-[#1A1A1A] hover:brightness-110"
-                  : "text-[#5a5a5a] bg-[#1A1A1A] opacity-50 cursor-not-allowed"
+                  : "opacity-50 cursor-not-allowed"
               }`}
             >
               <CircleX />
@@ -277,8 +378,7 @@ const EventInfoDetails = () => {
               <AvatarFallback>H</AvatarFallback>
             </Avatar>
             <p className="text-xs text-white/50">
-              Hosted by{" "}
-              <strong className="text-white">{eventData?.owner?.name}</strong>
+              Hosted by <strong className="text-white">{eventData?.owner?.name}</strong>
             </p>
           </div>
           <p className="text-xs text-white/50 mt-4">About</p>
@@ -291,6 +391,7 @@ const EventInfoDetails = () => {
           Guest list {eventData?.participants?.length || 0}/
           {eventData?.participantLimit || 0}
         </div>
+
         <GuestInfo />
       </div>
     </div>

@@ -13,6 +13,7 @@ interface EventFormFieldsProps {
   formik: FormikProps<EventFormValues>;
   categoriesList: { id: string; name: string; emoji: string }[];
   handlePasswordChange: (e: React.ChangeEvent<HTMLInputElement>, formikInstance: FormikProps<EventFormValues>) => void;
+  isMobile?: boolean; // optional flag
 }
 
 export const EventFormFields = ({
@@ -21,9 +22,10 @@ export const EventFormFields = ({
   handlePasswordChange,
 }: EventFormFieldsProps) => {
   return (
-    <form onSubmit={formik.handleSubmit} className="space-y-4 pt-4">
-      <div className="flex gap-4">
-        <div className="w-1/2">
+    <div className="space-y-4 pt-4">
+      {/* Title + Category */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="w-full sm:w-1/2">
           <Input
             name="title"
             placeholder="Title"
@@ -31,7 +33,7 @@ export const EventFormFields = ({
             value={formik.values.title}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            className="bg-[#0D0D0D]/70 border-[#2F2F2F] py-5 rounded-xl"
+            className="bg-[#0D0D0D]/70 border-[#2F2F2F] py-4 rounded-xl w-full"
           />
           {formik.touched.title && formik.errors.title && (
             <div className="text-red-500 text-xs mt-1">
@@ -43,13 +45,11 @@ export const EventFormFields = ({
           categories={categoriesList}
           selectedCategories={formik.values.categories}
           onToggleCategory={(categoryId) => {
-            const currentCategories = formik.values.categories;
-            formik.setFieldValue(
-              "categories",
-              currentCategories.includes(categoryId)
-                ? currentCategories.filter((c: string) => c !== categoryId)
-                : [...currentCategories, categoryId]
-            );
+            const current = formik.values.categories;
+            const updated = current.includes(categoryId)
+              ? current.filter((c: string) => c !== categoryId)
+              : [...current, categoryId];
+            formik.setFieldValue("categories", updated);
           }}
           error={
             formik.touched.categories && formik.errors.categories
@@ -59,23 +59,27 @@ export const EventFormFields = ({
         />
       </div>
 
-      <Textarea
-        name="description"
-        placeholder="Description"
-        rows={4}
-        value={formik.values.description}
-        onChange={formik.handleChange}
-        onBlur={formik.handleBlur}
-        className="bg-[#0D0D0D]/70 border-[#2F2F2F] rounded-xl p-3"
-      />
-      {formik.touched.description && formik.errors.description && (
-        <div className="text-red-500 text-xs mt-1">
-          {formik.errors.description}
-        </div>
-      )}
+      {/* Description */}
+      <div>
+        <Textarea
+          name="description"
+          placeholder="Description"
+          rows={4}
+          value={formik.values.description}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          className="bg-[#0D0D0D]/70 border-[#2F2F2F] rounded-xl p-3 w-full"
+        />
+        {formik.touched.description && formik.errors.description && (
+          <div className="text-red-500 text-xs mt-1">
+            {formik.errors.description}
+          </div>
+        )}
+      </div>
 
-      <div className="flex gap-4">
-        <div className="w-1/2">
+      {/* Date & Time */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="w-full sm:w-1/2">
           <DateTimePicker
             value={formik.values.startAt}
             onChange={(date) => formik.setFieldValue("startAt", date)}
@@ -87,7 +91,7 @@ export const EventFormFields = ({
             }
           />
         </div>
-        <div className="w-1/2">
+        <div className="w-full sm:w-1/2">
           <DateTimePicker
             value={formik.values.endAt}
             onChange={(date) => formik.setFieldValue("endAt", date)}
@@ -101,7 +105,8 @@ export const EventFormFields = ({
         </div>
       </div>
 
-      <div className="w-full pr-2">
+      {/* Participant Limit */}
+      <div>
         <Input
           name="participantLimit"
           type="number"
@@ -114,7 +119,7 @@ export const EventFormFields = ({
             )
           }
           onBlur={formik.handleBlur}
-          className="bg-[#0D0D0D]/70 border-[#2F2F2F] py-5 rounded-xl"
+          className="bg-[#0D0D0D]/70 border-[#2F2F2F] py-4 rounded-xl w-full"
         />
         {formik.touched.participantLimit && formik.errors.participantLimit && (
           <div className="text-red-500 text-xs mt-1">
@@ -123,6 +128,7 @@ export const EventFormFields = ({
         )}
       </div>
 
+      {/* Image Upload */}
       <ImageGallery
         galleryImages={formik.values.galleryImages}
         setGalleryImages={(urls) =>
@@ -136,9 +142,12 @@ export const EventFormFields = ({
         errors={formik.errors}
       />
 
-      <div className="flex w-full gap-3">
+      {/* Privacy Toggle */}
+      <div className="w-full">
         <PrivacyOptions formik={formik} />
       </div>
+
+      {/* Password Input if Private */}
       {formik.values.isPrivate && (
         <div>
           <Input
@@ -146,11 +155,11 @@ export const EventFormFields = ({
             type="text"
             inputMode="numeric"
             pattern="[0-9]*"
-            placeholder="4 оронтой тоо"
+            placeholder="4 оронтой нууц код"
             value={formik.values.password}
             onChange={(e) => handlePasswordChange(e, formik)}
             onBlur={formik.handleBlur}
-            className="bg-[#0D0D0D]/70 border-[#2F2F2F] py-5 rounded-xl mt-2"
+            className="bg-[#0D0D0D]/70 border-[#2F2F2F] py-4 rounded-xl w-full mt-2"
           />
           {formik.touched.password && formik.errors.password && (
             <div className="text-red-500 text-xs mt-1">
@@ -159,6 +168,6 @@ export const EventFormFields = ({
           )}
         </div>
       )}
-    </form>
+    </div>
   );
-}; 
+};
