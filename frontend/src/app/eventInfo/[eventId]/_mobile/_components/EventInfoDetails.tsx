@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import type { Event } from "@/types/Event";
 import {
   Lock,
   Earth,
@@ -46,11 +47,18 @@ interface Owner {
 
 interface Participant {
   userId: string;
+  id: string;
   name: string;
-  avatarImage: string;
-  moodStatus: string;
-  id?: string;
+  email: string;
+  avatarImage?: string;
+  phoneNumber?: string;
+  isVerified: boolean;
+  batteryLevel?: number;
+  moodStatus?: string;
+  backgroundImage?: string;
+  locations: Location[];
 }
+
 
 interface EventData {
   id: string;
@@ -58,12 +66,21 @@ interface EventData {
   owner: Owner;
   ownerId: string;
   startAt: string;
+  endAt: string;
+  createdAt: string;
   title: string;
   isPrivate: boolean;
-  participantLimit: string;
+  participantLimit: number;
   participants: Participant[];
+  lat: number;
+  lng: number;
+  status: string;
+  backgroundImage: string;
+  hiddenFromMap: boolean;
+  galleryImages: string[];
+  password?: string | null;
+  categories: string[];
 }
-
 interface User {
   avatarImage: string;
 }
@@ -156,7 +173,7 @@ const EventInfoDetails = () => {
 
   const handleDeleteEvent = async () => {
     try {
-      await deleteEvent(eventId);
+      await deleteEvent(eventId, userId!);
       toast.success("Event deleted successfully.");
       router.push("/events");
     } catch {
@@ -172,6 +189,7 @@ const EventInfoDetails = () => {
     setShowPasscodeModal(false);
     router.push("/events");
   };
+  
 
   return (
     <div className="relative">
@@ -289,13 +307,34 @@ const EventInfoDetails = () => {
 
         {eventData && eventData.ownerId === userId && (
           <EditEvent
-            event={eventData}
+            event={
+              {
+                ...eventData,
+                owner: {
+                  ...eventData.owner,
+                  name: eventData.owner?.name ?? "",
+                },
+                password: eventData?.password ?? null,
+              } as unknown as Event
+            }
             isOpen={isEditDialogOpen}
             onClose={() => setIsEditDialogOpen(false)}
-            onEventUpdate={(updatedEvent) => {
-              toast.success("Event updated successfully!");
-              setEventData(updatedEvent);
+            onEventUpdate={(updatedEvent: Event) => {
+              const fixedParticipants = (updatedEvent.participants as any[]).map((p) => ({
+                userId: p.userId ?? p.id, 
+                ...p,
+              }));
+              setEventData({
+                ...updatedEvent,
+                participants: fixedParticipants,
+                categories: Array.isArray((updatedEvent as any).categories)
+                  ? (updatedEvent as any).categories.map((cat: any) =>
+                      typeof cat === "string" ? cat : cat.name ?? cat.id ?? ""
+                    )
+                  : [],
+              } as EventData);
               setIsEditDialogOpen(false);
+              toast.success("Амжилттай засварлалаа!");
             }}
           />
         )}
