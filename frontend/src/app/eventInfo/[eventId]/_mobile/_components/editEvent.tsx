@@ -141,39 +141,45 @@ const EditEvent = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-black/30 backdrop-blur-lg border-[#2F2F2F] rounded-3xl p-6 text-[var(--background)]">
-        <DialogHeader>
-          <DialogTitle className="text-xl">Edit Event</DialogTitle>
-        </DialogHeader>
-        <Formik
-          initialValues={initialValues}
-          validationSchema={EditEventSchema}
-          onSubmit={handleSubmit}
-          enableReinitialize
+  <DialogContent
+    className="bg-black/30 backdrop-blur-lg border-[#2F2F2F] rounded-3xl p-4 sm:p-6 text-[var(--background)] max-h-[90vh] overflow-y-auto w-[90vw] sm:w-[500px]"
+  >
+    <DialogHeader>
+      <DialogTitle className="text-lg sm:text-xl">Edit Event</DialogTitle>
+    </DialogHeader>
+
+    <Formik
+      initialValues={initialValues}
+      validationSchema={EditEventSchema}
+      onSubmit={handleSubmit}
+      enableReinitialize
+    >
+      {(formik: FormikProps<EventFormValues>) => (
+        <form
+          id="event-edit-form"
+          onSubmit={formik.handleSubmit}
+          className="flex flex-col space-y-4"
         >
-          {(formik: FormikProps<EventFormValues>) => (
-            <>
-              <EventFormFields
-                formik={formik}
-                categoriesList={categoriesList}
-                handlePasswordChange={handlePasswordChange}
-              />
-              <DialogFooter className="mt-4">
-                <Button
-                  type="submit"
-                  form={formik.isSubmitting ? undefined : "event-edit-form"}
-                  onClick={() => formik.handleSubmit()}
-                  disabled={formik.isSubmitting}
-                  className="w-full bg-blue-600 rounded-xl py-5 hover:bg-blue-700"
-                >
-                  {formik.isSubmitting ? "Хадгалж байна..." : "Хадгалах"}
-                </Button>
-              </DialogFooter>
-            </>
-          )}
-        </Formik>
-      </DialogContent>
-    </Dialog>
+          <EventFormFields
+            formik={formik}
+            categoriesList={categoriesList}
+            handlePasswordChange={handlePasswordChange}
+          />
+
+          <DialogFooter className="mt-4">
+            <Button
+              type="submit"
+              disabled={formik.isSubmitting}
+              className="w-full bg-blue-600 rounded-xl py-5 hover:bg-blue-700"
+            >
+              {formik.isSubmitting ? "Хадгалж байна..." : "Хадгалах"}
+            </Button>
+          </DialogFooter>
+        </form>
+      )}
+    </Formik>
+  </DialogContent>
+</Dialog>
   );
 };
 
