@@ -93,6 +93,7 @@ const EventInfoDetails = () => {
   const [passcode, setPasscode] = useState("");
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
 
   const params = useParams();
   const eventId = params?.eventId as string;
@@ -384,8 +385,50 @@ const EventInfoDetails = () => {
           <p className="text-xs text-white/50 mt-4">About</p>
           <p className="text-sm text-white mt-2">{eventData?.description}</p>
         </div>
-
         <DirectionEvent />
+
+        {(eventData?.galleryImages ?? []).length > 0 && (
+          <div className="mt-6">
+            <h3 className="py-3">Gallery Images</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {(eventData?.galleryImages ?? []).map((img, index) => (
+                <div
+                  key={index}
+                  className="w-full aspect-square overflow-hidden rounded-lg border border-[#1b1b1b]"
+                >
+                  <img
+                    src={img}
+                    alt={`Gallery image ${index + 1}`}
+                    className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition"
+                    onClick={() => setPreviewImageUrl(img)}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {previewImageUrl && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/10 px-6"
+            onClick={() => setPreviewImageUrl(null)}
+          >
+            <div className="relative max-w-full max-h-[90vh]">
+              <img
+                src={previewImageUrl}
+                alt="Preview"
+                className="rounded-lg shadow-xl max-h-[90vh] w-auto max-w-full"
+                onClick={(e) => e.stopPropagation()}
+              />
+              <button
+                onClick={() => setPreviewImageUrl(null)}
+                className="absolute top-2 right-2 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-70"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="flex justify-between mt-5 text-white">
           Guest list {eventData?.participants?.length || 0}/
