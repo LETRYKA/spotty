@@ -18,6 +18,7 @@ const allowedOrigins = [
   "http://localhost:3000",
   "https://spottyproject.vercel.app",
   "https://spotty-lovat.vercel.app",
+  "https://spottymn.vercel.app",
 ];
 
 dotenv.config();
