@@ -31,6 +31,7 @@ const LocationWeb = () => {
           setSelectedEventId={setSelectedEventId}
           setIsSideBarOpen={setIsSideBarOpen}
         />
+        {/* Create Event Button */}
         <div className="absolute bottom-8 right-8 z-40">
           <CreateEvent />
         </div>

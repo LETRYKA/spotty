@@ -137,10 +137,11 @@ export default function LiveLocation({ userId }: { userId: string }) {
       // Log additional error details if available
       if (error?.target) {
         try {
+          const wsTarget = error.target as WebSocket;
           console.error("Error target details:", {
-            readyState: error.target.readyState,
-            url: error.target.url,
-            protocol: error.target.protocol,
+            readyState: wsTarget.readyState,
+            url: wsTarget.url,
+            protocol: wsTarget.protocol,
           });
         } catch (e) {
           console.error("Could not extract error target details:", e);
