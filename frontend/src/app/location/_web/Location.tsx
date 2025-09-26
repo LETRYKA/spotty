@@ -18,7 +18,7 @@ const LocationWeb = () => {
 
   return (
     <>
-      <div className="w-full h-screen items-center justify-center relative">
+      <div className="w-full h-screen overflow-hidden items-center justify-center relative">
         <div className="absolute h-full z-40 p-7">
           <MapWidgets
             isSideBarOpen={isSideBarOpen}

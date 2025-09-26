@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import axios from "axios";
-import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import iconUrl from "leaflet/dist/images/marker-icon.png";
 import iconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
@@ -10,7 +9,7 @@ import shadowUrl from "leaflet/dist/images/marker-shadow.png";
 import { Button } from "@/components/ui/button";
 import { Navigation, MapPin } from "lucide-react";
 import "leaflet/dist/leaflet.css";
-import { renderToStaticMarkup } from 'react-dom/server';
+import { renderToStaticMarkup } from "react-dom/server";
 import {
   Dialog,
   DialogContent,
@@ -31,19 +30,38 @@ L.Icon.Default.mergeOptions({
 
 const customMapPinIcon = L.divIcon({
   html: renderToStaticMarkup(<MapPin size={24} color="#2563EB" />),
-  className: 'leaflet-lucide-icon',
+  className: "leaflet-lucide-icon",
   iconSize: [24, 24],
   iconAnchor: [12, 24],
-  popupAnchor: [0, -24]
+  popupAnchor: [0, -24],
 });
 
-function LocationPicker({
+// Custom Map component that manages its own instance
+function CustomMap({
   onPick,
+  latlng,
+  mapInstanceRef,
 }: {
   onPick: (lat: number, lng: number, address: string) => void;
+  latlng: { lat: number; lng: number } | null;
+  mapInstanceRef: React.MutableRefObject<L.Map | null>;
 }) {
-  useMapEvents({
-    click: async (e) => {
+  const mapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!mapRef.current || mapInstanceRef.current) return;
+
+    // Create map instance
+    const map = L.map(mapRef.current).setView([47.9184676, 106.9177016], 13);
+    mapInstanceRef.current = map;
+
+    // Add tile layer
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "© OpenStreetMap contributors",
+    }).addTo(map);
+
+    // Add click handler
+    map.on("click", async (e) => {
       const { lat, lng } = e.latlng;
       try {
         const res = await axios.get(
@@ -55,10 +73,35 @@ function LocationPicker({
         console.error("❌ Reverse geocoding failed", err);
         toast.error("Failed to fetch address");
       }
-    },
-  });
+    });
 
-  return null;
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+    };
+  }, [onPick, mapInstanceRef]);
+
+  // Add marker when latlng changes
+  useEffect(() => {
+    if (!mapInstanceRef.current || !latlng) return;
+
+    // Remove existing markers
+    mapInstanceRef.current.eachLayer((layer) => {
+      if (layer instanceof L.Marker) {
+        mapInstanceRef.current?.removeLayer(layer);
+      }
+    });
+
+    // Add new marker
+    const marker = L.marker([latlng.lat, latlng.lng], {
+      icon: customMapPinIcon,
+    });
+    marker.addTo(mapInstanceRef.current);
+  }, [latlng]);
+
+  return <div ref={mapRef} className="h-[400px] rounded-2xl" />;
 }
 
 export default function LocationSelect({
@@ -74,6 +117,24 @@ export default function LocationSelect({
     null
   );
   const [address, setAddress] = useState("");
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<L.Map | null>(null);
+
+  // Reset state when dialog opens
+  useEffect(() => {
+    if (open) {
+      setLatlng(null);
+      setAddress("");
+    }
+  }, [open]);
+
+  // Clean up map instance when dialog closes
+  useEffect(() => {
+    if (!open && mapInstanceRef.current) {
+      mapInstanceRef.current.remove();
+      mapInstanceRef.current = null;
+    }
+  }, [open]);
 
   const handlePick = useCallback((lat: number, lng: number, addr: string) => {
     console.log("Location picked:", { lat, lng, addr });
@@ -93,6 +154,9 @@ export default function LocationSelect({
     (isOpen: boolean) => {
       console.log("LocationSelect onOpenChange:", isOpen);
       if (!isOpen) {
+        // Reset state when dialog closes
+        setLatlng(null);
+        setAddress("");
         onClose();
       }
     },
@@ -108,19 +172,11 @@ export default function LocationSelect({
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
-          <MapContainer
-            key={`${latlng?.lat ?? 'init'}-${latlng?.lng ?? 'init'}`}
-            center={[47.9184676, 106.9177016]}
-            zoom={13}
-            className="h-[400px] rounded-2xl"
-          >
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution="© OpenStreetMap contributors"
-            />
-            <LocationPicker onPick={handlePick} />
-            {latlng && <Marker position={[latlng.lat, latlng.lng]} icon={customMapPinIcon} />}
-          </MapContainer>
+          <CustomMap
+            onPick={handlePick}
+            latlng={latlng}
+            mapInstanceRef={mapInstanceRef}
+          />
 
           {latlng && (
             <div className="w-full px-6 py-4 bg-[var(--foreground)]/80 backdrop-blur-2xl text-[var(--background)] rounded-2xl border border-[#2F2F2F] transition-all duration-300 ease-in-out">

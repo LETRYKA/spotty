@@ -34,7 +34,6 @@ const Location = () => {
           </>
         ) : null}
       </div>
-      ;
     </>
   );
 };

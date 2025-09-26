@@ -1,5 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, CircleCheck, Pencil, Share, Trash, Trash2 } from "lucide-react";
+import {
+  ChevronLeft,
+  CircleCheck,
+  Pencil,
+  Share,
+  Trash,
+  Trash2,
+} from "lucide-react";
 import { Event } from "@/types/Event";
 import { useState, useEffect } from "react";
 import { useUser } from "@clerk/clerk-react";
@@ -16,7 +23,7 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 
 interface EventDetailContentProps {
   event: Event;
@@ -142,7 +149,8 @@ export const EventDetailContent = ({
           <DialogHeader>
             <DialogTitle className="text-white/50">Эвент устгах</DialogTitle>
             <DialogDescription className="pt-2 text-white text-base">
-              Та <strong>"{event?.title}"</strong> эвентийг усгахдаа итгэлтэй байна уу?
+              Та <strong>"{event?.title}"</strong> эвентийг усгахдаа итгэлтэй
+              байна уу?
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="pt-4">
