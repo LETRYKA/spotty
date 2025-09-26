@@ -70,7 +70,7 @@ const EventList = ({
 
   return (
     <>
-      <div className="w-full p-6 flex flex-col gap-4 overflow-y-scroll">
+      <div className="w-full p-6 flex flex-col gap-4 ">
         <div className="w-full h-14 bg-[#D9D9D9]/10 rounded-full flex items-center p-1.5 hover:bg-[#28272A]/80 transition-all">
           <div className="h-full w-auto aspect-square rounded-full bg-[#0E0E10] flex justify-center items-center">
             <Search stroke="white" width={17} />
